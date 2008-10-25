@@ -1,0 +1,5 @@
+Fixing up expat config include:
+* Copy expat_config.h to the expat directory
+* Run
+find . -not -wholename "*svn*" -and -name "*.c" -exec perl -pi -w -e 's/<expat_config.h>/"expat_config.h"/g' {} \;
+
