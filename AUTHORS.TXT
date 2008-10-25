@@ -1,0 +1,5 @@
+Main author
+-----------
+
+amorilia (amorilia@users.sourceforge.net)
+

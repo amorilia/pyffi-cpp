@@ -1,6 +1,6 @@
 env = Environment()
 Export("env")
-bases = SConscript("cffi/bases/SConscript")
+bases = SConscript("cffi/objectmodels/SConscript")
 expat = SConscript("cffi/expat/SConscript")
 #libffi = Library("cffi", [bases, expat])
 #Program("test.cpp", LIBS=["cffi"], LIBPATH=['.'])
