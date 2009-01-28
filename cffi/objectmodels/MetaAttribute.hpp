@@ -1,6 +1,9 @@
 #ifndef __METAATTRIBUTE_HPP
 #define __METAATTRIBUTE_HPP
 
+#include <vector>
+#include <boost/shared_ptr.hpp>
+
 #include "Attribute.hpp"
 
 class Expression;
@@ -16,26 +19,21 @@ public:
    */
   template<typename ValueType>
   MetaAttribute(const ValueType & default_value)
-    : mDefault(default_value), mVer1(-1), mVer2(-1), mUserVer(-1) {};
+    : default_value(default_value), shape() {};
   template<typename ValueType>
-  MetaAttribute(const ValueType & default_value, int ver1, int ver2, int userver, const Expression & arr1, const Expression & arr2, const Expression & cond)
-    : mDefault(default_value), mVer1(ver1), mVer2(ver2), mUserVer(userver) {};
+  MetaAttribute(const ValueType & default_value, const std::vector<boost::shared_ptr<Expression> > & shape)
+    : default_value(default_value), shape(shape) {};
 private:
   /*!
-   * mDefault plays both the role of storing the type of the
+   * default_value plays both the role of storing the type of the
    * attribute, as well as storing the default value.
    */
-  Attribute mDefault;
-  int mVer1;
-  int mVer2;
-  int mUserVer;
-  const Expression * mArr1;
-  const Expression * mArr2;
-  const Expression * mCond;
+  Attribute default_value;
+  //! Dimensions of array (this is an empty list for non-array's).
+  std::vector<boost::shared_ptr<Expression> > shape;
 
   // Struct can access the internal data.
   friend class Struct;
 };
 
 #endif
-

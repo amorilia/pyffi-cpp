@@ -1,6 +1,6 @@
 Import("env")
 objs = []
-for obj in Split("Struct.cpp Expression.cpp"):
+for obj in Split("Expression.cpp"):
     objs.append(env.Object(obj))
 Return("objs")
 

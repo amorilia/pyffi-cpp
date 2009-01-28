@@ -1,5 +1,5 @@
 env = Environment()
-env.Tool('crossmingw', toolpath = ['scons-tools'])
+#env.Tool('crossmingw', toolpath = ['scons-tools'])
 Export("env")
 bases = SConscript("cffi/objectmodels/SConscript")
 #expat = SConscript("extern/expat/SConscript")
