@@ -25,7 +25,7 @@ public:
 	std::map<std::string, unsigned int>::const_iterator index
 	  = index_map.find(name);
 	if (index != index_map.end()) {
-	  return meta_structs[index_map.find(name)->second];
+	  return meta_structs[index->second];
 	} else {
 	  throw name_error("Format has no struct '" + name + "'.");
 	};

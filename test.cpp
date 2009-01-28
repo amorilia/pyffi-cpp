@@ -42,7 +42,10 @@ int main() {
   std::cout << obj2["z"].get<Struct>()["a string attr"].get<std::string>() << std::endl;
 
   // non-existing class
-  testformat["ClassWhichDoesNotExist"];
+  //testformat["ClassWhichDoesNotExist"];
+
+  // non-existing attribute
+  obj["non existing attribute"];
 
   // bad cast
   std::cout << obj["a number"].get<short>() << std::endl; // exception
@@ -52,4 +55,3 @@ int main() {
 
   return 0;
 }
-

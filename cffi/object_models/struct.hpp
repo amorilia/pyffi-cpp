@@ -26,7 +26,13 @@ public:
   };
   //! Get a reference to the value of an attribute.
   Attribute & operator[](const std::string & name) {
-	return attributes[meta_struct->index_map.find(name)->second];
+	std::map<std::string, unsigned int>::const_iterator index
+	  = meta_struct->index_map.find(name);
+	if (index != meta_struct->index_map.end()) {
+	  return attributes[index->second];
+	} else {
+	  throw name_error("Struct has no attribute '" + name + "'.");
+	};
   };
 private:
   boost::shared_ptr<MetaStruct> meta_struct;
