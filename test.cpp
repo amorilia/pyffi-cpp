@@ -4,22 +4,34 @@
 #include "cffi/objectmodels/Attribute.hpp"
 #include "cffi/objectmodels/MetaStruct.hpp"
 #include "cffi/objectmodels/Struct.hpp"
+#include "cffi/objectmodels/Format.hpp"
 
-int main() {
-  boost::shared_ptr<MetaStruct> ObjClass(new MetaStruct);
+void init_testformat(Format & testformat) {
+  // testformat is initialized here explicitly
+  // this could be done from an xml file
+  boost::shared_ptr<MetaStruct> ObjClass = testformat.new_struct("ObjClass");
   ObjClass->add_attribute("a number", 5);
   ObjClass->add_attribute("a string attr", std::string("hello world"));
 
-  Struct obj(ObjClass);
-
-  boost::shared_ptr<MetaStruct> ObjClass2(new MetaStruct);
+  boost::shared_ptr<MetaStruct> ObjClass2 = testformat.new_struct("ObjClass2");
   ObjClass2->add_attribute("x", 0.0);
   ObjClass2->add_attribute("y", 0.0);
-  ObjClass2->add_attribute("z", obj);
+  Struct some_default(testformat["ObjClass"]);
+  ObjClass2->add_attribute("z", some_default);
+}
 
-  Struct obj2(ObjClass2);
+int main() {
+  // set up format description
 
-  // default values
+  Format testformat;
+  init_testformat(testformat);
+
+  // now we create a few structures which have been defined in testformat
+
+  Struct obj(testformat["ObjClass"]);
+  Struct obj2(testformat["ObjClass2"]);
+
+  // check default values
   std::cout << boost::any_cast<int>(obj["a number"]) << std::endl;
   std::cout << boost::any_cast<std::string>(obj["a string attr"]) << std::endl;
 
@@ -30,6 +42,9 @@ int main() {
   std::cout << obj["a number"].get<int>() << std::endl;
   std::cout << obj["a string attr"].get<std::string>() << std::endl;
   std::cout << obj2["z"].get<Struct>()["a string attr"].get<std::string>() << std::endl;
+
+  // non-existing class
+  testformat["ClassWhichDoesNotExist"];
 
   // bad cast
   std::cout << obj["a number"].get<short>() << std::endl; // exception

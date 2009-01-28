@@ -16,9 +16,13 @@ public:
    * in the given metastruct may be referred to.
    */
   Expression(const std::string & expr,
-			 boost::shared_ptr<MetaStruct> meta_struct);
+			 boost::shared_ptr<MetaStruct> meta_struct)
+	: meta_struct(meta_struct), left_index(-1), right_index(-1),
+	  left_value(0), right_value(0), oper(NONE) {};
   //! Evaluate the expression from the given structure.
-  int eval(const Struct & struc) const;
+  int eval(const Struct & struc) const {
+	return 0;
+  };
 private:
   //! Expression operators.
   enum Operator { NONE, EQ, NEQ, AND, OR, BITAND, BITOR };
