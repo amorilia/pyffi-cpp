@@ -5,7 +5,7 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-#include "MetaAttribute.hpp"
+#include "meta_attribute.hpp"
 
 //! Stores all information attached to a structure.
 class MetaStruct {

@@ -4,8 +4,8 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "Attribute.hpp"
-#include "MetaStruct.hpp"
+#include "attribute.hpp"
+#include "meta_struct.hpp"
 
 /*!
  * A structure instance. This class serves to creates instance of a

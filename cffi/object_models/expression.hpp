@@ -4,8 +4,8 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "MetaStruct.hpp"
-#include "Struct.hpp"
+#include "meta_struct.hpp"
+#include "struct.hpp"
 
 //class Expression;
 

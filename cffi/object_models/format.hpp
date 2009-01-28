@@ -5,8 +5,8 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-#include "MetaStruct.hpp"
-#include "../Exceptions.hpp"
+#include "../exceptions.hpp"
+#include "meta_struct.hpp"
 
 //! Stores all information attached to a format.
 class Format {

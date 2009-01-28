@@ -1,10 +1,8 @@
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
-#include "cffi/objectmodels/Attribute.hpp"
-#include "cffi/objectmodels/MetaStruct.hpp"
-#include "cffi/objectmodels/Struct.hpp"
-#include "cffi/objectmodels/Format.hpp"
+#include "cffi/object_models/format.hpp"
+#include "cffi/object_models/struct.hpp"
 
 void init_testformat(Format & testformat) {
   // testformat is initialized here explicitly

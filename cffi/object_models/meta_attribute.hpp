@@ -4,7 +4,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "Attribute.hpp"
+#include "attribute.hpp"
 
 class Expression;
 
