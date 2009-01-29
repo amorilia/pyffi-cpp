@@ -1,6 +1,7 @@
 #ifndef __STRUCT_HPP
 #define __STRUCT_HPP
 
+#include <typeinfo>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
@@ -24,14 +25,20 @@ public:
 	  attributes.push_back(Attribute(meta_attribute->default_value));
 	};
   };
-  //! Get a reference to the value of an attribute.
-  Attribute & operator[](const std::string & name) {
-	std::map<std::string, unsigned int>::const_iterator index
-	  = meta_struct->index_map.find(name);
+  //! Get the value of an attribute.
+  template<typename ValueType> ValueType & get(const std::string & name) {
+	std::map<std::string, unsigned int>::iterator index = meta_struct->index_map.find(name);
 	if (index != meta_struct->index_map.end()) {
-	  return attributes[index->second];
+	  try
+	  {
+	    return boost::any_cast<ValueType &>(attributes[index->second]);
+	  }
+	  catch (const boost::bad_any_cast &)
+	  {
+		throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(attributes[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+	  }
 	} else {
-	  throw name_error("Struct has no attribute '" + name + "'.");
+	  throw name_error("Struct has no attribute \"" + name + "\".");
 	};
   };
 private:

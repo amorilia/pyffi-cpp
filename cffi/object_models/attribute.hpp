@@ -18,20 +18,16 @@ public:
   //! Override assignment operator so type cannot be changed.
   Attribute & operator=(const Attribute & attr) {
     if (this->type() != attr.type())
-      throw type_error("Type mismatch on attribute assignment.");
+      throw type_error("Type mismatch on assignment (required " + std::string(this->type().name()) + " but got " + std::string(attr.type().name()) + ").");
     boost::any::operator=(attr);
     return *this;
   };
   //! Override assignment operator so type cannot be changed.
   template<typename ValueType> Attribute & operator=(const ValueType & value) {
     if (this->type() != typeid(value))
-      throw type_error("Type mismatch on attribute assignment.");
+      throw type_error("Type mismatch on assignment (required " + std::string(this->type().name()) + " but got " + std::string(typeid(value).name()) + ").");
     boost::any::operator=(value);
     return *this;
-  };
-  //! Quick cast function.
-  template<typename ValueType> ValueType get() {
-    return boost::any_cast<ValueType>(*this);
   };
 };
 

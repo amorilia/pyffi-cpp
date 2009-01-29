@@ -30,28 +30,28 @@ int main() {
   Struct obj2(testformat["ObjClass2"]);
 
   // check default values
-  std::cout << boost::any_cast<int>(obj["a number"]) << std::endl;
-  std::cout << boost::any_cast<std::string>(obj["a string attr"]) << std::endl;
+  std::cout << obj.get<int>("a number") << std::endl;
+  std::cout << obj.get<std::string>("a string attr") << std::endl;
 
   // change the values
-  obj["a number"] = 3;
-  obj["a string attr"] = std::string("hello again!");
+  obj.get<int>("a number") = 3;
+  obj.get<std::string>("a string attr") = "hello again!";
 
-  std::cout << obj["a number"].get<int>() << std::endl;
-  std::cout << obj["a string attr"].get<std::string>() << std::endl;
-  std::cout << obj2["z"].get<Struct>()["a string attr"].get<std::string>() << std::endl;
+  std::cout << obj.get<int>("a number") << std::endl;
+  std::cout << obj.get<std::string>("a string attr") << std::endl;
+  std::cout << obj2.get<Struct>("z").get<std::string>("a string attr") << std::endl;
 
   // non-existing class
   //testformat["ClassWhichDoesNotExist"];
 
   // non-existing attribute
-  obj["non existing attribute"];
+  obj.get<int>("non existing attribute");
 
   // bad cast
-  std::cout << obj["a number"].get<short>() << std::endl; // exception
+  std::cout << obj.get<short>("a number") << std::endl; // exception
 
   // try to change the type
-  obj["a number"] = 4.4; // exception
+  obj.get<float>("a number") = 4.4; // exception
 
   return 0;
 }
