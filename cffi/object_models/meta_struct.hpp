@@ -11,8 +11,8 @@ class MetaStruct {
 public:
   //! Add an attribute to the structure.
   template<typename ValueType>
-  void add_attribute(const std::string & name,
-					 const ValueType & default_value) {
+  void add_attr(const std::string & name,
+				const ValueType & default_value) {
     // calculate index of new attribute
     // and store this index, using the name as key
     index_map[name] = meta_attributes.size();
@@ -28,5 +28,8 @@ private:
   // allow Struct access to the internals
   friend class Struct;
 };
+
+//! Shared pointer to meta struct.
+typedef boost::shared_ptr<MetaStruct> PMetaStruct;
 
 #endif

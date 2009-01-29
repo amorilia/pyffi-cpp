@@ -28,8 +28,11 @@ public:
 	  attributes.push_back(Attribute(meta_attribute->default_value));
 	};
   };
+  //! Copy constructor.
+  Struct(const Struct & struc)
+	: meta_struct(struc.meta_struct), attributes(struc.attributes) {};
   //! Get the value of an attribute.
-  template<typename ValueType> ValueType & get(const std::string & name) {
+  template<typename ValueType> ValueType & get_attr(const std::string & name) {
 	std::map<std::string, unsigned int>::iterator index = meta_struct->index_map.find(name);
 	if (index != meta_struct->index_map.end()) {
 	  try

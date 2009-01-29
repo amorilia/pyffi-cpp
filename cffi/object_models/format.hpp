@@ -12,16 +12,16 @@
 class Format {
 public:
   //! Add an attribute to the structure.
-  boost::shared_ptr<MetaStruct> new_struct(const std::string & name) {
+  PMetaStruct add_struct(const std::string & name) {
     // calculate index of new meta struct
     // and store index
     index_map[name] = meta_structs.size();
     // create and store the meta struct
-	boost::shared_ptr<MetaStruct> meta_struct(new MetaStruct);
+	PMetaStruct meta_struct(new MetaStruct);
     meta_structs.push_back(meta_struct);
 	return meta_struct;
   };
-  boost::shared_ptr<MetaStruct> operator[](const std::string & name) {
+  PMetaStruct get_struct(const std::string & name) {
 	std::map<std::string, unsigned int>::const_iterator index
 	  = index_map.find(name);
 	if (index != index_map.end()) {
@@ -34,7 +34,7 @@ private:
   //! Maps string name to their index as they have been added.
   std::map<std::string, unsigned int> index_map;
   //! List of meta structs as they have been added.
-  std::vector<boost::shared_ptr<MetaStruct> > meta_structs;
+  std::vector<PMetaStruct> meta_structs;
 };
 
 #endif
