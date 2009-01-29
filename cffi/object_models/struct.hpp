@@ -8,6 +8,9 @@
 #include "attribute.hpp"
 #include "meta_struct.hpp"
 
+//! Shared pointer to meta struct.
+typedef boost::shared_ptr<MetaStruct> PMetaStruct;
+
 /*!
  * A structure instance. This class serves to creates instance of a
  * MetaStruct.
@@ -15,7 +18,7 @@
 class Struct {
 public:
   //! Create structure from a metaclass description.
-  Struct(boost::shared_ptr<MetaStruct> meta_struct)
+  Struct(PMetaStruct meta_struct)
 	: meta_struct(meta_struct) {
 	for (std::vector<MetaAttribute>::const_iterator
 		   meta_attribute = meta_struct->meta_attributes.begin();
@@ -42,7 +45,7 @@ public:
 	};
   };
 private:
-  boost::shared_ptr<MetaStruct> meta_struct;
+  PMetaStruct meta_struct;
   std::vector<Attribute> attributes;
 };
 

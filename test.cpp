@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/shared_ptr.hpp>
 
 #include "cffi/object_models/format.hpp"
 #include "cffi/object_models/struct.hpp"
@@ -7,15 +6,14 @@
 void init_testformat(Format & testformat) {
   // testformat is initialized here explicitly
   // this could be done from an xml file
-  boost::shared_ptr<MetaStruct> ObjClass = testformat.new_struct("ObjClass");
+  PMetaStruct ObjClass = testformat.new_struct("ObjClass");
   ObjClass->add_attribute("a number", 5);
   ObjClass->add_attribute("a string attr", std::string("hello world"));
 
-  boost::shared_ptr<MetaStruct> ObjClass2 = testformat.new_struct("ObjClass2");
+  PMetaStruct ObjClass2 = testformat.new_struct("ObjClass2");
   ObjClass2->add_attribute("x", 0.0);
   ObjClass2->add_attribute("y", 0.0);
-  Struct some_default(testformat["ObjClass"]);
-  ObjClass2->add_attribute("z", some_default);
+  ObjClass2->add_attribute("z", Struct(testformat["ObjClass"]));
 }
 
 int main() {
