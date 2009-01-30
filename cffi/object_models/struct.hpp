@@ -3,54 +3,59 @@
 
 #include <typeinfo>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <boost/foreach.hpp>
 
 #include "attribute.hpp"
 #include "meta_struct.hpp"
 
-//! Shared pointer to meta struct.
-typedef boost::shared_ptr<MetaStruct> PMetaStruct;
-
 /*!
- * A structure instance. This class serves to creates instance of a
+ * A structure instance. This class serves to create an instance of a
  * MetaStruct.
  */
 class Struct {
 public:
   //! Create structure from a metaclass description.
   Struct(PMetaStruct meta_struct)
-	: meta_struct(meta_struct) {
-	for (std::vector<MetaAttribute>::const_iterator
-		   meta_attribute = meta_struct->meta_attributes.begin();
-		 meta_attribute != meta_struct->meta_attributes.end();
-		 meta_attribute++) {
+	: meta_struct(meta_struct)
+  {
+	BOOST_FOREACH(const MetaAttribute & meta_attribute,
+				  meta_struct->meta_attributes) {
 	  // push back a copy of the default value
-	  attributes.push_back(Attribute(meta_attribute->default_value));
+	  attributes.push_back(Attribute(meta_attribute.default_value));
 	};
-  };
+  }
   //! Copy constructor.
   Struct(const Struct & struc)
 	: meta_struct(struc.meta_struct), attributes(struc.attributes) {};
-  //! Get the value of an attribute.
-  template<typename ValueType> ValueType & get_attr(const std::string & name) {
-	std::map<std::string, unsigned int>::iterator index = meta_struct->index_map.find(name);
+  //! Get reference to the value of an attribute.
+  template<typename ValueType> ValueType & get_attr(const std::string & name)
+  {
+	std::map<std::string, unsigned int>::iterator index;
+	
+	// search name in meta struct index
+	index = meta_struct->index_map.find(name);
+	
 	if (index != meta_struct->index_map.end()) {
+	  // found, so return attribute as requested type
 	  try
-	  {
-	    return boost::any_cast<ValueType &>(attributes[index->second]);
-	  }
+		{
+		  return boost::any_cast<ValueType &>(attributes[index->second]);
+		}
 	  catch (const boost::bad_any_cast &)
-	  {
-		throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(attributes[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
-	  }
+		{
+		  // could not get attribute in requested type, so throw exception
+		  throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(attributes[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+		}
 	} else {
+	  // not found, so throw an exception
 	  throw name_error("Struct has no attribute \"" + name + "\".");
 	};
   };
 private:
+  //! Metaclass information (list of attribute types, default values, ...).
   PMetaStruct meta_struct;
+  //! List of attribute values.
   std::vector<Attribute> attributes;
 };
 
-#endif
-
+#endif // __STRUCT_HPP
