@@ -5,7 +5,7 @@
 #include <vector>
 #include <boost/foreach.hpp>
 
-#include "attribute.hpp"
+#include "object.hpp"
 #include "meta_struct.hpp"
 
 /*!
@@ -21,12 +21,12 @@ public:
 	BOOST_FOREACH(const MetaAttribute & meta_attribute,
 				  meta_struct->meta_attributes) {
 	  // push back a copy of the default value
-	  attributes.push_back(Attribute(meta_attribute.default_value));
+	  objects.push_back(Object(meta_attribute.default_value));
 	};
   }
   //! Copy constructor.
   Struct(const Struct & struc)
-	: meta_struct(struc.meta_struct), attributes(struc.attributes) {};
+	: meta_struct(struc.meta_struct), objects(struc.objects) {};
   //! Get reference to the value of an attribute.
   template<typename ValueType> ValueType & get_attr(const std::string & name)
   {
@@ -39,12 +39,12 @@ public:
 	  // found, so return attribute as requested type
 	  try
 		{
-		  return boost::any_cast<ValueType &>(attributes[index->second]);
+		  return boost::any_cast<ValueType &>(objects[index->second]);
 		}
 	  catch (const boost::bad_any_cast &)
 		{
 		  // could not get attribute in requested type, so throw exception
-		  throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(attributes[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+		  throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(objects[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
 		}
 	} else {
 	  // not found, so throw an exception
@@ -55,7 +55,7 @@ private:
   //! Metaclass information (list of attribute types, default values, ...).
   PMetaStruct meta_struct;
   //! List of attribute values.
-  std::vector<Attribute> attributes;
+  std::vector<Object> objects;
 };
 
 #endif // __STRUCT_HPP
