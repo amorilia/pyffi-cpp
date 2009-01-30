@@ -11,8 +11,8 @@ void init_testformat(Format & testformat) {
   ObjClass->add_attr("a string attr", std::string("hello world"));
 
   PMetaStruct ObjClass2 = testformat.add_struct("ObjClass2");
-  ObjClass2->add_attr("x", 0.0);
-  ObjClass2->add_attr("y", 0.0);
+  ObjClass2->add_attr<double>("x", 0.0);
+  ObjClass2->add_attr<float>("y", 0.0);
   ObjClass2->add_attr("z", Struct(testformat.get_struct("ObjClass")));
 }
 
@@ -40,16 +40,13 @@ int main() {
   std::cout << obj2.get_attr<Struct>("z").get_attr<std::string>("a string attr") << std::endl;
 
   // non-existing class
-  //testformat["ClassWhichDoesNotExist"];
+  testformat.get_struct("ClassWhichDoesNotExist"); // exception
 
   // non-existing attribute
-  obj.get_attr<int>("non existing attribute");
+  obj.get_attr<int>("non existing attribute"); // exception
 
   // bad cast
-  std::cout << obj.get_attr<short>("a number") << std::endl; // exception
-
-  // try to change the type
-  obj.get_attr<float>("a number") = 4.4; // exception
+  std::cout << obj.get_attr<float>("a number") << std::endl; // exception
 
   return 0;
 }

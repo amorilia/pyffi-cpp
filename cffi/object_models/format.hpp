@@ -27,7 +27,7 @@ public:
 	if (index != index_map.end()) {
 	  return meta_structs[index->second];
 	} else {
-	  throw name_error("Format has no struct '" + name + "'.");
+	  throw name_error("Format has no struct \"" + name + "\".");
 	};
   }
 private:
