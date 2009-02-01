@@ -39,6 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define __OBJECT_HPP
 
 #include <boost/any.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "pyffi/exceptions.hpp"
 
@@ -87,6 +88,8 @@ public:
 private:
 	boost::any m_value;
 }; // class Object
+
+typedef boost::shared_ptr<Object> PObject;
 
 }; // namespace pyffi
 

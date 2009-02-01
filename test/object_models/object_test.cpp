@@ -117,3 +117,16 @@ BOOST_AUTO_TEST_CASE(assign_by_object_test)
   obj = Object(obj);
   BOOST_CHECK_EQUAL(Object(obj).get<int>(), 102);
 }
+
+BOOST_AUTO_TEST_CASE(shared_object_test)
+{
+  PObject p_obj1(new Object(10));
+  PObject p_obj2(p_obj1);
+
+  // check that the value is the same
+  BOOST_CHECK_EQUAL(p_obj2->get<int>(), 10);
+
+  // check that value is shared
+  *p_obj1 = 20;
+  BOOST_CHECK_EQUAL(p_obj2->get<int>(), 20);
+}
