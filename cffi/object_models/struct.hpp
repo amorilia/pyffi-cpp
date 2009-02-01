@@ -39,12 +39,12 @@ public:
 	  // found, so return attribute as requested type
 	  try
 		{
-		  return boost::any_cast<ValueType &>(objects[index->second]);
+		  return objects[index->second].get<ValueType>();
 		}
-	  catch (const boost::bad_any_cast &)
+	  catch (const type_error &)
 		{
 		  // could not get attribute in requested type, so throw exception
-		  throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(objects[index->second].type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+		  throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(typeid(objects[index->second]).name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
 		}
 	} else {
 	  // not found, so throw an exception
