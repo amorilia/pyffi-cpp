@@ -29,6 +29,7 @@ BOOST_AUTO_TEST_CASE(constructor_test)
 
 BOOST_AUTO_TEST_CASE(get_test)
 {
+  // check that get returns assigned value
   Object obj_short(short(5));
   BOOST_CHECK_EQUAL(obj_short.get<short>(), 5);
 
@@ -37,6 +38,10 @@ BOOST_AUTO_TEST_CASE(get_test)
   BOOST_CHECK_THROW(obj_short.get<float>(), type_error);
   BOOST_CHECK_THROW(obj_short.get<char>(), type_error);
   BOOST_CHECK_THROW(obj_short.get<std::string>(), type_error);
+
+  // check assignment via get
+  obj_short.get<short>() = 10;
+  BOOST_CHECK_EQUAL(obj_short.get<short>(), 10);
 }
 
 BOOST_AUTO_TEST_CASE(assign_by_value_test)
