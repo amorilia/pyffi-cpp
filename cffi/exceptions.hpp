@@ -6,22 +6,22 @@
 //! Thrown on name mismatch.
 class name_error : public std::runtime_error {
 public:
-  name_error(const std::string & msg)
-    : std::runtime_error(msg) {};
+	name_error(const std::string & msg)
+			: std::runtime_error(msg) {};
 };
 
 //! Thrown on type mismatch.
 class type_error : public std::runtime_error {
 public:
-  type_error(const std::string & msg)
-    : std::runtime_error(msg) {};
+	type_error(const std::string & msg)
+			: std::runtime_error(msg) {};
 };
 
 //! Thrown on value mismatch.
 class value_error : public std::runtime_error {
 public:
-  value_error(const std::string & msg)
-    : std::runtime_error(msg) {};
+	value_error(const std::string & msg)
+			: std::runtime_error(msg) {};
 };
 
 #endif
