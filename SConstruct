@@ -1,4 +1,4 @@
-env = Environment(CPPPATH='.')
+env = Environment(CPPPATH='include')
 #env.Tool('crossmingw', toolpath = ['scons-tools'])
 Export("env")
 #bases = SConscript("cffi/objectmodels/SConscript")

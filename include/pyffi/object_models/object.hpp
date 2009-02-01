@@ -3,7 +3,7 @@
 
 #include <boost/any.hpp>
 
-#include "cffi/exceptions.hpp"
+#include "pyffi/exceptions.hpp"
 
 /*!
  * A boost::any variant which can contain any type but that cannot

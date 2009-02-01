@@ -2,8 +2,8 @@
 #define BOOST_TEST_MODULE ObjectTest
 #include <boost/test/unit_test.hpp>
 
-#include "cffi/object_models/object.hpp"
-#include "cffi/exceptions.hpp"
+#include "pyffi/object_models/object.hpp"
+#include "pyffi/exceptions.hpp"
 
 BOOST_AUTO_TEST_CASE(constructor_test)
 {

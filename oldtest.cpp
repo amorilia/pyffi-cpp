@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "cffi/object_models/format.hpp"
-#include "cffi/object_models/struct.hpp"
+#include "pyffi/object_models/format.hpp"
+#include "pyffi/object_models/struct.hpp"
 
 void init_testformat(Format & testformat) {
 	// testformat is initialized here explicitly
