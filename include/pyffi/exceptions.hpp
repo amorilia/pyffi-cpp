@@ -3,6 +3,8 @@
 
 #include <stdexcept>
 
+namespace pyffi {
+
 //! Thrown on name mismatch.
 class name_error : public std::runtime_error {
 public:
@@ -23,5 +25,7 @@ public:
 	value_error(const std::string & msg)
 			: std::runtime_error(msg) {};
 };
+
+}; // namespace pyffi
 
 #endif

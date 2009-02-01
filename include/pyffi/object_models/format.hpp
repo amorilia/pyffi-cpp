@@ -8,6 +8,8 @@
 #include "../exceptions.hpp"
 #include "meta_struct.hpp"
 
+namespace pyffi {
+
 //! Stores all information attached to a format.
 class Format {
 public:
@@ -35,6 +37,8 @@ private:
 	std::map<std::string, unsigned int> index_map;
 	//! List of meta structs as they have been added.
 	std::vector<PMetaStruct> meta_structs;
-};
+}; // class Format
+
+}; // namespace pyffi
 
 #endif

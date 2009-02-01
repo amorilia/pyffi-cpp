@@ -6,6 +6,8 @@
 
 #include "object.hpp"
 
+namespace pyffi {
+
 class Expression;
 
 /*!
@@ -34,6 +36,8 @@ private:
 
 	// Struct can access the internal data.
 	friend class Struct;
-};
+}; // class MetaAttribute
+
+}; // namespace pyffi
 
 #endif

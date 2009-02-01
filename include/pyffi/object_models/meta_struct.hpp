@@ -4,7 +4,9 @@
 #include <vector>
 #include <map>
 
-#include "meta_attribute.hpp"
+#include "pyffi/object_models/meta_attribute.hpp"
+
+namespace pyffi {
 
 //! Stores all information attached to a structure.
 class MetaStruct {
@@ -30,5 +32,7 @@ private:
 
 //! Shared pointer to meta struct.
 typedef boost::shared_ptr<MetaStruct> PMetaStruct;
+
+}; // namespace pyffi
 
 #endif

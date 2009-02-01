@@ -3,6 +3,8 @@
 #include "pyffi/object_models/format.hpp"
 #include "pyffi/object_models/struct.hpp"
 
+using namespace pyffi;
+
 void init_testformat(Format & testformat) {
 	// testformat is initialized here explicitly
 	// this could be done from an xml file

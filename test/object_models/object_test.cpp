@@ -5,6 +5,8 @@
 #include "pyffi/object_models/object.hpp"
 #include "pyffi/exceptions.hpp"
 
+using namespace pyffi;
+
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
   // test default constructor

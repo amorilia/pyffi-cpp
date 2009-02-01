@@ -8,6 +8,8 @@
 #include "object.hpp"
 #include "meta_struct.hpp"
 
+namespace pyffi {
+
 /*!
  * A structure instance. This class serves to create an instance of a
  * MetaStruct.
@@ -50,6 +52,8 @@ private:
 	PMetaStruct meta_struct;
 	//! List of attribute values.
 	std::vector<Object> objects;
-};
+}; // class Struct
+
+}; // namespace pyffi
 
 #endif // __STRUCT_HPP

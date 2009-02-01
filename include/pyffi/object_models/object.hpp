@@ -5,6 +5,8 @@
 
 #include "pyffi/exceptions.hpp"
 
+namespace pyffi {
+
 /*!
  * A boost::any variant which can contain any type but that cannot
  * change type once created. All objects (i.e. any data that can take
@@ -47,7 +49,9 @@ public:
 	};
 private:
 	boost::any m_value;
-};
+}; // class Object
+
+}; // namespace pyffi
 
 #endif
 
