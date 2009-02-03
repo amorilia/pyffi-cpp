@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef __OBJECT_HPP
-#define __OBJECT_HPP
+#ifndef PYFFI_OBJECT_HPP_INCLUDED
+#define PYFFI_OBJECT_HPP_INCLUDED
 
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
@@ -52,10 +52,10 @@ namespace pyffi {
  */
 class Object {
 public:
-	//! Default constructor is disabled.
-	//Object() {
-	//  throw type_error("Object must be constructed with a specific value.");
-	//};
+	//! Default constructor throws.
+	Object() {
+		throw type_error("Object must be constructed with a specific value.");
+	};
 	//! Copy constructor.
 	Object(const Object & object)
 			: m_value(object.m_value) {};
