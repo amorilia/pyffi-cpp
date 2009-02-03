@@ -92,9 +92,13 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 BOOST_AUTO_TEST_CASE(get_test) {
 	// set up arguments
 	Args args;
-	args.add<char>("char1", 's');
-	args.add<char>("char2", 'f');
-	args.add<bool>("ic", true);
+	BOOST_CHECK_NO_THROW(args.add<char>("char1", 's'));
+	BOOST_CHECK_NO_THROW(args.add<char>("char2", 'f'));
+	BOOST_CHECK_NO_THROW(args.add<bool>("ic", true));
+
+	// check that invalid get really does not create a key
+	BOOST_CHECK_THROW(args.get<int>("test"), key_error);
+	BOOST_CHECK_THROW(args.get<int>("test"), key_error);
 
 	// check that type casts work as expected
 	BOOST_CHECK_THROW(args.get<int>("char1"), type_error);
@@ -116,11 +120,11 @@ BOOST_AUTO_TEST_CASE(get_test) {
 	args.get<char>("char2") = 'a';
 	BOOST_CHECK_EQUAL(args.get<char>("char1"), 's');
 	BOOST_CHECK_EQUAL(args.get<char>("char2"), 'a');
-	BOOST_CHECK_EQUAL(args.get<char>("ic"), true);
+	BOOST_CHECK_EQUAL(args.get<bool>("ic"), true);
 
 	args.get<char>("char1") = 'a';
-	args.get<char>("ic") = false;
+	args.get<bool>("ic") = false;
 	BOOST_CHECK_EQUAL(args.get<char>("char1"), 'a');
 	BOOST_CHECK_EQUAL(args.get<char>("char2"), 'a');
-	BOOST_CHECK_EQUAL(args.get<char>("ic"), false);
+	BOOST_CHECK_EQUAL(args.get<bool>("ic"), false);
 }

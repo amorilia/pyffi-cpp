@@ -72,14 +72,11 @@ public:
 	};
 	//! Get reference to value stored in the object.
 	template<typename ValueType> ValueType & get(const std::string & name) {
-		try {
-			return m_map[name].get<ValueType>();
-		} catch (const type_error &) {
+	  ArgsMap::iterator it = m_map.find(name);
+	  if (it != m_map.end()) {
+		return it->second.get<ValueType>();
+	  } else {
 			// if there is no name key, we signal this as a key error
-			// explanation: if there is no name key, then the above code would
-			// create an Object() and return that, however,
-			// the default Object constructor throws a type_error
-			// because objects must have a value
 			throw key_error("no argument with key '" + name + "'");
 		};
 	};
