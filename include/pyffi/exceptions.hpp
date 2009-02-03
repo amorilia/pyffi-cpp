@@ -63,6 +63,20 @@ public:
 			: std::runtime_error(msg) {};
 };
 
+//! Thrown on attribute mismatch.
+class attribute_error : public std::runtime_error {
+public:
+	attribute_error(const std::string & msg)
+			: std::runtime_error(msg) {};
+};
+
+//! Thrown on key mismatch.
+class key_error : public std::runtime_error {
+public:
+	key_error(const std::string & msg)
+			: std::runtime_error(msg) {};
+};
+
 }; // namespace pyffi
 
 #endif
