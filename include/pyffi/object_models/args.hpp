@@ -38,6 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef PYFFI_ARGS_HPP_INCLUDED
 #define PYFFI_ARGS_HPP_INCLUDED
 
+#include <utility> // pair
 // unordered_map introduced in boost 1.36.0
 #if BOOST_VERSION >= 013600
 #include <boost/unordered_map.hpp>
@@ -63,9 +64,9 @@ public:
 	//! Constructor to set the type and the value.
 	template<typename ValueType> void add(const std::string & name, const ValueType & value) {
 		// if name not found, add object to the map
-		if (m_map.find(name) == m_map.end()) {
-			m_map[name] = Object(value);
-		} else {
+	  std::pair<ArgsMap::iterator, bool> ret = m_map.insert(make_pair(name, Object(value)));
+		if (!ret.second) {
+			// insert failed
 			throw value_error("'" + name + "' already added to arguments.");
 		};
 	};

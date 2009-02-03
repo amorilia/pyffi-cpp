@@ -44,13 +44,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace pyffi;
 
+BOOST_AUTO_TEST_CASE(declare_test) {
+	BOOST_CHECK_NO_THROW(Args args);
+}
+
 BOOST_AUTO_TEST_CASE(add_test) {
 	Args args;
 
 	// add arguments of various types
-	args.add<int>("arg1", 5);
-	args.add<char>("arg2", 'y');
-	args.add<std::string>("arg3", "Hello world!");
+	BOOST_CHECK_NO_THROW(args.add<int>("arg1", 5));
+	BOOST_CHECK_NO_THROW(args.add<char>("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(args.add<std::string>("arg3", "Hello world!"));
 
 	BOOST_CHECK_EQUAL(args.get<int>("arg1"), 5);
 	BOOST_CHECK_EQUAL(args.get<char>("arg2"), 'y');
@@ -72,6 +76,9 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 	args.add<char>("arg2", 'y');
 	args.add<std::string>("arg3", "Hello world!");
 	Args args2(args);
+	BOOST_CHECK_NO_THROW(args2.get<int>("arg1"));
+	BOOST_CHECK_NO_THROW(args2.get<char>("arg2"));
+	BOOST_CHECK_NO_THROW(args2.get<std::string>("arg3"));
 	BOOST_CHECK_EQUAL(args2.get<int>("arg1"), 5);
 	BOOST_CHECK_EQUAL(args2.get<char>("arg2"), 'y');
 	BOOST_CHECK_EQUAL(args2.get<std::string>("arg3"), std::string("Hello world!"));
