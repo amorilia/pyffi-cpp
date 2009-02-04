@@ -3,3 +3,19 @@ Fixing up expat config include:
 * Run
 find . -not -wholename "*svn*" -and -name "*.c" -exec perl -pi -w -e 's/<expat_config.h>/"expat_config.h"/g' {} \;
 
+Installing boost on windows with mingw32:
+* unzip and compile bjam "build.bat mingw"
+* to make sure that bjam can compile python_boost, install python, and put the following lines in a file C:\Users\<yourusername>\user-config.jam
+
+import toolset : using ;
+using python
+   : 2.5
+   : c:\\Python25\\python.exe
+   : c:\\Python25\\include
+   : c:\\Python25\\libs
+   ;
+
+* unzip the boost sources
+* run bjam in the source directory, with the following options
+..\boost-jam-3.1.17\bin.ntx86\bjam.exe --toolset=gcc --layout=system link=static runtime-link=static threading=single variant=release install
+* wait a while... the sources and libs will be installed in C:\Boost
