@@ -42,8 +42,21 @@ using namespace boost::python;
 int main(int argc, char **argv) {
 	try {
 		Py_Initialize();
-		// start interactive console
-		import("code").attr("InteractiveConsole")().attr("interact")();
+		// get namespace
+		object main_module = import("__main__");
+		object main_namespace = main_module.attr("__dict__");
+		// set some objects in the namespace
+		// - import all format namespaces
+		// - possibly, set up some convenience functions (load & save?)
+		// - perhaps, if called from for instance a gui, automatically load
+		//   data, and have it automatically saved upon exit of the
+		//   interpreter
+		// for now, just do a little test
+		// import the sys module, and set x to a value
+		main_namespace["sys"] = import("sys");
+		main_namespace["x"] = 5;
+		// start interactive console, using the main namespace
+		import("code").attr("InteractiveConsole")(main_namespace).attr("interact")();
 	} catch (error_already_set) {
 		PyErr_Print();
 	}
