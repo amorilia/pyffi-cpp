@@ -64,7 +64,7 @@ public:
 	//! Constructor to set the type and the value.
 	template<typename ValueType> void add(const std::string & name, const ValueType & value) {
 		// if name not found, add object to the map
-	  std::pair<ArgsMap::iterator, bool> ret = m_map.insert(make_pair(name, Object(value)));
+		std::pair<ArgsMap::iterator, bool> ret = m_map.insert(make_pair(name, Object(value)));
 		if (!ret.second) {
 			// insert failed
 			throw value_error("'" + name + "' already added to arguments.");
@@ -72,10 +72,10 @@ public:
 	};
 	//! Get reference to value stored in the object.
 	template<typename ValueType> ValueType & get(const std::string & name) {
-	  ArgsMap::iterator it = m_map.find(name);
-	  if (it != m_map.end()) {
-		return it->second.get<ValueType>();
-	  } else {
+		ArgsMap::iterator it = m_map.find(name);
+		if (it != m_map.end()) {
+			return it->second.get<ValueType>();
+		} else {
 			// if there is no name key, we signal this as a key error
 			throw key_error("no argument with key '" + name + "'");
 		};
