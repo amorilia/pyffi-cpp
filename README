@@ -17,5 +17,8 @@ using python
 
 * unzip the boost sources
 * run bjam in the source directory, with the following options
-..\boost-jam-3.1.17\bin.ntx86\bjam.exe --toolset=gcc --layout=system link=static runtime-link=static threading=single variant=release install
+..\boost-jam-3.1.17\bin.ntx86\bjam.exe --toolset=gcc --layout=system link=shared runtime-link=shared threading=single variant=release install
 * wait a while... the sources and libs will be installed in C:\Boost
+* if you are happy with the installation, move C:\Boost\include\boost to C:\MinGW\include\boost
+and copy all libraries from C:\Boost\lib to C:\MinGW\lib (or, add the include and bin directories to
+your mingw's specs file); you can delete the C:\Boost directory
