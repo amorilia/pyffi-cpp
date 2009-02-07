@@ -3,22 +3,24 @@ Fixing up expat config include:
 * Run
 find . -not -wholename "*svn*" -and -name "*.c" -exec perl -pi -w -e 's/<expat_config.h>/"expat_config.h"/g' {} \;
 
-Installing boost on windows with mingw32:
-* unzip and compile bjam "build.bat mingw"
-* to make sure that bjam can compile python_boost, install python, and put the following lines in a file C:\Users\<yourusername>\user-config.jam
-
-import toolset : using ;
-using python
-   : 2.5
-   : c:\\Python25\\python.exe
-   : c:\\Python25\\include
-   : c:\\Python25\\libs
-   ;
-
-* unzip the boost sources
-* run bjam in the source directory, with the following options
-..\boost-jam-3.1.17\bin.ntx86\bjam.exe --toolset=gcc --layout=system link=shared runtime-link=shared threading=single variant=release install
-* wait a while... the sources and libs will be installed in C:\Boost
-* if you are happy with the installation, move C:\Boost\include\boost to C:\MinGW\include\boost
-and copy all libraries from C:\Boost\lib to C:\MinGW\lib (or, add the include and bin directories to
-your mingw's specs file); you can delete the C:\Boost directory
+Installing boost on windows with mingw32 and cmake:
+* checkout boost from http://svn.boost.org/svn/boost/trunk into xxx/src/
+* create empty directory xxx/build/
+* run cmake
+  - unselect "bcp"
+  - unselect "wserialization"
+  - unselect "debug"
+  - unselect "multithreaded"
+  - unselect "quickbook"
+  - select "release"
+  - select "shared"
+  - select "singlethreaded"
+  - unselect "static"
+  - unselect "testing"
+  - unselect "versioned"
+  - in advanced settings, check the python paths
+* run mingw32-make in the build dir
+* if you are happy with the compilation, copy xxx/src/boost to C:\MinGW\include\boost
+and copy all libraries from xxx/build/lib to C:\MinGW\lib
+* to run any executable linked with MinGW, you need to put the correct dll files from xxx/build/bin
+into the directory of the executable
