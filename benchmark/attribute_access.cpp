@@ -1,232 +1,100 @@
 // compare speed of attribute access, using various implementations
 
-#include <boost/format.hpp>
-#include <map>
+#define NUM_ATTRIBUTES 30
+#define NUM_TRIALS (3000000 / NUM_ATTRIBUTES)
 
-char *names[] = {
-	"0e49c7cb29c403f2bb203d33e94b4ee6",
-	"3997023afe263e38d442c47c7b14baf4",
-	"0501ae3a1ae1b3ecf75c390ec1746405",
-	"d52da432b7c232ce92305192e10a53b9",
-	"9fabdf127019f41f7efd4c1d4d578369",
-	"ae6477e60634deab84c8bc5b8779bd02",
-	"fe903806ab3909deda0a5753c23946f2",
-	"a6c8ae11ed3f5999be1fe43db59b31b1",
-	"20c8c6af09d307111081ca9ba471eb48",
-	"e59ccc46b35721460081c24537060075",
-	"bfc8d7309bd405e84d5e0eb1e397f2ac",
-	"5fdfdb50032423380853bd8156b3adeb",
-	"e00c5fea733989d76cbc8e77bde2ee64",
-	"a581d474e800a1337a0ccbb08c51bd96",
-	"a241a1fb0913ab6f6b7f7b6aeb89457e",
-	"156e7b13093bab21587c642eb5b8b021",
-	"533f14c84ccff886792df2479ec2664b",
-	"7acffddf7e937bce0c297589304b7ca5",
-	"d702afda694f5a458ce60ed7ec86fdf5",
-	"9835459e99fa21b20eb61f274368f231",
-	"9f4b8719d434e967002d9da65a5f0331",
-	"a90b956ca64b4c936c3d47fc3e8f7ae2",
-	"c5e8df4ca341542ee3578f493fc84381",
-	"7a43b09357e7ec5bdd52ea6f6cbf72b0",
-	"7879e5f161a042536735c612c25fe80d",
-	"00a10ae22ec7f5b7dfb6ad3479ffeb50",
-	"a57c7bf26391dd5bb63a0915b35ec65a",
-	"6feaedc25c3b91d7bb46b73dbd637ada",
-	"f4f9ba021f69ef3b1e46663e82b61694",
-	"ee4b7dbe2c7c4099e6e8a2060f453b68",
-	"69b52b97c48a7bb3f8417d00a2cd5030",
-	"5b680c4947108e985d7960e33dd26e6f",
-	"79493c7e2e7b92a43052e15992fc58e9",
-	"e6abdf3c06cef3c3700a7c7bbf3d8d3b",
-	"91c74cd11ad2c54c335b988eb9e5a860",
-	"46626fdea44e57bc2c1465aaeb586859",
-	"6cde0c3350e59f071a08da3b89ff9b95",
-	"fdb4a722d8d48da5fc299338e3fe28df",
-	"a8c744a64c7916895f1af73512031d32",
-	"7afaf1b6df7bcc6e04793952fcd037c3",
-	"13f81865e3c7bd72ab2c5632eeed96bf",
-	"b0f4102c622b9986b9d9c53ee775c435",
-	"0b1269c5caeb4dd1ca3ad5d887d11109",
-	"af6eb7535d424a6dd4cfb106935b6e69",
-	"189bc8f6639e256148b9b55cd2213e28",
-	"5c568d208e4ef255bba807fccb8a33d5",
-	"bddbdf0c3360f5aefc10b5b1eda7b6f8",
-	"6ab2324ad52fe7222fa442779cbf8111",
-	"ff783525563a13c34ec632ec831af15c",
-	"dab6ec41e1ff12d15713cfd3dfae5887",
-	"eb4c5b6ff9c9e3e1f076a3b290620ef1",
-	"0f823b3d097c310e8c0a5df55fb09d97",
-	"fc4264f47ccda0a33ae60e06cfbd1a68",
-	"0e66256560aab81d13d576205eba3137",
-	"67cb156e6b8fcde69838e78059931bfb",
-	"7d43bc1a2c3dcd82f5553e4e6f735515",
-	"11567a6516f86cfbb6371ef13d0e961a",
-	"ce733fe80f546be35c4fa016d585c2a6",
-	"37bd4df573fe9966950b844a523132da",
-	"699c0f332b6ea793990b99555279f530",
-	"b08dc8ee66fea6d9d050499c9126d5cc",
-	"84959e8376206070efdf473412ae24b5",
-	"b1604529fb57846352ebe666923d0980",
-	"3ceffcd1ff5418b4870266c517302692",
-	"4ba9db33a99d7cf94fbb7c63c43f2473",
-	"6da4708479441bc5188d9c1a58ae930b",
-	"6e8d9a54412a4c1c2f2beb0728ee949f",
-	"52d1a1be144f56fb3d9030a6f393b4b0",
-	"a93a4819f72c33befe75def9b46ddf55",
-	"2a5993fa7ba78747612fd7bc47d728d0",
-	"bd95759d7a5bff65c42931f46ac9823c",
-	"9b30e56ccd87869f7d13c4e37765005d",
-	"9814d1e9b92e9137751c632f6319fea4",
-	"2566bcb2083d8f6365dcf2aafba93a56",
-	"38506d47a081c487a5d584d095b3fecd",
-	"54aa5a0ce1d88bf077838068495f8657",
-	"273709e24972222bab6af9047dc35630",
-	"a5504dfa18ddbbdada81e0b57c5edbe6",
-	"2bc53e9b24821284d803564cb786c665",
-	"0bee1afbff40c47f7a470f70846c7257",
-	"52e45be1e17aec42cc3a0511f30ae2e7",
-	"cd463abba7d0a14e080db500245fa075",
-	"e9ef1950f43d8162ed20b2ff050afa7d",
-	"d5f384bbece24d9083791192a4d9ec2f",
-	"6789b1fada315427036b2d7c22b879d3",
-	"76a2209b37505407e0913a26c4ad9d8f",
-	"47042a4ca0bf3487e97de616c955e36f",
-	"6ca9b78a8ced866a3384112c932dcabb",
-	"29c734d2bffca8a2456cb070ba078224",
-	"88d3e5041a1538674d558b97d00ed9e9",
-	"b09002b4c2a7aa701ecca6164f4aea7e",
-	"bfe7ac89d9f5f4204eed3ec331e5dde7",
-	"2723397df9c40f4255beeb28707c04c3",
-	"030d48b091b75608992a4d9903f0e7eb",
-	"bb577413cdc2b7243d4cfd0cf9dc28a3",
-	"4ece0fff9196d4683a879eee422a8473",
-	"b55255c025f995c41b3f344205fe1df7",
-	"b5a11353c945534fe15f0b659ff02322",
-	"906a6dd5f41747a2f2ad11b6b6972570",
-	"2c28c7d01cda705a182a5306de7fb759",
-	"b16891159d9ac42fc6351caab9eede8a",
-	"a2eeca7799926c589e2033a1a7d64992",
-	"9b65d931ec183c5a8b7512f5174467d2",
-	"376224d3cabb8753a6e129eb336412df",
-	"a4f46ebc4814642743acee77fd3fd135",
-	"a304f3918038b9415aada8ed03246c19",
-	"3089480435fa9181ba1c001f6be7661d",
-	"1edbbce0aba4eba65b3a96f031ded5b2",
-	"f374c2513572e7d70bc64910a84a8d2f",
-	"10eefacbdf613c0bc7109fefc8e65df9",
-	"02f4567d97bba40326bf391573f29119",
-	"e0199f042f6290984c78d588af55376c",
-	"3e0e9164fa3911d3a5ebaae94b66f3db",
-	"55ff4171622243492f8d8269fe7b96c3",
-	"32250da6f40b83ee2058596f64ff0877",
-	"d3e7b0371842148b5080ef213fe4bc73",
-	"796315ba9b3f88cee3935354a86983a5",
-	"12ce53c1cd8681cb2c1448cb5c09e198",
-	"e4da6797e4d1535dd7a2f24d1866ed46",
-	"172af65d5f597988ed5417324c264abc",
-	"91a613e8716e7c9aa92c6ead78c18eaa",
-	"3b3a89f37d8f7b170f77727f4f6abdea",
-	"59cdcaae0366a5ba266dfd86097cb804",
-	"45d0dd9ef889c27bfd4768145b06f5b6",
-	"2dbef71f1091502c77a936aef9d380ef",
-	"3fc925d263a96b4166f78de1215bcffc",
-	"61803cdbd44cba9cb98f30069f6e6d6b",
-	"e5d629b02befa3660c1c91fd51c5cc3c",
-	"0862d40a783c21bd52606081d4fe7e01",
-	"5f92e96e0ecf99950249e33ad969478c",
-	"d493fea99a781039e2bcc24e71799e88",
-	"b023b4bce7af4f299fdb0f678004d26a",
-	"195bc34398d35e16cfdcf75aecc9b60a",
-	"fe12c03763084e131225f42b8d8aa90e",
-	"dde58beb1af0e6d11e458583c06a14ae",
-	"711fe07eea9ad1010e53159485691f6f",
-	"c7218b970756c4e59edb6fc6a20fbd5d",
-	"64143ea9c9aa2c5649e1cb992ee7d909",
-	"c917117cfb306bb1f6b674d222531439",
-	"595682baef996ddd56c2c5a8872d9475",
-	"52e66e500a474f288364eb92468c9e16",
-	"805840bb85b3891e79dad342a653a1e6",
-	"0a140b9741c26b4897bf56a892624afa",
-	"6a7958cae8200e0f69c9aea0fa43dd18",
-	"6237f8dda0cb5617cab5fb39741e15aa",
-	"46dfa4dc92c68f38130594972072dca9",
-	"71736128ecafa9c199cb70780754fa03",
-	"c8d370f227236bbf527aa1eb6535365f",
-	"2c5d45730e5ae793d4d589d51ac440d9",
-	"16b74f5ae5c4b77f42366765fb742342",
-	"d40fe99019dfdb619057832d6a210713",
-	"385d8a64616b6ac95548314263337a0e",
-	"ec45fedd3a69f61f08bc050e180b3084",
-	"974b33f023c3e3b2dbff6d56291c8d69",
-	"b0f376ac525bf696317ce39b735c1277",
-	"95d319c477933921f0026388870749ca",
-	"58cc49f0968cc61a65ad3b0c4ac4c9dc",
-	"c1760644d9e07f3fbf84e447b9ed4e16",
-	"214a048321dde7a6cb480ccd4c2dd245",
-	"bcf47bc004e8f3a875613286bf3b2cf9",
-	"ecb0f7bd2249ee121ab2784785913447",
-	"f362b930a340062c6049c3f71b41baaa",
-	"cd79dfde31e19b34669bdecd4dfb6731",
-	"992ea80ec7a63c3ea36fa1fcb3c0827e",
-	"2b0ba464db62cfdea3d7b605482a7470",
-	"68b5a97d868c158356d63a95f1707167",
-	"0ecbddd86056d9be3aada3352fe4d4c4",
-	"07727e180da9aaf7d5857d70af7988e5",
-	"16794325afa40babf43dd89298b44f25",
-	"81423858afb5733ca5a7a781adf211e9",
-	"d4b70c53444b5eee1e6b21f423aa3d94",
-	"b916366a568db59a8afd8fbb91a4e8e7",
-	"daa0b55082ce7fd2591363269285b427",
-	"9e6ed44eaa1560eded8339903251883b",
-	"197f2617a0c461869522855d45722df7",
-	"d63648b880d8f203c38a41c3621c7131",
-	"44aadaf2cea4db546c395f707156d565",
-	"3c5512b1efeccb0fd2a246c9a2f07797",
-	"46ab8e01e162cdfa37c0d9e7c771731e",
-	"79d33b91acfb7461d88773c5dae0b679",
-	"064279fe3648dbbc91cd501cd2b41491",
-	"34774514cbc94a3479d47ef5bf63ca2d",
-	"2fae16e87e2cf2aab8afdfa3a87add48",
-	"8d4d456f4033f4090c2573fa3565a6ff",
-	"30ac1cf804a0c4a36d5886922c598368",
-	"200655b7651e15812772d85314fc997d",
-	"fd5731907add3f1145e7d8c69b16a49e",
-	"02610e7466cbe2ea3d5cc28ed5d48a17",
-	"fb2f0fdf537f0ff6e0e20d6ff4091873",
-	"3210d9773b67aea9f3dc7b3913a6cd57",
-	"c815e6ca3d36969af86a69d22578dc6f",
-	"a686c9777851b7e00c87b92466a5e438",
-	"5f15467a23f9d14dded916b9226001a1",
-	"fea65555bfdd3493bc4959e1518dff73",
-	"b8eed62ada9e1ff890e56f30c27c7dd8",
-	"a16999dba8825c13f6cbe59a01c15d12",
-	"043026511e925c8c112391c4516d2299",
-	"882e88c427ddfdf1f25b1331828e72c1",
-	"8a5fbd9152aa8f8cf9c0c658878d252f",
-	"e816e6cbd7026bb9e5ba72596ac94d46",
-	"ae7d5e5f940bbcbc9558903c1062bf35",
-	"08d7544b171203b33901885466c4a77b",
-	"2fef04d56d41cf14b24c1e15dfcf8935",
-	"0e3fbffc7ee39b5baa1012d63d0c0e70",
-	"beba50b3802d92354f164eef3642a28c",
-	"ea6fcc3cdaf41e0ec8d1f76e26f1015f",
-	"6a4b1bcaf5eb171aea78bfa211f80d27",
-	"6c7b41c15b01aacd3f2849f1e96af452",
-	"807044ecc2e5ad626e1d5de66212e7bb",
-	"89d22c1fd5137adca505f0f2364d67e5",
-	"d0135c9f28b6c555658149a74b28266a",
-	"3abb2b567e9f72e327cde5b3e6bd7769",
-	"11f719adf28df17f0d1c513a731c8fa1",
-	"c18b2476a94817cf76cacd316ead2f8b"
+#include <map>
+#include <ctime>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+#include <boost/foreach.hpp>
+#include <boost/format.hpp>
+#include <boost/python.hpp>
+#include <boost/unordered/unordered_map.hpp>
+
+//! Create random string.
+std::string random_string(int len)
+{
+    std::string ret;
+    for(int i=0; i < len; ++i)
+    {
+        int num;
+        num = rand()%122;
+        if (48 > num)
+            num += 48;
+        if ((57 < num) && (65 > num))
+            num += 7;
+        if ((90 < num) && (97 > num))
+            num += 6;
+		ret += (char)num;
+    }  
+	return ret;
+}
+
+void impl_map(const std::vector<std::string> & names) {
+	std::map<std::string, int> dict1;
+	for (int i=0; i < NUM_TRIALS; i++) {
+		BOOST_FOREACH(const std::string & name, names) {
+			dict1[name] = i;
+		};
+	};
 };
 
-void impl_map() {
-	std::map<std::string, int> dict1;
-	for (int i=0; i < 100; i++) {
-		dict1[names[i]] = i;
+void impl_hash_map(const std::vector<std::string> & names) {
+	boost::unordered_map<std::string, int> dict1;
+	for (int i=0; i < NUM_TRIALS; i++) {
+		BOOST_FOREACH(const std::string & name, names) {
+			dict1[name] = i;
+		};
+	};
+};
+
+void impl_python_dict(const std::vector<std::string> & names) {
+	boost::python::dict dict1;
+	for (int i=0; i < NUM_TRIALS; i++) {
+		BOOST_FOREACH(const std::string & name, names) {
+			dict1[name] = i;
+		};
+	};
+};
+
+class Test {};
+
+void impl_python_class(const std::vector<std::string> & names) {
+	boost::python::object dict1 = boost::python::class_<Test>("Test");
+	for (int i=0; i < NUM_TRIALS; i++) {
+		BOOST_FOREACH(const std::string & name, names) {
+			dict1.attr(name.c_str()) = i;
+		};
 	};
 };
 
 int main(void) {
-	impl_map();
+	Py_Initialize();
+
+	clock_t t;
+
+	std::vector<std::string> names;
+	for (int j=0; j < NUM_ATTRIBUTES; j++) {
+		std::string name = random_string(10);
+		//std::cout << name << std::endl;
+		names.push_back(name);
+	};
+
+	t = clock();
+	impl_map(names);
+	std::cout << "map: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds"<< std::endl;
+
+	t = clock();
+	impl_hash_map(names);
+	std::cout << "hash map: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds" << std::endl;
+
+	t = clock();
+	impl_python_dict(names);
+	std::cout << "python dict: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds" << std::endl;
+
+	t = clock();
+	impl_python_class(names);
+	std::cout << "python class: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds" << std::endl;
 };
