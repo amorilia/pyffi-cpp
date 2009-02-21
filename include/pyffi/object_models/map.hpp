@@ -38,12 +38,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef PYFFI_MAP_HPP_INCLUDED
 #define PYFFI_MAP_HPP_INCLUDED
 
+#include <utility> // pair
+
 // unordered_map introduced in boost 1.36.0
 #if BOOST_VERSION >= 13600
 #include <boost/unordered_map.hpp>
 #else
 #include <map>
 #endif
+
+#include "pyffi/exceptions.hpp"
 
 namespace pyffi {
 
@@ -65,11 +69,34 @@ struct name_hash : std::unary_function<std::string, std::size_t> {
 };
 
 template <typename T>
-class Map : public boost::unordered_map<std::string, T, name_hash> {};
+class Map : private boost::unordered_map<std::string, T, name_hash>
 #else
 template <typename T>
-class Map : public std::map<std::string, T> {};
+class Map : private std::map<std::string, T>
 #endif
+
+{
+public:
+	//! Register a new name, and a default value for it.
+	void add(const std::string & name, const T & value) {
+		std::pair<typename Map<T>::iterator, bool> ret = this->insert(std::make_pair(name, value));
+		if (!ret.second) {
+			// insert failed
+			throw value_error("key '" + name + "' already added.");
+		};
+	};
+
+	//! Get reference to value by name.
+	T & get(const std::string & name) {
+		typename Map<T>::iterator it = this->find(name);
+		if (it != this->end()) {
+			return it->second;
+		} else {
+			// if there is no name key, we signal this as a key error
+			throw key_error("no key '" + name + "'.");
+		};
+	};
+}; // class Map
 
 } // namespace pyff
 

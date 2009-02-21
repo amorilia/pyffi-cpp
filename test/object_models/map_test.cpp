@@ -39,8 +39,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MODULE MapTest
 #include <boost/test/unit_test.hpp>
 
-#include <stdexcept>
-
 #include "pyffi/object_models/map.hpp"
 
 using namespace pyffi;
@@ -49,29 +47,39 @@ BOOST_AUTO_TEST_CASE(declare_test) {
 	BOOST_CHECK_NO_THROW(Map<int> intmap);
 }
 
-BOOST_AUTO_TEST_CASE(assign_test) {
+BOOST_AUTO_TEST_CASE(add_test) {
 	Map<int> intmap;
 
 	// add arguments
-	BOOST_CHECK_NO_THROW(intmap["arg1"] = 5);
-	BOOST_CHECK_NO_THROW(intmap["arg2"] = 2);
-	BOOST_CHECK_NO_THROW(intmap["arg3"] = 9);
+	BOOST_CHECK_NO_THROW(intmap.add("arg1", 5));
+	BOOST_CHECK_NO_THROW(intmap.add("arg2", 2));
+	BOOST_CHECK_NO_THROW(intmap.add("arg3", 9));
 
-	// check values
-	BOOST_CHECK_EQUAL(intmap["arg1"], 5);
-	BOOST_CHECK_EQUAL(intmap["arg2"], 2);
-	BOOST_CHECK_EQUAL(intmap["arg3"], 9);
+	// cannot add something that was already added
+	BOOST_CHECK_THROW(intmap.add("arg2", 3), value_error);
+
+	// check that value has not changed after bad add
+	BOOST_CHECK_EQUAL(intmap.get("arg2"), 2);
 }
-BOOST_AUTO_TEST_CASE(modify_test) {
+
+BOOST_AUTO_TEST_CASE(get_test) {
 	Map<int> intmap;
 
-	// add arguments of various types
-	BOOST_CHECK_NO_THROW(intmap["arg1"] = 5);
-	BOOST_CHECK_NO_THROW(intmap["arg2"] = 2);
-	BOOST_CHECK_NO_THROW(intmap["arg3"] = 9);
+	// add arguments
+	BOOST_CHECK_NO_THROW(intmap.add("arg1", 5));
+	BOOST_CHECK_NO_THROW(intmap.add("arg2", 2));
+	BOOST_CHECK_NO_THROW(intmap.add("arg3", 9));
+
+	// check values
+	BOOST_CHECK_EQUAL(intmap.get("arg1"), 5);
+	BOOST_CHECK_EQUAL(intmap.get("arg2"), 2);
+	BOOST_CHECK_EQUAL(intmap.get("arg3"), 9);
+
+	// cannot get something that was not yet added
+	BOOST_CHECK_THROW(intmap.get("arg4"), key_error);
 
 	// check value change
-	BOOST_CHECK_EQUAL(intmap["arg2"], 2);
-	BOOST_CHECK_NO_THROW(intmap["arg2"] = 99);
-	BOOST_CHECK_EQUAL(intmap["arg2"], 99);
+	BOOST_CHECK_EQUAL(intmap.get("arg2"), 2);
+	BOOST_CHECK_NO_THROW(intmap.get("arg2") = 99);
+	BOOST_CHECK_EQUAL(intmap.get("arg2"), 99);
 }
