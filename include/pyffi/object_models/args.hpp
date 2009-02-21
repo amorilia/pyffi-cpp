@@ -51,6 +51,27 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace pyffi {
 
+// unordered_map introduced in boost 1.36.0
+#if BOOST_VERSION >= 13600
+// special very fast name hash function (assuming names start with different
+// letters in most occasions)
+struct name_hash : std::unary_function<std::string, std::size_t> {
+	std::size_t operator()(std::string const & name) const {
+		std::size_t seed = 0;
+		try {
+			boost::hash_combine(seed, name.at(0));
+			//boost::hash_combine(seed, name.at(1));
+		} catch (const & std::out_of_range) {
+			// pass the exception
+		};
+		return seed;
+	}
+};
+typedef boost::unordered_map<std::string, Object, name_hash> ArgsMap;
+#else
+typedef std::map<std::string, Object> ArgsMap;
+#endif
+
 /*!
  * A std::map<std::string, Object> variant with an interface that
  * matches the rest of the library.
@@ -81,12 +102,6 @@ public:
 		};
 	};
 private:
-// unordered_map introduced in boost 1.36.0
-#if BOOST_VERSION >= 013600
-	typedef boost::unordered_map<std::string, Object> ArgsMap;
-#else
-	typedef std::map<std::string, Object> ArgsMap;
-#endif
 	ArgsMap m_map;
 }; // class Args
 

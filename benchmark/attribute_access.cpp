@@ -11,7 +11,9 @@
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/python.hpp>
+#if BOOST_VERSION >= 13600
 #include <boost/unordered/unordered_map.hpp>
+#endif
 
 //! Create random string.
 std::string random_string(int len) {
@@ -39,6 +41,7 @@ void impl_map(const std::vector<std::string> & names) {
 	};
 };
 
+#if BOOST_VERSION >= 13600
 void impl_hash_map(const std::vector<std::string> & names) {
 	boost::unordered_map<std::string, int> dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
@@ -47,6 +50,7 @@ void impl_hash_map(const std::vector<std::string> & names) {
 		};
 	};
 };
+#endif
 
 void impl_python_dict(const std::vector<std::string> & names) {
 	boost::python::dict dict1;
@@ -84,9 +88,11 @@ int main(void) {
 	impl_map(names);
 	std::cout << "map: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds"<< std::endl;
 
+#if BOOST_VERSION >= 13600
 	t = clock();
 	impl_hash_map(names);
 	std::cout << "hash map: " << float(clock() - t) / CLOCKS_PER_SEC << " seconds" << std::endl;
+#endif
 
 	t = clock();
 	impl_python_dict(names);

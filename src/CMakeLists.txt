@@ -1,4 +1,6 @@
-include_directories(/usr/include/python2.5)
 add_executable(pyffi pyffi.cpp)
-target_link_libraries (pyffi python25)
+
+find_package(PythonLibs)
+include_directories(${PYTHON_INCLUDE_PATH})
+target_link_libraries (pyffi ${PYTHON_LIBRARIES})
 target_link_libraries (pyffi boost_python) 
