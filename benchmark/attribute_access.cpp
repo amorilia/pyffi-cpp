@@ -14,21 +14,19 @@
 #include <boost/unordered/unordered_map.hpp>
 
 //! Create random string.
-std::string random_string(int len)
-{
-    std::string ret;
-    for(int i=0; i < len; ++i)
-    {
-        int num;
-        num = rand()%122;
-        if (48 > num)
-            num += 48;
-        if ((57 < num) && (65 > num))
-            num += 7;
-        if ((90 < num) && (97 > num))
-            num += 6;
+std::string random_string(int len) {
+	std::string ret;
+	for (int i=0; i < len; ++i) {
+		int num;
+		num = rand()%122;
+		if (48 > num)
+			num += 48;
+		if ((57 < num) && (65 > num))
+			num += 7;
+		if ((90 < num) && (97 > num))
+			num += 6;
 		ret += (char)num;
-    }  
+	}
 	return ret;
 }
 
