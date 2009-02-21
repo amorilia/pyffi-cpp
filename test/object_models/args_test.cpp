@@ -35,14 +35,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE ArgsTest
-#include <boost/test/unit_test.hpp>
-
 #include "pyffi/object_models/args.hpp"
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
+
+BOOST_AUTO_TEST_SUITE(args_test_suite)
 
 BOOST_AUTO_TEST_CASE(declare_test) {
 	BOOST_CHECK_NO_THROW(Args args);
@@ -128,3 +126,5 @@ BOOST_AUTO_TEST_CASE(get_test) {
 	BOOST_CHECK_EQUAL(args.get<char>("char2"), 'a');
 	BOOST_CHECK_EQUAL(args.get<bool>("ic"), false);
 }
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -35,14 +35,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE ObjectTest
-#include <boost/test/unit_test.hpp>
-
 #include "pyffi/object_models/object.hpp"
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
+
+BOOST_AUTO_TEST_SUITE(object_test_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test) {
 	// test default constructor
@@ -125,3 +123,5 @@ BOOST_AUTO_TEST_CASE(shared_object_test) {
 	*p_obj1 = 20;
 	BOOST_CHECK_EQUAL(p_obj2->get<int>(), 20);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
