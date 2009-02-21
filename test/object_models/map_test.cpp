@@ -35,50 +35,43 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_ARGS_HPP_INCLUDED
-#define PYFFI_ARGS_HPP_INCLUDED
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE MapTest
+#include <boost/test/unit_test.hpp>
 
-#include <utility> // pair
+#include <stdexcept>
 
-#include "pyffi/exceptions.hpp"
 #include "pyffi/object_models/map.hpp"
-#include "pyffi/object_models/object.hpp"
 
-namespace pyffi {
+using namespace pyffi;
 
-/*!
- * A std::map<std::string, Object> variant with an interface that
- * matches the rest of the library.
- */
-class Args {
-public:
-	//! Default constructor.
-	Args() : m_map() {};
-	//! Copy constructor.
-	Args(const Args & args) : m_map(args.m_map) {};
-	//! Constructor to set the type and the value.
-	template<typename ValueType> void add(const std::string & name, const ValueType & value) {
-		// if name not found, add object to the map
-		std::pair<Map<Object>::iterator, bool> ret = m_map.insert(make_pair(name, Object(value)));
-		if (!ret.second) {
-			// insert failed
-			throw value_error("'" + name + "' already added to arguments.");
-		};
-	};
-	//! Get reference to value stored in the object.
-	template<typename ValueType> ValueType & get(const std::string & name) {
-		Map<Object>::iterator it = m_map.find(name);
-		if (it != m_map.end()) {
-			return it->second.get<ValueType>();
-		} else {
-			// if there is no name key, we signal this as a key error
-			throw key_error("no argument with key '" + name + "'");
-		};
-	};
-private:
-	Map<Object> m_map;
-}; // class Args
+BOOST_AUTO_TEST_CASE(declare_test) {
+	BOOST_CHECK_NO_THROW(Map<int> intmap);
+}
 
-}; // namespace pyffi
+BOOST_AUTO_TEST_CASE(assign_test) {
+	Map<int> intmap;
 
-#endif
+	// add arguments
+	BOOST_CHECK_NO_THROW(intmap["arg1"] = 5);
+	BOOST_CHECK_NO_THROW(intmap["arg2"] = 2);
+	BOOST_CHECK_NO_THROW(intmap["arg3"] = 9);
+
+	// check values
+	BOOST_CHECK_EQUAL(intmap["arg1"], 5);
+	BOOST_CHECK_EQUAL(intmap["arg2"], 2);
+	BOOST_CHECK_EQUAL(intmap["arg3"], 9);
+}
+BOOST_AUTO_TEST_CASE(modify_test) {
+	Map<int> intmap;
+
+	// add arguments of various types
+	BOOST_CHECK_NO_THROW(intmap["arg1"] = 5);
+	BOOST_CHECK_NO_THROW(intmap["arg2"] = 2);
+	BOOST_CHECK_NO_THROW(intmap["arg3"] = 9);
+
+	// check value change
+	BOOST_CHECK_EQUAL(intmap["arg2"], 2);
+	BOOST_CHECK_NO_THROW(intmap["arg2"] = 99);
+	BOOST_CHECK_EQUAL(intmap["arg2"], 99);
+}

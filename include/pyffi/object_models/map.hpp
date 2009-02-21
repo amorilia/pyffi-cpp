@@ -35,50 +35,42 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_ARGS_HPP_INCLUDED
-#define PYFFI_ARGS_HPP_INCLUDED
+#ifndef PYFFI_MAP_HPP_INCLUDED
+#define PYFFI_MAP_HPP_INCLUDED
 
-#include <utility> // pair
-
-#include "pyffi/exceptions.hpp"
-#include "pyffi/object_models/map.hpp"
-#include "pyffi/object_models/object.hpp"
+// unordered_map introduced in boost 1.36.0
+#if BOOST_VERSION >= 13600
+#include <boost/unordered_map.hpp>
+#else
+#include <map>
+#endif
 
 namespace pyffi {
 
-/*!
- * A std::map<std::string, Object> variant with an interface that
- * matches the rest of the library.
- */
-class Args {
-public:
-	//! Default constructor.
-	Args() : m_map() {};
-	//! Copy constructor.
-	Args(const Args & args) : m_map(args.m_map) {};
-	//! Constructor to set the type and the value.
-	template<typename ValueType> void add(const std::string & name, const ValueType & value) {
-		// if name not found, add object to the map
-		std::pair<Map<Object>::iterator, bool> ret = m_map.insert(make_pair(name, Object(value)));
-		if (!ret.second) {
-			// insert failed
-			throw value_error("'" + name + "' already added to arguments.");
+// unordered_map introduced in boost 1.36.0
+#if BOOST_VERSION >= 13600
+// special very fast name hash function (assuming names start with different
+// letters in most occasions)
+struct name_hash : std::unary_function<std::string, std::size_t> {
+	std::size_t operator()(std::string const & name) const {
+		std::size_t seed = 0;
+		try {
+			boost::hash_combine(seed, name.at(0));
+			//boost::hash_combine(seed, name.at(1));
+		} catch (const & std::out_of_range) {
+			// pass the exception
 		};
-	};
-	//! Get reference to value stored in the object.
-	template<typename ValueType> ValueType & get(const std::string & name) {
-		Map<Object>::iterator it = m_map.find(name);
-		if (it != m_map.end()) {
-			return it->second.get<ValueType>();
-		} else {
-			// if there is no name key, we signal this as a key error
-			throw key_error("no argument with key '" + name + "'");
-		};
-	};
-private:
-	Map<Object> m_map;
-}; // class Args
+		return seed;
+	}
+};
 
-}; // namespace pyffi
+template <typename T>
+class Map : public boost::unordered_map<std::string, T, name_hash> {};
+#else
+template <typename T>
+class Map : public std::map<std::string, T> {};
+#endif
+
+} // namespace pyff
 
 #endif
