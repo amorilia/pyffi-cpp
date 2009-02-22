@@ -75,6 +75,8 @@ private:
 	friend class Struct;
 }; // class MetaAttribute
 
+typedef boost::shared_ptr<MetaAttribute> PMetaAttribute;
+
 }; // namespace pyffi
 
 #endif

@@ -39,8 +39,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #define __METASTRUCT_HPP
 
 #include <vector>
-#include <map>
 
+
+#include "pyffi/object_models/map.hpp"
 #include "pyffi/object_models/meta_attribute.hpp"
 
 namespace pyffi {
@@ -48,20 +49,23 @@ namespace pyffi {
 //! Stores all information attached to a structure.
 class MetaStruct {
 public:
+	//! Size.
+	typedef std::vector<MetaAttribute>::size_type size_type;
 	//! Add an attribute to the structure.
-	template<typename ValueType>
-	void add_attr(const std::string & name, const ValueType & default_value) {
-		// calculate index of new attribute
+	void add(const std::string & name, PMetaAttribute & p_meta_attribute) {
 		// and store this index, using the name as key
-		index_map[name] = meta_attributes.size();
+		index_map.add(name, meta_attributes.size());	
 		// store attribute
-		meta_attributes.push_back(MetaAttribute(default_value));
+		meta_attributes.push_back(p_meta_attribute);
+	};
+	size_type index(const std::string & name) {
+		return index_map.get(name);
 	};
 private:
 	//! Maps string name to their index as they have been added.
-	std::map<std::string, unsigned int> index_map;
+	Map<size_type> index_map;
 	//! List of attribute information as they have been added.
-	std::vector<MetaAttribute> meta_attributes;
+	std::vector<PMetaAttribute> meta_attributes;
 
 	// allow Struct access to the internals
 	friend class Struct;

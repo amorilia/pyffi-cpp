@@ -66,23 +66,24 @@ public:
 			: meta_struct(struc.meta_struct), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & get_attr(const std::string & name) {
-		std::map<std::string, unsigned int>::iterator index;
+		std::size_t index;
 
 		// search name in meta struct index
-		index = meta_struct->index_map.find(name);
-
-		if (index != meta_struct->index_map.end()) {
-			// found, so return attribute as requested type
-			try {
-				return objects[index->second].get<ValueType>();
-			} catch (const type_error &) {
-				// could not get attribute in requested type, so throw exception
-				throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(typeid(objects[index->second]).name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
-			}
-		} else {
+		try {
+			index = meta_struct->index_map.get(name);
+		} catch (const key_error &) {
 			// not found, so throw an exception
 			throw name_error("Struct has no attribute \"" + name + "\".");
 		};
+
+		// return attribute as requested type
+		try {
+			return objects[index->second].get<ValueType>();
+		} catch (const type_error &) {
+			// could not get attribute in requested type, so throw exception
+			throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(typeid(objects[index->second]).name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+		};
+
 	};
 private:
 	//! Metaclass information (list of attribute types, default values, ...).
