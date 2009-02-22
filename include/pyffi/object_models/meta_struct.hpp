@@ -54,7 +54,7 @@ public:
 	//! Add an attribute to the structure.
 	void add(const std::string & name, PMetaAttribute & p_meta_attribute) {
 		// and store this index, using the name as key
-		index_map.add(name, meta_attributes.size());	
+		index_map.add(name, meta_attributes.size());
 		// store attribute
 		meta_attributes.push_back(p_meta_attribute);
 	};

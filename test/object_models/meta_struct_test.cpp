@@ -57,15 +57,28 @@ BOOST_AUTO_TEST_CASE(add_test) {
 	BOOST_CHECK_NO_THROW(ms.add("arg2", ma2));
 	BOOST_CHECK_NO_THROW(ms.add("arg3", ma3));
 
-	BOOST_CHECK_EQUAL(ms.index("arg1"), 0);
-	BOOST_CHECK_EQUAL(ms.index("arg2"), 1);
-	BOOST_CHECK_EQUAL(ms.index("arg3"), 2);
-
 	// check that argument cannot be added again
 	PMetaAttribute ma4(new MetaAttribute(999));
 	BOOST_CHECK_THROW(ms.add("arg1", ma4), value_error);
 	BOOST_CHECK_THROW(ms.add("arg2", ma4), value_error);
 	BOOST_CHECK_THROW(ms.add("arg3", ma4), value_error);
+}
+
+BOOST_AUTO_TEST_CASE(index_test) {
+	MetaStruct ms;
+	PMetaAttribute ma1(new MetaAttribute(5));
+	PMetaAttribute ma2(new MetaAttribute('y'));
+	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
+
+	// add arguments of various types
+	BOOST_CHECK_NO_THROW(ms.add("arg1", ma1));
+	BOOST_CHECK_NO_THROW(ms.add("arg2", ma2));
+	BOOST_CHECK_NO_THROW(ms.add("arg3", ma3));
+
+	// check that index matches number of argument
+	BOOST_CHECK_EQUAL(ms.index("arg1"), 0);
+	BOOST_CHECK_EQUAL(ms.index("arg2"), 1);
+	BOOST_CHECK_EQUAL(ms.index("arg3"), 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
