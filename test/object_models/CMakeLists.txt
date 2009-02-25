@@ -1,0 +1,8 @@
+find_package(PythonLibs REQUIRED)
+find_package(Boost REQUIRED COMPONENTS python unit_test_framework)
+include_directories(${PYTHON_INCLUDE_PATH} ${Boost_INCLUDE_DIRS})
+foreach(TEST object_test map_test args_test meta_struct_test)
+  add_executable(${TEST} ${TEST}.cpp)
+  target_link_libraries (${TEST} ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+  add_test(object_models::${TEST} ${TEST})
+endforeach()

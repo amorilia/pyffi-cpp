@@ -35,6 +35,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+
 #include "pyffi/object_models/map.hpp"
 
 using namespace pyffi;
