@@ -1,0 +1,6 @@
+This directory has the original antlr source, with these changes:
+- all files related to the autotools build system have been removed
+- all files related to the msvc build system have been removed
+- support for cmake has been (CMakeLists.txt and antlr3config.h.cmake)
+
+Amorilia, 28 Feb 2009
