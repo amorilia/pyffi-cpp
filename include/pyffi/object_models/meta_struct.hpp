@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef __METASTRUCT_HPP
-#define __METASTRUCT_HPP
+#ifndef PYFFI_OM_METASTRUCT_HPP_INCLUDED
+#define PYFFI_OM_METASTRUCT_HPP_INCLUDED
 
 #include <vector>
 
@@ -45,6 +45,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/meta_attribute.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 //! Stores all information attached to a structure.
 class MetaStruct {
@@ -73,6 +75,8 @@ private:
 
 //! Shared pointer to meta struct.
 typedef boost::shared_ptr<MetaStruct> PMetaStruct;
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

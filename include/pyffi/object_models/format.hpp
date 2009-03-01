@@ -1,5 +1,5 @@
-#ifndef __FORMAT_HPP
-#define __FORMAT_HPP
+#ifndef PYFFI_OM_FORMAT_HPP_INCLUDED
+#define PYFFI_OM_FORMAT_HPP_INCLUDED
 
 #include <vector>
 #include <map>
@@ -9,6 +9,8 @@
 #include "meta_struct.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 //! Stores all information attached to a format.
 class Format {
@@ -38,6 +40,8 @@ private:
 	//! List of meta structs as they have been added.
 	std::vector<PMetaStruct> meta_structs;
 }; // class Format
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

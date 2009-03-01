@@ -39,6 +39,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace pyffi {
 
+namespace object_models {
+
 /*!
  * Base class for all data that can be stored. Consists of read and write.
  */
@@ -49,5 +51,7 @@ class AnyType {
 	//! Write data to stream (TODO: with parameters taken from namespace).
 	virtual void write(std::ostream & out) const = 0;
 }; // class AnyType
+
+}; // namespace object_models
 
 }; // namespace pyffi

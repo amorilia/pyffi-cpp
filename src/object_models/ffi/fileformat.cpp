@@ -46,31 +46,53 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace pyffi {
 
-void _test_parser(const std::string & filename) {
-	// set up the antlr structures
-	pANTLR3_INPUT_STREAM           input;
-	pFFILexer               lex;
-	pANTLR3_COMMON_TOKEN_STREAM    tokens;
-	pFFIParser              parser;
+namespace object_models {
 
-	input  = antlr3AsciiFileStreamNew          ((pANTLR3_UINT8)filename.c_str());
+namespace ffi {
+
+FileFormat::FileFormat(const std::string & filename) {
+	// set up the antlr structures
+	pANTLR3_INPUT_STREAM input;
+	pFFILexer lex;
+	pANTLR3_COMMON_TOKEN_STREAM tokens;
+	pFFIParser parser;
+
+	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
 	if (input == NULL) {
 		throw io_error("Could not open '" + filename + "'.");
 	};
-	/*
-	lex    = FFILexerNew                (input);
-	tokens = antlr3CommonTokenStreamSourceNew  (ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
-	parser = FFIParserNew               (tokens);
+	lex = FFILexerNew(input);
+	if (lex == NULL) {
+		input->close(input);
+		throw runtime_error("Could not create lexer for '" + filename + "'.");
+	};
+	tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
+	if (tokens == NULL) {
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create tokens for '" + filename + "'.");
+	};
+	parser = FFIParserNew(tokens);
+	if (parser == NULL) {
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create parser for '" + filename + "'.");
+	};
+	// parse the file
+	parser->ffi(parser);
 
-	//parser  ->ffi(parser);
+	// TODO: create meta classes etc.
 
-	// clean up
-	parser ->free(parser);
-	tokens ->free(tokens);
-	lex    ->free(lex);
-	*/
-	input  ->close(input);
-}
+	// release memory
+	parser->free(parser);
+	tokens->free(tokens);
+	lex->free(lex);
+	input->close(input);
+};
 
-}
+}; // namespace ffi
 
+}; // namespace object_models
+
+}; // namespace pyffi

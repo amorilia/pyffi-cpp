@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef __METAATTRIBUTE_HPP
-#define __METAATTRIBUTE_HPP
+#ifndef PYFFI_OM_METAATTRIBUTE_HPP_INCLUDED
+#define PYFFI_OM_METAATTRIBUTE_HPP_INCLUDED
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -44,6 +44,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "object.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 class Expression;
 
@@ -76,6 +78,8 @@ private:
 }; // class MetaAttribute
 
 typedef boost::shared_ptr<MetaAttribute> PMetaAttribute;
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

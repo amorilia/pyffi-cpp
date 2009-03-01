@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef __STRUCT_HPP
-#define __STRUCT_HPP
+#ifndef PYFFI_OM_STRUCT_HPP_INCLUDED
+#define PYFFI_OM_STRUCT_HPP_INCLUDED
 
 #include <typeinfo>
 #include <vector>
@@ -46,6 +46,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "meta_struct.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 /*!
  * A structure instance. This class serves to create an instance of a
@@ -91,6 +93,8 @@ private:
 	//! List of attribute values.
 	std::vector<Object> objects;
 }; // class Struct
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

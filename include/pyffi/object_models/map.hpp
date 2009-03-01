@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_MAP_HPP_INCLUDED
-#define PYFFI_MAP_HPP_INCLUDED
+#ifndef PYFFI_OM_MAP_HPP_INCLUDED
+#define PYFFI_OM_MAP_HPP_INCLUDED
 
 #include <utility> // pair
 
@@ -50,6 +50,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/exceptions.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 // unordered_map introduced in boost 1.36.0
 #if BOOST_VERSION >= 13600
@@ -98,6 +100,8 @@ public:
 	};
 }; // class Map
 
-} // namespace pyff
+}; // namespace object_models
+
+}; // namespace pyffi
 
 #endif

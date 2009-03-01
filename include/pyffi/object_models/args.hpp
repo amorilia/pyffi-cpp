@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_ARGS_HPP_INCLUDED
-#define PYFFI_ARGS_HPP_INCLUDED
+#ifndef PYFFI_OM_ARGS_HPP_INCLUDED
+#define PYFFI_OM_ARGS_HPP_INCLUDED
 
 #include <utility> // pair
 
@@ -45,6 +45,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/object.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 /*!
  * A std::map<std::string, Object> variant with an interface that
@@ -68,6 +70,8 @@ public:
 private:
 	Map<Object> m_map;
 }; // class Args
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

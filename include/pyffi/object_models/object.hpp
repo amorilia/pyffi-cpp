@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OBJECT_HPP_INCLUDED
-#define PYFFI_OBJECT_HPP_INCLUDED
+#ifndef PYFFI_OM_OBJECT_HPP_INCLUDED
+#define PYFFI_OM_OBJECT_HPP_INCLUDED
 
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
@@ -44,6 +44,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/exceptions.hpp"
 
 namespace pyffi {
+
+namespace object_models {
 
 /*!
  * A boost::any variant which can contain any type but that cannot
@@ -90,6 +92,8 @@ private:
 }; // class Object
 
 typedef boost::shared_ptr<Object> PObject;
+
+}; // namespace object_models
 
 }; // namespace pyffi
 

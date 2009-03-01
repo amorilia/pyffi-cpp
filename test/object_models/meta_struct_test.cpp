@@ -43,6 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
+using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(meta_struct_test_suite)
 

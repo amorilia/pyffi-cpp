@@ -43,35 +43,36 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/ffi/fileformat.hpp"
 
 using namespace pyffi;
+using namespace pyffi::object_models::ffi;
 
 BOOST_AUTO_TEST_SUITE(ffi_test_suite)
 
 BOOST_AUTO_TEST_CASE(non_existing_file_test) {
-	BOOST_CHECK_THROW(_test_parser("non_existing_file.ffi"), io_error);
+	BOOST_CHECK_THROW(FileFormat("non_existing_file.ffi"), io_error);
 }
 
 BOOST_AUTO_TEST_CASE(type_test) {
-	_test_parser("test_type.ffi");
+	FileFormat("test_type.ffi");
 }
 
 BOOST_AUTO_TEST_CASE(type_doc_test) {
-	_test_parser("test_type_doc.ffi");
+	FileFormat("test_type_doc.ffi");
 }
 
 BOOST_AUTO_TEST_CASE(class_test) {
-	_test_parser("test_class.ffi");
+	FileFormat("test_class.ffi");
 }
 
 BOOST_AUTO_TEST_CASE(parameter_test) {
-	_test_parser("test_parameter.ffi");
+	FileFormat("test_parameter.ffi");
 }
 
 BOOST_AUTO_TEST_CASE(kwargs_test) {
-	_test_parser("test_kwargs.ffi");
+	FileFormat("test_kwargs.ffi");
 }
 
 BOOST_AUTO_TEST_CASE(conditions_test) {
-	_test_parser("test_conditions.ffi");
+	FileFormat("test_conditions.ffi");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

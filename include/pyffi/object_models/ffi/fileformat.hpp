@@ -35,16 +35,24 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_FFI_FILEFORMAT_HPP_INCLUDED
-#define PYFFI_FFI_FILEFORMAT_HPP_INCLUDED
+#ifndef PYFFI_OM_FFI_FILEFORMAT_HPP_INCLUDED
+#define PYFFI_OM_FFI_FILEFORMAT_HPP_INCLUDED
 
 namespace pyffi {
 
-// for now this is just a stub to test the parser
-// of course, this will eventually be removed from the public interface
-void _test_parser(const std::string & filename);
+namespace object_models {
 
-} // namespace pyff
+namespace ffi {
+
+class FileFormat {
+public:
+	FileFormat(const std::string & filename);
+};
+
+}; // namespace ffi
+
+}; // namespace object_models
+
+}; // namespace pyffi
 
 #endif
-

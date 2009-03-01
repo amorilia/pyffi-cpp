@@ -42,6 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/map.hpp"
 
 using namespace pyffi;
+using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(map_test_suite)
 

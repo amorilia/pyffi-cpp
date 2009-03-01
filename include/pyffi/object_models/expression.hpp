@@ -35,14 +35,18 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef __EXPRESSION_HPP
-#define __EXPRESSION_HPP
+#ifndef PYFFI_OM_EXPRESSION_HPP_INCLUDED
+#define PYFFI_OM_EXPRESSION_HPP_INCLUDED
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "meta_struct.hpp"
 #include "struct.hpp"
+
+namespace pyffi {
+
+namespace object_models {
 
 //class Expression;
 
@@ -71,6 +75,10 @@ private:
 	int left_value;           //! The left value.
 	int right_value;          //! The right value.
 	Operator oper;            //! The operator. NONE means use only the left side.
-};
+}; // class Expression
+
+}; // namespace object_models
+
+}; // namespace pyffi
 
 #endif
