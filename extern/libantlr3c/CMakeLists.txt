@@ -1,3 +1,5 @@
+project(ANTLR3C)
+
 # configuration
 
 include(CheckIncludeFile)
@@ -35,12 +37,18 @@ check_function_exists(memmove HAVE_MEMMOVE)
 check_function_exists(memset HAVE_MEMSET)
 # todo: HAVE_ACCEPT
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/antlr3config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/antlr3config.h)
+# check 64 bit
+check_type_size(void* VOID_PTR_SIZE)
+if(VOID_PTR_SIZE EQUAL 8)
+  set(ANTLR3_USE_64BIT 1)
+endif(VOID_PTR_SIZE EQUAL 8)
+
+configure_file(${ANTLR3C_SOURCE_DIR}/antlr3config.h.cmake ${ANTLR3C_BINARY_DIR}/antlr3config.h)
 
 # includes and sources
 
-# include current binary directory so antlr3config.h is found
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+# include binary directory so antlr3config.h is found
+include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 
 set(antlr3c_LIB_SRCS
     src/antlr3baserecognizer.c

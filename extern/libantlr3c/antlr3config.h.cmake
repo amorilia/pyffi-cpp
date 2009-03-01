@@ -1,8 +1,8 @@
 /* Define if ANTLR debugger not required */
-#undef ANTLR3_NODEBUGGER
+/* #undef ANTLR3_NODEBUGGER */
 
 /* Define if 64 bit mode required */
-#undef ANTLR3_USE_64BIT
+#cmakedefine ANTLR3_USE_64BIT
 
 /* Define to 1 if you have the `accept' function. */
 #cmakedefine HAVE_ACCEPT 1
