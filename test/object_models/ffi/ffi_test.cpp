@@ -42,13 +42,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/exceptions.hpp"
 #include "pyffi/object_models/ffi/fileformat.hpp"
 
-using namespace pyffi;
 using namespace pyffi::object_models::ffi;
 
 BOOST_AUTO_TEST_SUITE(ffi_test_suite)
 
 BOOST_AUTO_TEST_CASE(non_existing_file_test) {
-	BOOST_CHECK_THROW(FileFormat("non_existing_file.ffi"), io_error);
+	BOOST_CHECK_THROW(FileFormat("non_existing_file.ffi"), pyffi::io_error);
+}
+
+BOOST_AUTO_TEST_CASE(invalid_test) {
+	BOOST_CHECK_THROW(FileFormat("test_invalid.ffi"), pyffi::syntax_error);
 }
 
 BOOST_AUTO_TEST_CASE(type_test) {

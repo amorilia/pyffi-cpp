@@ -56,6 +56,7 @@ FileFormat::FileFormat(const std::string & filename) {
 	pFFILexer lex;
 	pANTLR3_COMMON_TOKEN_STREAM tokens;
 	pFFIParser parser;
+	FFIParser_ffi_return_struct ffi_ast;
 
 	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
 	if (input == NULL) {
@@ -80,9 +81,17 @@ FileFormat::FileFormat(const std::string & filename) {
 		throw runtime_error("Could not create parser for '" + filename + "'.");
 	};
 	// parse the file
-	parser->ffi(parser);
+	ffi_ast = parser->ffi(parser);
+	// check that parsing succeeded
+	if (parser->pParser->rec->state->errorCount > 0) {
+		parser->free(parser);
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw syntax_error("Syntax error while parsing '" + filename + "'.");
+	};
 
-	// TODO: create meta classes etc.
+	// TODO: run over the syntax tree and create meta classes etc.
 
 	// release memory
 	parser->free(parser);

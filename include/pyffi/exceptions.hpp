@@ -42,6 +42,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace pyffi {
 
+//! Thrown on syntax error.
+class syntax_error : public std::runtime_error {
+public:
+	syntax_error(const std::string & msg)
+			: std::runtime_error(msg) {};
+};
+
 //! Thrown on runtime error (convenience wrapper around std::runtime_error).
 class runtime_error : public std::runtime_error {
 public:
