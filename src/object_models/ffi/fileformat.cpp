@@ -38,6 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 
 #include "pyffi/object_models/ffi/fileformat.hpp"
+#include "pyffi/exceptions.hpp"
 
 #include "antlr3.h"
 #include "FFILexer.h"
@@ -53,16 +54,21 @@ void _test_parser(const std::string & filename) {
 	pFFIParser              parser;
 
 	input  = antlr3AsciiFileStreamNew          ((pANTLR3_UINT8)filename.c_str());
+	if (input == NULL) {
+		throw io_error("Could not open '" + filename + "'.");
+	};
+	/*
 	lex    = FFILexerNew                (input);
 	tokens = antlr3CommonTokenStreamSourceNew  (ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
 	parser = FFIParserNew               (tokens);
 
-	parser  ->ffi(parser);
+	//parser  ->ffi(parser);
 
 	// clean up
 	parser ->free(parser);
 	tokens ->free(tokens);
 	lex    ->free(lex);
+	*/
 	input  ->close(input);
 }
 

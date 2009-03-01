@@ -77,6 +77,13 @@ public:
 			: std::runtime_error(msg) {};
 };
 
+//! Thrown on input/output error.
+class io_error : public std::runtime_error {
+public:
+	io_error(const std::string & msg)
+			: std::runtime_error(msg) {};
+};
+
 }; // namespace pyffi
 
 #endif
