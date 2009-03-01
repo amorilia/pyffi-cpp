@@ -35,39 +35,36 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#include <string>
 
 #include "pyffi/object_models/ffi/fileformat.hpp"
 
-using namespace pyffi;
+#include "antlr3.h"
+#include "FFILexer.h"
+#include "FFIParser.h"
 
-BOOST_AUTO_TEST_SUITE(ffi_test_suite)
+namespace pyffi {
 
-BOOST_AUTO_TEST_CASE(type_test) {
-	_test_parser("test_type.ffi");
+void _test_parser(const std::string & filename) {
+	// set up the antlr structures
+	pANTLR3_INPUT_STREAM           input;
+	pFFILexer               lex;
+	pANTLR3_COMMON_TOKEN_STREAM    tokens;
+	pFFIParser              parser;
+
+	input  = antlr3AsciiFileStreamNew          ((pANTLR3_UINT8)filename.c_str());
+	lex    = FFILexerNew                (input);
+	tokens = antlr3CommonTokenStreamSourceNew  (ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
+	parser = FFIParserNew               (tokens);
+
+	parser  ->ffi(parser);
+
+	// clean up
+	parser ->free(parser);
+	tokens ->free(tokens);
+	lex    ->free(lex);
+	input  ->close(input);
 }
 
-BOOST_AUTO_TEST_CASE(type_doc_test) {
-	_test_parser("test_type_doc.ffi");
 }
-
-BOOST_AUTO_TEST_CASE(class_test) {
-	_test_parser("test_class.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(parameter_test) {
-	_test_parser("test_parameter.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(kwargs_test) {
-	_test_parser("test_kwargs.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(conditions_test) {
-	_test_parser("test_conditions.ffi");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
 

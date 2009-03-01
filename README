@@ -4,7 +4,7 @@ Fixing up expat config include:
 find . -not -wholename "*svn*" -and -name "*.c" -exec perl -pi -w -e 's/<expat_config.h>/"expat_config.h"/g' {} \;
 
 Installing boost on windows with mingw32 and cmake:
-* checkout boost from http://svn.boost.org/svn/boost/trunk into xxx/src/
+* download boost 1.38.0 or later (earlier versions do not have cmake support)
 * create empty directory xxx/build/
 * run cmake
   - unselect "bcp"

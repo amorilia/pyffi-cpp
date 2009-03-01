@@ -3,7 +3,8 @@ grammar FFI;
 options {
     language=C;
     output=AST;
-    ASTLabelType=CommonTree;
+    //ASTLabelType=CommonTree;
+    ASTLabelType=pANTLR3_BASE_TREE;
 }
 
 tokens {
@@ -37,7 +38,7 @@ tokens {
 
 // JAVA
 
-/* */
+/*
 
 @lexer::members {
     // keep track of indentation
@@ -102,7 +103,7 @@ NEWLINE
         }
     ;
 
-/* */
+*/
 
 // PYTHON
 // note: ANTLR defines Python members on class level, but we want to define an
@@ -182,10 +183,10 @@ NEWLINE
  *------------------------------------------------------------------*/
 
 ffi
-    :   formatdef declarations EOF
+    :   formatdefine declarations EOF
     ;
 
-formatdef
+formatdefine
     :   longdoc FILEFORMAT FORMATNAME shortdoc
     ;
 
@@ -209,15 +210,15 @@ longdoc
     ;
 
 typeblock
-    :   TYPE blockbegin typedef+ blockend
+    :   TYPE blockbegin typedefine+ blockend
     ;
 
 parameterblock
-    :   PARAMETER blockbegin fielddef+ blockend
+    :   PARAMETER blockbegin fielddefine+ blockend
     ;
 
 classblock
-    :   longdoc CLASS TYPENAME blockbegin declarations class_fielddefs blockend
+    :   longdoc CLASS TYPENAME blockbegin declarations class_fielddefines blockend
     ;
 
 blockbegin
@@ -228,24 +229,24 @@ blockend
     :   DEDENT
     ;
 
-typedef
+typedefine
     :   longdoc TYPENAME shortdoc // basic type
     |   longdoc TYPENAME '=' TYPENAME shortdoc // alias
     ;
 
-fielddef
+fielddefine
     :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
     ;
 
-class_fielddefs_ifelifelse_fragment
+class_fielddefines_ifelifelse_fragment
     :
-        IF expression blockbegin class_fielddefs blockend
-        (ELIF expression blockbegin class_fielddefs blockend)*
-        (ELSE blockbegin class_fielddefs blockend)?
+        IF expression blockbegin class_fielddefines blockend
+        (ELIF expression blockbegin class_fielddefines blockend)*
+        (ELSE blockbegin class_fielddefines blockend)?
     ;
 
-class_fielddefs
-    :   (class_fielddefs_ifelifelse_fragment | fielddef)+
+class_fielddefines
+    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
     ;
 
 kwarg

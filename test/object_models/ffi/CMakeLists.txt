@@ -1,0 +1,5 @@
+foreach(TEST ffi_test)
+  add_executable(${TEST} ${TEST}.cpp)
+  target_link_libraries (${TEST} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pyffi)
+  add_test(object_models::ffi::${TEST} ${TEST})
+endforeach()

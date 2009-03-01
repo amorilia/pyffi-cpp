@@ -35,39 +35,16 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#ifndef PYFFI_FFI_FILEFORMAT_HPP_INCLUDED
+#define PYFFI_FFI_FILEFORMAT_HPP_INCLUDED
 
-#include "pyffi/object_models/ffi/fileformat.hpp"
+namespace pyffi {
 
-using namespace pyffi;
+// for now this is just a stub to test the parser
+// of course, this will eventually be removed from the public interface
+void _test_parser(const std::string & filename);
 
-BOOST_AUTO_TEST_SUITE(ffi_test_suite)
+} // namespace pyff
 
-BOOST_AUTO_TEST_CASE(type_test) {
-	_test_parser("test_type.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(type_doc_test) {
-	_test_parser("test_type_doc.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(class_test) {
-	_test_parser("test_class.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(parameter_test) {
-	_test_parser("test_parameter.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(kwargs_test) {
-	_test_parser("test_kwargs.ffi");
-}
-
-BOOST_AUTO_TEST_CASE(conditions_test) {
-	_test_parser("test_conditions.ffi");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
+#endif
 
