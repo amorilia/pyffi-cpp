@@ -1,3 +1,5 @@
+add_subdirectory(object_models)
+
 add_executable(pyffi pyffi.cpp)
 
 find_package(PythonLibs REQUIRED)
