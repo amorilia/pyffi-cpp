@@ -1,5 +1,10 @@
 This directory has the original antlr source, with these changes:
+
+* amorilia - 2 Mar 2009
+- support for token FILO queues (based on a circular buffer)
+- (TODO) support for multiple tokens per lexer rule
+
+* amorilia - 28 Feb 2009
 - all files related to the msvc and autotools build systems are removed
 - support for cmake added (CMakeLists.txt and antlr3config.h.cmake)
 
-Amorilia, 28 Feb 2009

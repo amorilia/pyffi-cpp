@@ -69,12 +69,20 @@
 #include    <antlr3tokenstream.h>
 #include    <antlr3baserecognizer.h>
 
+/* BEGIN CHANGES FOR PYFFI */
+#include <antlr3tokenqueue.h>
+/* END CHANGES FOR PYFFI */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef	struct ANTLR3_LEXER_struct
 {
+    /* BEGIN CHANGES FOR PYFFI */
+    TokenQueue tokenqueue;
+    /* END CHANGES FOR PYFFI */
+
     /** If there is a super structure that is implementing the
      *  lexer, then a pointer to it can be stored here in case
      *  implementing functions are overridden by this super structure.

@@ -75,6 +75,7 @@ set(antlr3c_LIB_SRCS
     src/antlr3stringstream.c
     src/antlr3tokenstream.c
     src/antlr3treeparser.c
-    src/antlr3ucs2inputstream.c)
+    src/antlr3ucs2inputstream.c
+    src/antlr3tokenqueue.c)
 
 add_library(antlr3c STATIC ${antlr3c_LIB_SRCS})
