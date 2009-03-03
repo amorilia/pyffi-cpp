@@ -70,7 +70,9 @@
 #include    <antlr3baserecognizer.h>
 
 /* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
 #include <antlr3tokenqueue.h>
+#endif
 /* END CHANGES FOR PYFFI */
 
 #ifdef __cplusplus
@@ -80,7 +82,9 @@ extern "C" {
 typedef	struct ANTLR3_LEXER_struct
 {
     /* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
     TokenQueue tokenqueue;
+#endif
     /* END CHANGES FOR PYFFI */
 
     /** If there is a super structure that is implementing the

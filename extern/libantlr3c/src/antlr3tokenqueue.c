@@ -64,3 +64,12 @@ pANTLR3_COMMON_TOKEN token_queue_pop(TokenQueue * pqueue)
   pqueue->buffer[pqueue->pos_begin++] = NULL;
   return token;
 }
+
+int token_queue_is_empty(TokenQueue * pqueue)
+{
+  if (pqueue->pos_begin == pqueue->pos_end) {
+    return 1;
+  } else {
+    return 0;
+  };
+}

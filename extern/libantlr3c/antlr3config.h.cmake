@@ -1,3 +1,7 @@
+/* Define to enable multiple tokens per lexer rule at a small performance
+   cost. For PyFFI this must always be enabled. */
+#define ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
+
 /* Define if ANTLR debugger not required */
 /* #undef ANTLR3_NODEBUGGER */
 

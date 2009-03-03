@@ -49,5 +49,6 @@ typedef struct TokenQueue_struct
 void token_queue_reset(TokenQueue * pqueue);
 void token_queue_push(TokenQueue * pqueue, pANTLR3_COMMON_TOKEN token);
 pANTLR3_COMMON_TOKEN token_queue_pop(TokenQueue * pqueue);
+int token_queue_is_empty(TokenQueue * pqueue);
 
 #endif

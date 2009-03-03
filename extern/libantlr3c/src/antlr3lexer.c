@@ -159,6 +159,15 @@ antlr3LexerNew(ANTLR3_UINT32 sizeHint, pANTLR3_RECOGNIZER_SHARED_STATE state)
     specialT->setType	  (specialT, ANTLR3_TOKEN_INVALID);
     specialT->factoryMade	= ANTLR3_TRUE;					// Prevent things trying to free() it
     specialT->strFactory    = NULL;
+
+    /* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
+    // initialize token queue
+    token_queue_reset(&lexer->tokenqueue);
+#endif
+    /* END CHANGES FOR PYFFI */
+
+
     return  lexer;
 }
 
@@ -354,6 +363,15 @@ nextToken	    (pANTLR3_TOKEN_SOURCE toksource)
 		}
 		
 	}
+
+	/* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
+	// pop token from queue
+	pANTLR3_LEXER lexer = (pANTLR3_LEXER)(toksource->super);
+	if (!token_queue_is_empty(&lexer->tokenqueue))
+	  tok = token_queue_pop(&lexer->tokenqueue);
+#endif
+	/* END CHANGES FOR PYFFI */
 
 	// return whatever token we have, which may be EOF
 	//
@@ -612,6 +630,13 @@ popCharStream   (pANTLR3_LEXER lexer)
 static void emitNew	    (pANTLR3_LEXER lexer,  pANTLR3_COMMON_TOKEN token)
 {
     lexer->rec->state->token    = token;	/* Voila!   */
+
+    /* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
+    // push token to queue
+    token_queue_push(&lexer->tokenqueue, token);
+#endif
+    /* END CHANGES FOR PYFFI */
 }
 
 static pANTLR3_COMMON_TOKEN
@@ -653,6 +678,13 @@ emit	    (pANTLR3_LEXER lexer)
 	token->custom		= lexer->rec->state->custom;
 
     lexer->rec->state->token	    = token;
+
+    /* BEGIN CHANGES FOR PYFFI */
+#ifdef ANLTR3_ENABLE_MULTIPLE_TOKENS_PER_LEXER_RULE
+    // push token to queue
+    token_queue_push(&lexer->tokenqueue, token);
+#endif
+    /* END CHANGES FOR PYFFI */
 
     return  token;
 }
