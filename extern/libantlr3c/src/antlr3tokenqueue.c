@@ -57,6 +57,7 @@ pANTLR3_COMMON_TOKEN token_queue_pop(TokenQueue * pqueue)
   if (pqueue->pos_begin == pqueue->pos_end) {
     //throw std::runtime_error("Cannot pop from empty queue.");
     ANTLR3_FPRINTF(stderr, "token_queue_pop: Error: Popping from empty token queue.\n");
+	return NULL;
   };
   // pos_begin++ automatically wraps around 255
   pANTLR3_COMMON_TOKEN token = pqueue->buffer[pqueue->pos_begin];

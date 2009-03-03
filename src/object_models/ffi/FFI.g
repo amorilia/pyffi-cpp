@@ -178,6 +178,52 @@ NEWLINE
 
 */
 
+// C
+
+@lexer::members {
+    static int current_indent = 0;
+}
+
+NEWLINE
+@init {
+    int indent = 0;
+}
+    :
+        (
+            (('\f')? ('\r')? '\n'
+                {
+                    ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(NEWLINE));
+                }
+            )
+            |
+            ' ')*
+        (('\f')? ('\r')? '\n'
+            {
+                ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(NEWLINE));
+            }
+        )
+        ('    '
+            {
+                indent++;
+            }
+        )*
+        {   
+            if (indent == current_indent + 1) {
+                current_indent++;
+                ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(INDENT));
+            } else if (indent == current_indent) {
+            } else if (indent < current_indent) {
+                do {
+                    current_indent--;
+                    ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(DEDENT));
+                } while (indent < current_indent);
+            } else {
+                ANTLR3_FPRINTF(stderr, "NEWLINE: Error: Bad indentation!\n");
+                /* TODO: set lexer error state */
+            };
+        }
+    ;
+
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
