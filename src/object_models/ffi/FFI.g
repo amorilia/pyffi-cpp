@@ -182,24 +182,47 @@ NEWLINE
 
 @lexer::members {
     static int current_indent = 0;
+
+    // helper function to create token in lexer
+    // (this is adapted from the createToken function in 
+    pANTLR3_COMMON_TOKEN createLexerToken(pANTLR3_LEXER lexer, ANTLR3_UINT32 tokenType, pANTLR3_UINT8 text)
+    {
+        pANTLR3_COMMON_TOKEN    newToken;
+        
+        newToken = lexer->rec->state->tokFactory->newToken(lexer->rec->state->tokFactory);
+        
+        if (newToken != NULL)
+        {
+            newToken->type = tokenType;
+            newToken->input = lexer->rec->state->tokFactory->input;
+            if (text != NULL) {
+                newToken->textState = ANTLR3_TEXT_CHARP;
+                newToken->tokText.chars = (pANTLR3_UCHAR)text;
+            } else {
+                newToken->textState = ANTLR3_TEXT_NONE;
+            };
+        }
+        return  newToken;
+    }
 }
 
 NEWLINE
 @init {
     int indent = 0;
+    pANTLR3_LEXER lexer = ctx->pLexer;
 }
     :
         (
             (('\f')? ('\r')? '\n'
                 {
-                    ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(NEWLINE));
+                    lexer->emitNew(lexer, createLexerToken(lexer, NEWLINE, "\n"));
                 }
             )
             |
             ' ')*
         (('\f')? ('\r')? '\n'
             {
-                ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(NEWLINE));
+                lexer->emitNew(lexer, createLexerToken(lexer, NEWLINE, "\n"));
             }
         )
         ('    '
@@ -210,12 +233,12 @@ NEWLINE
         {   
             if (indent == current_indent + 1) {
                 current_indent++;
-                ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(INDENT));
+                lexer->emitNew(lexer, createLexerToken(lexer, INDENT, ">"));
             } else if (indent == current_indent) {
             } else if (indent < current_indent) {
                 do {
                     current_indent--;
-                    ctx->pLexer->emitNew(ctx->pLexer, antlr3CommonTokenNew(DEDENT));
+                    lexer->emitNew(lexer, createLexerToken(lexer, DEDENT, "<"));
                 } while (indent < current_indent);
             } else {
                 ANTLR3_FPRINTF(stderr, "NEWLINE: Error: Bad indentation!\n");

@@ -65,20 +65,20 @@ FileFormat::FileFormat(const std::string & filename) {
 	lex = FFILexerNew(input);
 	if (lex == NULL) {
 		input->close(input);
-		throw runtime_error("Could not create lexer for '" + filename + "'.");
+		throw runtime_error("Could not create lexer for '" + filename + "' (insufficient memory?).");
 	};
 	tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
 	if (tokens == NULL) {
 		lex->free(lex);
 		input->close(input);
-		throw runtime_error("Could not create tokens for '" + filename + "'.");
+		throw runtime_error("Could not create tokens for '" + filename + "'. (insufficient memory?)");
 	};
 	parser = FFIParserNew(tokens);
 	if (parser == NULL) {
 		tokens->free(tokens);
 		lex->free(lex);
 		input->close(input);
-		throw runtime_error("Could not create parser for '" + filename + "'.");
+		throw runtime_error("Could not create parser for '" + filename + "'. (insufficient memory?)");
 	};
 	// parse the file
 	ffi_ast = parser->ffi(parser);
