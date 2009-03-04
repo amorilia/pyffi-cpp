@@ -32,44 +32,53 @@
 
 #include <antlr3tokenqueue.h>
 
-void token_queue_reset(pTokenQueue pqueue)
-{
-  int i;
+void token_queue_reset(pTokenQueue pqueue) {
+	int i;
 
-  pqueue->pos_begin = 0;
-  pqueue->pos_end = 0;
-  for (i=0; i < 256; ++i) pqueue->buffer[i] = NULL;
+	pqueue->pos_begin = 0;
+	pqueue->pos_end = 0;
+	for (i=0; i < 256; ++i) pqueue->buffer[i] = NULL;
 }
 
-void token_queue_push(pTokenQueue pqueue, pANTLR3_COMMON_TOKEN token)
-{
-  if (pqueue->pos_begin == pqueue->pos_end + 1) {
-    //throw std::runtime_error("Cannot push to full queue.");
-    ANTLR3_FPRINTF(stderr, "token_queue_push: Error: Pushing to full token queue. Some tokens will be lost!\n");
-  };
-  // pos_end++ automatically wraps around 255
-  pqueue->buffer[pqueue->pos_end++] = token;
+void token_queue_push(pTokenQueue pqueue, pANTLR3_COMMON_TOKEN token) {
+	// pos_end++ automatically wraps around 255
+	pqueue->buffer[pqueue->pos_end++] = token;
+	if (pqueue->pos_begin == pqueue->pos_end) {
+		// revert action and report error
+		pqueue->buffer[--pqueue->pos_end] = NULL;
+		//throw std::runtime_error("Cannot push to full queue.");
+		ANTLR3_FPRINTF(stderr, "token_queue_push: Error: Pushing to full token queue. Some tokens will be lost!\n");
+		return;
+	};
 }
 
-
-pANTLR3_COMMON_TOKEN token_queue_pop(pTokenQueue pqueue)
-{
-  if (pqueue->pos_begin == pqueue->pos_end) {
-    //throw std::runtime_error("Cannot pop from empty queue.");
-    ANTLR3_FPRINTF(stderr, "token_queue_pop: Error: Popping from empty token queue.\n");
-	return NULL;
-  };
-  // pos_begin++ automatically wraps around 255
-  pANTLR3_COMMON_TOKEN token = pqueue->buffer[pqueue->pos_begin];
-  pqueue->buffer[pqueue->pos_begin++] = NULL;
-  return token;
+pANTLR3_COMMON_TOKEN token_queue_pop(pTokenQueue pqueue) {
+	if (pqueue->pos_begin == pqueue->pos_end) {
+		//throw std::runtime_error("Cannot pop from empty queue.");
+		ANTLR3_FPRINTF(stderr, "token_queue_pop: Error: Popping from empty token queue.\n");
+		return NULL;
+	};
+	// pos_begin++ automatically wraps around 255
+	pANTLR3_COMMON_TOKEN token = pqueue->buffer[pqueue->pos_begin];
+	pqueue->buffer[pqueue->pos_begin++] = NULL;
+	return token;
 }
 
-int token_queue_is_empty(pTokenQueue pqueue)
-{
-  if (pqueue->pos_begin == pqueue->pos_end) {
-    return 1;
-  } else {
-    return 0;
-  };
+int token_queue_is_empty(pTokenQueue pqueue) {
+	if (pqueue->pos_begin == pqueue->pos_end) {
+		return 1;
+	} else {
+		return 0;
+	};
+}
+
+int token_queue_is_full(pTokenQueue pqueue) {
+	pqueue->pos_end++;
+	if (pqueue->pos_begin == pqueue->pos_end) {
+		pqueue->pos_end--;
+		return 1;
+	} else {
+		pqueue->pos_end--;
+		return 0;
+	};
 }

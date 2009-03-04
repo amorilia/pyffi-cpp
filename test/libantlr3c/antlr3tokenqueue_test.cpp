@@ -39,6 +39,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
+#include <iostream>
+
 #include "antlr3tokenqueue.h"
 
 BOOST_AUTO_TEST_SUITE(tokenqueue_test_suite)
@@ -108,6 +110,42 @@ BOOST_AUTO_TEST_CASE(fifo_test2) {
 	BOOST_CHECK_EQUAL(token_queue_pop(&tq), &tok2);
 	BOOST_CHECK_EQUAL(token_queue_pop(&tq), &tok1);
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+}
+
+BOOST_AUTO_TEST_CASE(pop_empty_test) {
+	TokenQueue tq;
+	token_queue_reset(&tq);
+
+	// pop from an empty buffer, returns NULL
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+	BOOST_CHECK_EQUAL(token_queue_pop(&tq), (void*)NULL);
+}
+
+BOOST_AUTO_TEST_CASE(push_full_test) {
+	TokenQueue tq;
+	token_queue_reset(&tq);
+	ANTLR3_COMMON_TOKEN tok1;
+	ANTLR3_COMMON_TOKEN tok2;
+
+	// push buffer until full (note: the actual implementation only allows 254 entries)
+	int i;
+	for (i=0; i<10000; i++) {
+		token_queue_push(&tq, &tok1);
+		if (token_queue_is_full(&tq))
+			break;
+	};
+	// check maximal length of buffer
+	BOOST_CHECK_EQUAL(i, 254);
+	// try pushing; this should not do anything and leave the queue unaffected
+	token_queue_push(&tq, &tok2);
+	// popping should return all original tokens
+	for (; i>=0; i--) {
+		BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 0);
+		BOOST_CHECK_EQUAL(token_queue_pop(&tq), &tok1);
+	};
+	// no more tokens can be popped
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+	BOOST_CHECK_EQUAL(token_queue_pop(&tq), (void*)NULL);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
