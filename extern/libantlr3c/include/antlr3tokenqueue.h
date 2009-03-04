@@ -36,9 +36,13 @@
 #include <antlr3defs.h>
 #include <antlr3commontoken.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct TokenQueue_struct TokenQueue, * pTokenQueue;
 
-// a token queue (first in last out)
+// a token queue (first in first out)
 // implemented as a circular buffer of size 256
 // http://en.wikipedia.org/wiki/Circular_buffer
 struct TokenQueue_struct
@@ -52,6 +56,10 @@ void token_queue_reset(pTokenQueue pqueue);
 void token_queue_push(pTokenQueue pqueue, pANTLR3_COMMON_TOKEN token);
 pANTLR3_COMMON_TOKEN token_queue_pop(pTokenQueue pqueue);
 int token_queue_is_empty(pTokenQueue pqueue);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
 
