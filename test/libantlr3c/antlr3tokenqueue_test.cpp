@@ -115,10 +115,22 @@ BOOST_AUTO_TEST_CASE(fifo_test2) {
 BOOST_AUTO_TEST_CASE(pop_empty_test) {
 	TokenQueue tq;
 	token_queue_reset(&tq);
+	ANTLR3_COMMON_TOKEN tok1;
 
 	// pop from an empty buffer, returns NULL
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 	BOOST_CHECK_EQUAL(token_queue_pop(&tq), (void*)NULL);
+	// still empty
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+	// push something
+	token_queue_push(&tq, &tok1);
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 0);
+	// pop
+	BOOST_CHECK_EQUAL(token_queue_pop(&tq), &tok1);
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+	// pop again (once more from empty queue)
+	BOOST_CHECK_EQUAL(token_queue_pop(&tq), (void*)NULL);
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
 BOOST_AUTO_TEST_CASE(push_full_test) {
@@ -127,7 +139,7 @@ BOOST_AUTO_TEST_CASE(push_full_test) {
 	ANTLR3_COMMON_TOKEN tok1;
 	ANTLR3_COMMON_TOKEN tok2;
 
-	// push buffer until full (note: the actual implementation only allows 254 entries)
+	// push buffer until full (note: implementation allows 255 entries)
 	int i;
 	for (i=0; i<10000; i++) {
 		token_queue_push(&tq, &tok1);
@@ -135,17 +147,21 @@ BOOST_AUTO_TEST_CASE(push_full_test) {
 			break;
 	};
 	// check maximal length of buffer
-	BOOST_CHECK_EQUAL(i, 254);
-	// try pushing; this should not do anything and leave the queue unaffected
+	BOOST_CHECK_EQUAL(i, 254); // 255 entries: 0, 1, ..., 254
+	// try pushing; this should leave the queue unaffected
 	token_queue_push(&tq, &tok2);
-	// popping should return all original tokens
+	// check that previous action had no effect by popping and checking
+	// all tokens
 	for (; i>=0; i--) {
 		BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 0);
 		BOOST_CHECK_EQUAL(token_queue_pop(&tq), &tok1);
 	};
-	// no more tokens can be popped
+	// check that no more tokens can be popped
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 	BOOST_CHECK_EQUAL(token_queue_pop(&tq), (void*)NULL);
+	// remains empty after failed pop
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
