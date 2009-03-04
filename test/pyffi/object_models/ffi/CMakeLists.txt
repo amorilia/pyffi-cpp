@@ -5,5 +5,5 @@ foreach(TEST ffi_test)
     # the ffi files reside in the source directory
     # so we run the actual test from that directory
     # (the default is from the binary directory)
-    add_test(object_models::ffi::${TEST} ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
+    add_test(pyffi::object_models::ffi::${TEST} ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
 endforeach()
