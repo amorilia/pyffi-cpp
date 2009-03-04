@@ -32,7 +32,7 @@
 
 #include <antlr3tokenqueue.h>
 
-void token_queue_reset(TokenQueue * pqueue)
+void token_queue_reset(pTokenQueue pqueue)
 {
   int i;
 
@@ -41,7 +41,7 @@ void token_queue_reset(TokenQueue * pqueue)
   for (i=0; i < 256; ++i) pqueue->buffer[i] = NULL;
 }
 
-void token_queue_push(TokenQueue * pqueue, pANTLR3_COMMON_TOKEN token)
+void token_queue_push(pTokenQueue pqueue, pANTLR3_COMMON_TOKEN token)
 {
   if (pqueue->pos_begin == pqueue->pos_end + 1) {
     //throw std::runtime_error("Cannot push to full queue.");
@@ -52,7 +52,7 @@ void token_queue_push(TokenQueue * pqueue, pANTLR3_COMMON_TOKEN token)
 }
 
 
-pANTLR3_COMMON_TOKEN token_queue_pop(TokenQueue * pqueue)
+pANTLR3_COMMON_TOKEN token_queue_pop(pTokenQueue pqueue)
 {
   if (pqueue->pos_begin == pqueue->pos_end) {
     //throw std::runtime_error("Cannot pop from empty queue.");
@@ -65,7 +65,7 @@ pANTLR3_COMMON_TOKEN token_queue_pop(TokenQueue * pqueue)
   return token;
 }
 
-int token_queue_is_empty(TokenQueue * pqueue)
+int token_queue_is_empty(pTokenQueue pqueue)
 {
   if (pqueue->pos_begin == pqueue->pos_end) {
     return 1;
