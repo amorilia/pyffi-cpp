@@ -112,6 +112,22 @@ BOOST_AUTO_TEST_CASE(fifo_test2) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
+BOOST_AUTO_TEST_CASE(fifo_test3) {
+	TokenQueue tq;
+	token_queue_reset(&tq);
+	ANTLR3_COMMON_TOKEN toklist[100];
+
+	// stress test! push and pop 100 tokens 1000 times
+	for (int i = 0; i < 1000; i++) {
+		BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+		for (int j = 0; j < 100; j++)
+			token_queue_push(&tq, &toklist[j]);
+		for (int j = 0; j < 100; j++)
+			BOOST_CHECK_EQUAL(token_queue_pop(&tq), &toklist[j]);
+	};
+	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
+}
+
 BOOST_AUTO_TEST_CASE(pop_empty_test) {
 	TokenQueue tq;
 	token_queue_reset(&tq);
@@ -141,7 +157,7 @@ BOOST_AUTO_TEST_CASE(push_full_test) {
 
 	// push buffer until full (note: implementation allows 255 entries)
 	int i;
-	for (i=0; i<10000; i++) {
+	for (i = 0; i < 10000; i++) {
 		token_queue_push(&tq, &tok1);
 		if (token_queue_is_full(&tq))
 			break;
