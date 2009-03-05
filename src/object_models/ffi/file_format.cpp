@@ -54,13 +54,13 @@ namespace ffi {
  * Helper functions for parsing the syntax tree.
  */
 
-std::string getDoc(const pANTLR3_BASE_TREE & tree) {
+std::string getFileFormatDoc(pANTLR3_BASE_TREE ast) {
 	// TODO
 	return std::string("");
 };
 
-std::string getName(pANTLR3_BASE_TREE tree) {
-	pANTLR3_BASE_TREE name_node = (pANTLR3_BASE_TREE)tree->getFirstChildWithType(tree, FORMATNAME);
+std::string getFileFormatName(pANTLR3_BASE_TREE ast) {
+	pANTLR3_BASE_TREE name_node = (pANTLR3_BASE_TREE)ast->getFirstChildWithType(ast, FORMATNAME);
 	if (name_node == NULL) {
 		throw runtime_error("Bug: Failed to get name.");
 	};
@@ -77,7 +77,7 @@ FileFormat::FileFormat(const std::string & filename) {
 	pFFILexer lex;
 	pANTLR3_COMMON_TOKEN_STREAM tokens;
 	pFFIParser parser;
-	FFIParser_ffi_return_struct ffi_ast;
+	pANTLR3_BASE_TREE ast;
 
 	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
 	if (input == NULL) {
@@ -102,7 +102,7 @@ FileFormat::FileFormat(const std::string & filename) {
 		throw runtime_error("Could not create parser for '" + filename + "' (insufficient memory?).");
 	};
 	// parse the file
-	ffi_ast = parser->ffi(parser);
+	ast = parser->ffi(parser).tree;
 	// check that parsing succeeded
 	if (parser->pParser->rec->state->errorCount > 0) {
 		parser->free(parser);
@@ -113,9 +113,9 @@ FileFormat::FileFormat(const std::string & filename) {
 	};
 
 	// for debugging
-	//printf("Abstract syntax tree: \n%s\n\n", ffi_ast.tree->toStringTree(ffi_ast.tree)->chars);
+	printf("Abstract syntax tree: \n%s\n\n", ast->toStringTree(ast)->chars);
 
-	name = getName(ffi_ast.tree);
+	name = getFileFormatName(ast);
 
 	// TODO: run over the syntax tree and create meta classes etc.
 

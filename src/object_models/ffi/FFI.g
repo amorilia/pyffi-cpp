@@ -252,11 +252,11 @@ NEWLINE
  *------------------------------------------------------------------*/
 
 ffi
-    :   formatdefine declarations EOF
+    :   formatdefine declarations EOF!
     ;
 
 formatdefine
-    :   longdoc FILEFORMAT FORMATNAME shortdoc
+    :   longdoc FILEFORMAT FORMATNAME shortdoc -> ^(FORMATNAME longdoc shortdoc)
     ;
 
 declarations
@@ -268,14 +268,14 @@ declarations
 // it includes the newline(s) that follow the definition (this makes the other parser
 // rules a bit simpler).
 shortdoc
-    :   SHORTDOC? NEWLINE+
+    :   SHORTDOC? (NEWLINE!)+
     ;
 
 // Documentation preceeding a definition, with single newline following each line of text
 // the number of lines in the documentation is arbitrary, also zero lines is possible (i.e.
 // no documentation at all).
 longdoc
-    :   (SHORTDOC NEWLINE)*
+    :   (SHORTDOC NEWLINE!)*
     ;
 
 typeblock
