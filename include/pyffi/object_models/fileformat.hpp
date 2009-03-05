@@ -35,51 +35,39 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FORMAT_HPP_INCLUDED
-#define PYFFI_OM_FORMAT_HPP_INCLUDED
+#ifndef PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
+#define PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
 
-#include <vector>
-#include <map>
-#include <boost/shared_ptr.hpp>
-
-#include "../exceptions.hpp"
-#include "meta_struct.hpp"
+#include "pyffi/exceptions.hpp"
+#include "pyffi/object_models/object_map.hpp"
+/* TODO
+#include "pyffi/object_models/meta_struct.hpp"
+#include "pyffi/object_models/struct.hpp"
+*/
 
 namespace pyffi {
 
 namespace object_models {
 
 //! Stores all information attached to a format.
-class FileFormat {
+class FileFormat : private ObjectMap {
 public:
 	//! The name of the format (nif, cgf, tga, dds, ...)
-	static string name = "";
-
-	//! Add an attribute to the structure.
-	PMetaStruct add_struct(const std::string & name) {
-		// calculate index of new meta struct
-		// and store index
-		index_map[name] = meta_structs.size();
+	std::string name;
+/* TODO
+	//! Add a structure declaration.
+	PMetaStruct struct_(const std::string & name) {
 		// create and store the meta struct
 		PMetaStruct meta_struct(new MetaStruct);
-		meta_structs.push_back(meta_struct);
+		ObjectMap::add(meta_struct);
 		return meta_struct;
 	};
-	PMetaStruct get_struct(const std::string & name) {
-		std::map<std::string, unsigned int>::const_iterator index
-		= index_map.find(name);
-		if (index != index_map.end()) {
-			return meta_structs[index->second];
-		} else {
-			throw name_error("Format has no struct \"" + name + "\".");
-		};
-	}
-private:
-	//! Maps string name to their index as they have been added.
-	std::map<std::string, unsigned int> index_map;
-	//! List of meta structs as they have been added.
-	std::vector<PMetaStruct> meta_structs;
-}; // class Format
+	//! Instantiate a structure.
+	Struct instantiate(const std::string & name) {
+		return Struct(ObjectMap::get<PMetaStruct>(name));
+	};
+*/
+}; // class FileFormat
 
 }; // namespace object_models
 

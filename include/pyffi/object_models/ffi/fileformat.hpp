@@ -35,8 +35,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FFI_FILEFORMAT_HPP_INCLUDED
-#define PYFFI_OM_FFI_FILEFORMAT_HPP_INCLUDED
+#ifndef PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
+#define PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
+
+#include "pyffi/object_models/fileformat.hpp"
 
 namespace pyffi {
 
@@ -44,10 +46,10 @@ namespace object_models {
 
 namespace ffi {
 
-class FileFormat {
+class FileFormat : public pyffi::object_models::FileFormat {
 public:
 	FileFormat(const std::string & filename);
-};
+}; // class FileFormat
 
 }; // namespace ffi
 
