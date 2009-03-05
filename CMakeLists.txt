@@ -41,7 +41,7 @@ include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 
 # build the actual library
 add_library(pyffi
-    src/object_models/ffi/fileformat.cpp
+    src/object_models/ffi/file_format.cpp
     ${PYFFI_BINARY_DIR}/FFILexer.c
     ${PYFFI_BINARY_DIR}/FFIParser.c)
 target_link_libraries(pyffi antlr3c)

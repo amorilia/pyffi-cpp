@@ -40,7 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/test/unit_test.hpp>
 
 #include "pyffi/exceptions.hpp"
-#include "pyffi/object_models/ffi/fileformat.hpp"
+#include "pyffi/object_models/ffi/file_format.hpp"
 
 using namespace pyffi::object_models::ffi;
 

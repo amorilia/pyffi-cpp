@@ -35,10 +35,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
-#define PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
+#include <string>
 
-#include "pyffi/object_models/fileformat.hpp"
+#include "pyffi/object_models/ffi/file_format.hpp"
+#include "pyffi/exceptions.hpp"
+
+#include "antlr3.h"
+#include "FFILexer.h"
+#include "FFIParser.h"
 
 namespace pyffi {
 
@@ -46,15 +50,58 @@ namespace object_models {
 
 namespace ffi {
 
-class FileFormat : public pyffi::object_models::FileFormat {
-public:
-	FileFormat(const std::string & filename);
-}; // class FileFormat
+FileFormat::FileFormat(const std::string & filename) {
+	// set up the antlr structures
+	pANTLR3_INPUT_STREAM input;
+	pFFILexer lex;
+	pANTLR3_COMMON_TOKEN_STREAM tokens;
+	pFFIParser parser;
+	FFIParser_ffi_return_struct ffi_ast;
+
+	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
+	if (input == NULL) {
+		throw io_error("Could not open '" + filename + "'.");
+	};
+	lex = FFILexerNew(input);
+	if (lex == NULL) {
+		input->close(input);
+		throw runtime_error("Could not create lexer for '" + filename + "' (insufficient memory?).");
+	};
+	tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
+	if (tokens == NULL) {
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create tokens for '" + filename + "' (insufficient memory?).");
+	};
+	parser = FFIParserNew(tokens);
+	if (parser == NULL) {
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create parser for '" + filename + "' (insufficient memory?).");
+	};
+	// parse the file
+	ffi_ast = parser->ffi(parser);
+	// check that parsing succeeded
+	if (parser->pParser->rec->state->errorCount > 0) {
+		parser->free(parser);
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw syntax_error("Syntax error while parsing '" + filename + "'.");
+	};
+
+	// TODO: run over the syntax tree and create meta classes etc.
+
+	// release memory
+	parser->free(parser);
+	tokens->free(tokens);
+	lex->free(lex);
+	input->close(input);
+};
 
 }; // namespace ffi
 
 }; // namespace object_models
 
 }; // namespace pyffi
-
-#endif
