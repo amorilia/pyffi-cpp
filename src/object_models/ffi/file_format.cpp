@@ -50,6 +50,27 @@ namespace object_models {
 
 namespace ffi {
 
+/*
+ * Helper functions for parsing the syntax tree.
+ */
+
+std::string getDoc(const pANTLR3_BASE_TREE & tree) {
+	// TODO
+	return std::string("");
+};
+
+std::string getName(pANTLR3_BASE_TREE tree) {
+	pANTLR3_BASE_TREE name_node = (pANTLR3_BASE_TREE)tree->getFirstChildWithType(tree, FORMATNAME);
+	if (name_node == NULL) {
+		throw runtime_error("Bug: Failed to get name.");
+	};
+	return std::string((const char *)name_node->getText(name_node)->chars);
+};
+
+/*
+ * Main entry point for parsing.
+ */
+
 FileFormat::FileFormat(const std::string & filename) {
 	// set up the antlr structures
 	pANTLR3_INPUT_STREAM input;
@@ -90,6 +111,11 @@ FileFormat::FileFormat(const std::string & filename) {
 		input->close(input);
 		throw syntax_error("Syntax error while parsing '" + filename + "'.");
 	};
+
+	// for debugging
+	//printf("Abstract syntax tree: \n%s\n\n", ffi_ast.tree->toStringTree(ffi_ast.tree)->chars);
+
+	name = getName(ffi_ast.tree);
 
 	// TODO: run over the syntax tree and create meta classes etc.
 

@@ -35,42 +35,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
-#define PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
-#include "pyffi/exceptions.hpp"
-#include "pyffi/object_models/object_map.hpp"
-/* TODO
-#include "pyffi/object_models/meta_struct.hpp"
-#include "pyffi/object_models/struct.hpp"
-*/
+#include "pyffi/object_models/ffi/file_format.hpp"
 
-namespace pyffi {
+using namespace pyffi::object_models::ffi;
 
-namespace object_models {
+BOOST_AUTO_TEST_SUITE(file_format_name_test_suite)
 
-//! Stores all information attached to a format.
-class FileFormat : private ObjectMap {
-public:
-	//! The name of the format (nif, cgf, tga, dds, ...)
-	std::string name;
-	/* TODO
-		//! Add a structure declaration.
-		PMetaStruct struct_(const std::string & name) {
-			// create and store the meta struct
-			PMetaStruct meta_struct(new MetaStruct);
-			ObjectMap::add(meta_struct);
-			return meta_struct;
-		};
-		//! Instantiate a structure.
-		Struct instantiate(const std::string & name) {
-			return Struct(ObjectMap::get<PMetaStruct>(name));
-		};
-	*/
-}; // class FileFormat
+BOOST_AUTO_TEST_CASE(name_test) {
+	FileFormat ff("test_name.ffi");
+	BOOST_CHECK_EQUAL(ff.name, "AFORMATNAMETEST123");
+}
 
-}; // namespace object_models
-
-}; // namespace pyffi
-
-#endif
+BOOST_AUTO_TEST_SUITE_END()

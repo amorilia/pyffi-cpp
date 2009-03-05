@@ -1,5 +1,5 @@
 # run the tests
-foreach(TEST ffi_test)
+foreach(TEST ffi_test file_format_name_test)
     add_executable(${TEST} ${TEST}.cpp)
     target_link_libraries (${TEST} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pyffi)
     # the ffi files reside in the source directory
