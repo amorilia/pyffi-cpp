@@ -14,6 +14,12 @@ tokens {
     // emitted when indentation decreases
     // see NEWLINE for details
     DEDENT;
+    // virtual token that serves as head node of documentation
+    DOC;
+    // virtual token that serves as head node of a field
+    FIELD;
+    FIELDARG;
+    FIELDARGS;
     // keywords
     CLASS='class';
     ELIF='elif';
@@ -256,7 +262,8 @@ ffi
     ;
 
 formatdefine
-    :   longdoc FILEFORMAT FORMATNAME shortdoc -> ^(FORMATNAME longdoc shortdoc)
+    :   longdoc FILEFORMAT FORMATNAME (',' FORMATNAME)* shortdoc
+        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME FORMATNAME*)
     ;
 
 declarations
@@ -279,15 +286,16 @@ longdoc
     ;
 
 typeblock
-    :   TYPE blockbegin typedefine+ blockend
+    :   TYPE! blockbegin! typedefine+ blockend!
     ;
 
 parameterblock
-    :   PARAMETER blockbegin fielddefine+ blockend
+    :   PARAMETER! blockbegin! fielddefine+ blockend!
     ;
 
 classblock
     :   longdoc CLASS TYPENAME blockbegin declarations class_fielddefines blockend
+        -> ^(CLASS ^(DOC longdoc) TYPENAME declarations class_fielddefines)
     ;
 
 blockbegin
@@ -300,18 +308,22 @@ blockend
 
 typedefine
     :   longdoc TYPENAME shortdoc // basic type
-    |   longdoc TYPENAME '=' TYPENAME shortdoc // alias
+        -> ^(TYPE ^(DOC longdoc shortdoc) TYPENAME)
+    |   longdoc alias=TYPENAME '=' orig=TYPENAME shortdoc // alias
+        -> ^(TYPE ^(DOC longdoc shortdoc) $alias $orig)
     ;
 
 fielddefine
     :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
+        -> ^(FIELD ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 class_fielddefines_ifelifelse_fragment
     :
-        IF expression blockbegin class_fielddefines blockend
-        (ELIF expression blockbegin class_fielddefines blockend)*
-        (ELSE blockbegin class_fielddefines blockend)?
+        IF ifexp=expression blockbegin ifdefines=class_fielddefines blockend
+        (ELIF elifexp=expression blockbegin elifdefines=class_fielddefines blockend)*
+        (ELSE blockbegin elsedefines=class_fielddefines blockend)?
+        -> ^(IF $ifexp $ifdefines ^(ELIF $elifexp $elifdefines) ^(ELSE $elsedefines))
     ;
 
 class_fielddefines
@@ -320,10 +332,12 @@ class_fielddefines
 
 kwarg
     :   VARIABLENAME '=' expression
+        -> ^(FIELDARG VARIABLENAME expression)
     ;
 
 fieldparameters
     :   '(' kwarg (',' kwarg)* ')'
+        -> ^(FIELDARGS kwarg kwarg*)
     ;
 
 // TODO: operators such as and, or, not, ...
@@ -381,17 +395,18 @@ COLON
     ;
 
 fragment
-LCLETTER:   'a'..'z'
+LCLETTER
+    :   'a'..'z'
     ;
 
 fragment
-UCLETTER:   'A'..'Z'
+UCLETTER
+    :   'A'..'Z'
     ;
 
-// UPPERCASE for format name
-
+// format name (this identifies the file extension)
 FORMATNAME
-    :   UCLETTER (UCLETTER | DIGITS)*
+    :   (UCLETTER | DIGITS | '_')+
     ;
 
 // lower_case_with_underscores for variable names (e.g. fields)
