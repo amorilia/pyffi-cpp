@@ -51,4 +51,21 @@ BOOST_AUTO_TEST_CASE(name_test) {
 	BOOST_CHECK_EQUAL(ff.extensions.front(), "AFORMATNAMETEST123");
 }
 
+BOOST_AUTO_TEST_CASE(multi_name_test) {
+	FileFormat ff("test_multi_name.ffi");
+	BOOST_CHECK_EQUAL(ff.extensions.size(), 6);
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "AFORMATNAMETEST123");
+	ff.extensions.pop_front();
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "AND");
+	ff.extensions.pop_front();
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "A");
+	ff.extensions.pop_front();
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "FEW");
+	ff.extensions.pop_front();
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "OTHER");
+	ff.extensions.pop_front();
+	BOOST_CHECK_EQUAL(ff.extensions.front(), "ONES");
+	ff.extensions.pop_front();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
