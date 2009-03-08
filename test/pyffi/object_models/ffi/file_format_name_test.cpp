@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_SUITE(file_format_name_test_suite)
 
 BOOST_AUTO_TEST_CASE(name_test) {
 	FileFormat ff("test_name.ffi");
+	BOOST_CHECK_EQUAL(ff.extensions.size(), 1);
 	BOOST_CHECK_EQUAL(ff.extensions.front(), "AFORMATNAMETEST123");
 }
 

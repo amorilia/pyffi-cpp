@@ -12,28 +12,30 @@ options {
  * PARSER RULES
  *------------------------------------------------------------------*/
 
-scope GlobalScope {
-    FileFormat *ff;
-}
-
 @includes {
     #include "pyffi/object_models/ffi/file_format.hpp"
-	using namespace pyffi::object_models::ffi;
+    using namespace pyffi::object_models::ffi;
+}
+
+@members {
+    // convert antlr string to std::string
+    std::string get_string(pANTLR3_STRING s) {
+        return std::string((const char *)s->chars); 
+    };
 }
 
 ffi[FileFormat *ff]
-scope GlobalScope;
-@init {
-    $GlobalScope::ff = ff;
-}
-    :   formatdefine declarations
+    :   formatdefine[ff] declarations
     ;
 
-formatdefine
-scope GlobalScope;
+formatdefine[FileFormat *ff]
     :   ^(FILEFORMAT 
             ^(DOC SHORTDOC*)
-            (name=FORMATNAME {$GlobalScope::ff->extensions.push_back((const char *)$name.text->chars);})+
+            (n=FORMATNAME
+                {
+                    ff->extensions.push_back(get_string($n.text));
+                }
+            )+
         )
     ;
 

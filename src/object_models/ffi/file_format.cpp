@@ -58,12 +58,13 @@ namespace ffi {
 
 FileFormat::FileFormat(const std::string & filename) {
 	// set up the antlr structures
-	pANTLR3_INPUT_STREAM input;
-	pFFILexer lex;
-	pANTLR3_COMMON_TOKEN_STREAM tokens;
-	pFFIParser parser;
-	pFFIFileFormat walker;
-	pANTLR3_BASE_TREE ast;
+	pANTLR3_INPUT_STREAM input = NULL;
+	pFFILexer lex = NULL;
+	pANTLR3_COMMON_TOKEN_STREAM tokens = NULL;
+	pFFIParser parser = NULL;
+	pANTLR3_BASE_TREE ast = NULL;
+	pANTLR3_COMMON_TREE_NODE_STREAM nodes = NULL;
+	pFFIFileFormat walker = NULL;
 
 	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
 	if (input == NULL) {
@@ -101,13 +102,32 @@ FileFormat::FileFormat(const std::string & filename) {
 	// for debugging
 	printf("Abstract syntax tree: \n%s\n\n", ast->toStringTree(ast)->chars);
 
-	// TODO: run over the syntax tree and create meta classes etc.
+        nodes = antlr3CommonTreeNodeStreamNewTree(ast, ANTLR3_SIZE_HINT);
+	if (nodes == NULL) {
+	        parser->free(parser);
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create nodes for '" + filename + "' (insufficient memory?).");
+	};
+        walker = FFIFileFormatNew(nodes);
+	if (walker == NULL) {
+                nodes->free(nodes);
+	        parser->free(parser);
+		tokens->free(tokens);
+		lex->free(lex);
+		input->close(input);
+		throw runtime_error("Could not create walker for '" + filename + "' (insufficient memory?).");
+	};
+        walker->ffi(walker, this);
 
 	// release memory
-	parser->free(parser);
-	tokens->free(tokens);
-	lex->free(lex);
-	input->close(input);
+        if (walker) walker->free(walker);
+        if (nodes) nodes->free(nodes);
+	if (parser) parser->free(parser);
+	if (tokens) tokens->free(tokens);
+	if (lex) lex->free(lex);
+	if (input) input->close(input);
 };
 
 }; // namespace ffi

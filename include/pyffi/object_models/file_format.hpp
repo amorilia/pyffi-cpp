@@ -56,6 +56,7 @@ class FileFormat : private ObjectMap {
 public:
 	//! The file extensions of the format (nif, cgf, tga, dds, ...)
 	std::list<std::string> extensions;
+	FileFormat() : extensions() {};
 	/* TODO
 		//! Add a structure declaration.
 		PMetaStruct struct_(const std::string & name) {
