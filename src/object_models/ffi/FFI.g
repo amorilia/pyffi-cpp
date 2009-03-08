@@ -191,7 +191,7 @@ NEWLINE
 
     // helper function to create token in lexer
     // (this is adapted from the createToken function in 
-    pANTLR3_COMMON_TOKEN createLexerToken(pANTLR3_LEXER lexer, ANTLR3_UINT32 tokenType, pANTLR3_UINT8 text)
+    pANTLR3_COMMON_TOKEN createLexerToken(pANTLR3_LEXER lexer, ANTLR3_UINT32 tokenType, const char * text)
     {
         pANTLR3_COMMON_TOKEN    newToken;
         
