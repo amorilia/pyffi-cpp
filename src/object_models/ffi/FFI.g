@@ -3,7 +3,6 @@ grammar FFI;
 options {
     language=C;
     output=AST;
-    //ASTLabelType=CommonTree;
     ASTLabelType=pANTLR3_BASE_TREE;
 }
 
@@ -14,13 +13,11 @@ tokens {
     // emitted when indentation decreases
     // see NEWLINE for details
     DEDENT;
-    // virtual token that serves as head node of documentation
+
     DOC;
-    // virtual token that serves as head node of a field
-    FIELD;
+    FIELDDEF;
     FIELDARG;
-    FIELDARGS;
-    // keywords
+    FIELDARGLIST;
     CLASS='class';
     ELIF='elif';
     ELSE='else';
@@ -28,6 +25,7 @@ tokens {
     IF='if';
     PARAMETER='parameter';
     TYPE='type';
+    TYPEDEF;
 }
 
 // target specific code
@@ -263,11 +261,11 @@ ffi
 
 formatdefine
     :   longdoc FILEFORMAT FORMATNAME (',' FORMATNAME)* shortdoc
-        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME FORMATNAME*)
+        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME+)
     ;
 
 declarations
-    :   typeblock? parameterblock? classblock*
+    :   (typeblock | parameterblock | classblock)*
     ;
 
 // Short documentation following a definition, followed by one or more newlines.
@@ -286,11 +284,11 @@ longdoc
     ;
 
 typeblock
-    :   TYPE! blockbegin! typedefine+ blockend!
+    :   TYPE^ blockbegin! typedefine+ blockend!
     ;
 
 parameterblock
-    :   PARAMETER! blockbegin! fielddefine+ blockend!
+    :   PARAMETER^ blockbegin! fielddefine+ blockend!
     ;
 
 classblock
@@ -308,14 +306,14 @@ blockend
 
 typedefine
     :   longdoc TYPENAME shortdoc // basic type
-        -> ^(TYPE ^(DOC longdoc shortdoc) TYPENAME)
+        -> ^(TYPEDEF ^(DOC longdoc shortdoc) TYPENAME)
     |   longdoc alias=TYPENAME '=' orig=TYPENAME shortdoc // alias
-        -> ^(TYPE ^(DOC longdoc shortdoc) $alias $orig)
+        -> ^(TYPEDEF ^(DOC longdoc shortdoc) $alias $orig)
     ;
 
 fielddefine
     :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
-        -> ^(FIELD ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
+        -> ^(FIELDDEF ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 class_fielddefines_ifelifelse_fragment
@@ -337,7 +335,7 @@ kwarg
 
 fieldparameters
     :   '(' kwarg (',' kwarg)* ')'
-        -> ^(FIELDARGS kwarg kwarg*)
+        -> ^(FIELDARGLIST kwarg+)
     ;
 
 // TODO: operators such as and, or, not, ...

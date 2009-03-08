@@ -22,16 +22,25 @@ add_custom_command(
         ${PYFFI_BINARY_DIR}/FFILexer.h
         ${PYFFI_BINARY_DIR}/FFIParser.cpp
         ${PYFFI_BINARY_DIR}/FFIParser.h
-    DEPENDS ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFI.g
+        ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp
+        ${PYFFI_BINARY_DIR}/FFIFileFormat.h
+    DEPENDS
+        ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFI.g
+        ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFIFileFormat.g
     # copy grammar to build dir
     COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFI.g FFI.g
-    # generate lexer and parser
+    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFIFileFormat.g FFIFileFormat.g
+    # generate lexer, parser, and walker
     COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFI.g
+    COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFIFileFormat.g
     # change extension of files to force cmake to use C++ compiler
     COMMAND ${CMAKE_COMMAND} -E copy FFILexer.c FFILexer.cpp
     COMMAND ${CMAKE_COMMAND} -E copy FFIParser.c FFIParser.cpp
+    COMMAND ${CMAKE_COMMAND} -E copy FFIFileFormat.c FFIFileFormat.cpp
+    # patch for generated code
+    COMMAND patch -p0 < ${PYFFI_SOURCE_DIR}/FFIFileFormat.cpp.patch
     # clean up
-    COMMAND ${CMAKE_COMMAND} -E remove FFILexer.c FFIParser.c FFI.g FFI.tokens
+    COMMAND ${CMAKE_COMMAND} -E remove FFILexer.c FFIParser.c FFIFileFormat.c FFI.g FFIFileFormat.g FFI.tokens
     WORKING_DIRECTORY ${PYFFI_BINARY_DIR}
     COMMENT "Generating antlr3 lexer and parser from FFI.g")
 
@@ -48,7 +57,8 @@ include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 add_library(pyffi
     src/object_models/ffi/file_format.cpp
     ${PYFFI_BINARY_DIR}/FFILexer.cpp
-    ${PYFFI_BINARY_DIR}/FFIParser.cpp)
+    ${PYFFI_BINARY_DIR}/FFIParser.cpp
+    ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp)
 target_link_libraries(pyffi antlr3c)
 
 # build the pypyffi toy application

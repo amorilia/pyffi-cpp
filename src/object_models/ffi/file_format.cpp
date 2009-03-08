@@ -37,12 +37,14 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <string>
 
-#include "pyffi/object_models/ffi/file_format.hpp"
-#include "pyffi/exceptions.hpp"
-
 #include "antlr3.h"
+
 #include "FFILexer.h"
 #include "FFIParser.h"
+#include "FFIFileFormat.h"
+
+#include "pyffi/object_models/ffi/file_format.hpp"
+#include "pyffi/exceptions.hpp"
 
 namespace pyffi {
 
@@ -51,24 +53,7 @@ namespace object_models {
 namespace ffi {
 
 /*
- * Helper functions for parsing the syntax tree.
- */
-
-std::string getFileFormatDoc(pANTLR3_BASE_TREE ast) {
-	// TODO
-	return std::string("");
-};
-
-std::string getFileFormatName(pANTLR3_BASE_TREE ast) {
-	pANTLR3_BASE_TREE name_node = (pANTLR3_BASE_TREE)ast->getFirstChildWithType(ast, FORMATNAME);
-	if (name_node == NULL) {
-		throw runtime_error("Bug: Failed to get name.");
-	};
-	return std::string((const char *)name_node->getText(name_node)->chars);
-};
-
-/*
- * Main entry point for parsing.
+ * Main entry point for lexing, parsing, and walking.
  */
 
 FileFormat::FileFormat(const std::string & filename) {
@@ -77,6 +62,7 @@ FileFormat::FileFormat(const std::string & filename) {
 	pFFILexer lex;
 	pANTLR3_COMMON_TOKEN_STREAM tokens;
 	pFFIParser parser;
+	pFFIFileFormat walker;
 	pANTLR3_BASE_TREE ast;
 
 	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
@@ -114,8 +100,6 @@ FileFormat::FileFormat(const std::string & filename) {
 
 	// for debugging
 	printf("Abstract syntax tree: \n%s\n\n", ast->toStringTree(ast)->chars);
-
-	name = getFileFormatName(ast);
 
 	// TODO: run over the syntax tree and create meta classes etc.
 

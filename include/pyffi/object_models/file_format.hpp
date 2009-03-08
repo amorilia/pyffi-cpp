@@ -38,6 +38,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
 #define PYFFI_OM_FILE_FORMAT_HPP_INCLUDED
 
+#include <list>
+
 #include "pyffi/exceptions.hpp"
 #include "pyffi/object_models/object_map.hpp"
 /* TODO
@@ -52,8 +54,8 @@ namespace object_models {
 //! Stores all information attached to a format.
 class FileFormat : private ObjectMap {
 public:
-	//! The name of the format (nif, cgf, tga, dds, ...)
-	std::string name;
+	//! The file extensions of the format (nif, cgf, tga, dds, ...)
+	std::list<std::string> extensions;
 	/* TODO
 		//! Add a structure declaration.
 		PMetaStruct struct_(const std::string & name) {

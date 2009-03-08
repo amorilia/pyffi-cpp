@@ -1,0 +1,11 @@
+--- FFIFileFormat.cpp	2009-03-08 11:15:50.000000000 +0000
++++ FFIFileFormat.cpp	2009-03-08 11:16:29.000000000 +0000
+@@ -223,7 +223,7 @@
+         // we can just reuse one. Our limit tracks the stack count, so the index of the entry we want
+         // is one less than that, or conveniently, the current value of limit.
+         //
+-        newAttributes = ctx->pFFIFileFormat_GlobalScopeStack->get(ctx->pFFIFileFormat_GlobalScopeStack, ctx->pFFIFileFormat_GlobalScopeStack_limit);
++        newAttributes = (FFIFileFormat_GlobalScope_SCOPE_struct*)ctx->pFFIFileFormat_GlobalScopeStack->get(ctx->pFFIFileFormat_GlobalScopeStack, ctx->pFFIFileFormat_GlobalScopeStack_limit);
+     }
+     else
+     {
