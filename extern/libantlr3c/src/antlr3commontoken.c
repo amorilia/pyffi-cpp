@@ -60,6 +60,7 @@ static  pANTLR3_STRING  toString				(pANTLR3_COMMON_TOKEN token);
  */
 static	void			factoryClose	(pANTLR3_TOKEN_FACTORY factory);
 static	pANTLR3_COMMON_TOKEN	newToken	(void);
+static  void			setInputStream	(pANTLR3_TOKEN_FACTORY factory, pANTLR3_INPUT_STREAM input);
 
 /* Internal management functions
  */
@@ -105,6 +106,7 @@ antlr3TokenFactoryNew(pANTLR3_INPUT_STREAM input)
      */
     factory->newToken	    =  newPoolToken;
     factory->close			=  factoryClose;
+    factory->setInputStream = setInputStream;
     
     /* Allocate the initial pool
      */
@@ -123,11 +125,25 @@ antlr3TokenFactoryNew(pANTLR3_INPUT_STREAM input)
 
     // Input stream
     //
-    factory->input				=  input;
-    factory->unTruc.input       =  input;
+    setInputStream(factory, input);
     
     return  factory;
 
+}
+
+static void
+setInputStream	(pANTLR3_TOKEN_FACTORY factory, pANTLR3_INPUT_STREAM input)
+{
+    factory->input          =  input;
+    factory->unTruc.input   =  input;
+	if	(input != NULL)
+	{
+		factory->unTruc.strFactory	= input->strFactory;
+	}
+	else
+	{
+		factory->unTruc.strFactory = NULL;
+    }
 }
 
 static void
