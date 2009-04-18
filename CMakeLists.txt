@@ -25,11 +25,11 @@ add_custom_command(
         ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp
         ${PYFFI_BINARY_DIR}/FFIFileFormat.h
     DEPENDS
-        ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFI.g
-        ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFIFileFormat.g
+        ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g
+        ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.g
     # copy grammar to build dir
-    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFI.g FFI.g
-    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/object_models/ffi/FFIFileFormat.g FFIFileFormat.g
+    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g FFI.g
+    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.g FFIFileFormat.g
     # generate lexer, parser, and walker
     COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFI.g
     COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFIFileFormat.g
@@ -52,22 +52,12 @@ include_directories(${PYFFI_BINARY_DIR})
 include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 
 # build the actual library
-add_library(cpyffi
-    src/object_models/ffi/file_format.cpp
+add_library(pyffi
+    src/pyffi/object_models/ffi/file_format.cpp
     ${PYFFI_BINARY_DIR}/FFILexer.cpp
     ${PYFFI_BINARY_DIR}/FFIParser.cpp
     ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp)
-target_link_libraries(cpyffi antlr3c)
-
-add_library(pyffi SHARED
-    src/pyffi.cpp)
-set_target_properties(pyffi PROPERTIES PREFIX "")
-target_link_libraries(pyffi ${PYTHON_LIBRARIES} ${Boost_PYTHON_LIBRARY} cpyffi)
-
-# build the pypyffi toy application
-# (eventually this might go into a seperate project?)
-add_executable(pypyffi src/pypyffi.cpp)
-target_link_libraries(pypyffi ${PYTHON_LIBRARIES} ${Boost_PYTHON_LIBRARY} cpyffi)
+target_link_libraries(pyffi antlr3c)
 
 # build the tests
 enable_testing()
@@ -76,3 +66,5 @@ add_subdirectory(test)
 # build the benchmarks
 add_subdirectory(benchmark)
 
+# build other application(s) and python wrapper
+add_subdirectory(src)
