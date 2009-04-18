@@ -86,9 +86,9 @@ struct name_hash3 : std::unary_function<std::string, std::size_t> {
 	std::size_t operator()(std::string const & name) const {
 		std::size_t seed = 0;
 		try {
-			 seed ^= name.at(0);
-			 seed ^= name.at(2);
-			 seed ^= name.at(8);
+			seed ^= name.at(0);
+			seed ^= name.at(2);
+			seed ^= name.at(8);
 		} catch (const std::out_of_range &) {
 			// pass the exception
 		};

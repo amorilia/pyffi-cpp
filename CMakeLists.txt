@@ -52,17 +52,22 @@ include_directories(${PYFFI_BINARY_DIR})
 include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 
 # build the actual library
-add_library(pyffi
+add_library(cpyffi
     src/object_models/ffi/file_format.cpp
     ${PYFFI_BINARY_DIR}/FFILexer.cpp
     ${PYFFI_BINARY_DIR}/FFIParser.cpp
     ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp)
-target_link_libraries(pyffi antlr3c)
+target_link_libraries(cpyffi antlr3c)
+
+add_library(pyffi SHARED
+    src/pyffi.cpp)
+set_target_properties(pyffi PROPERTIES PREFIX "")
+target_link_libraries(pyffi ${PYTHON_LIBRARIES} ${Boost_PYTHON_LIBRARY} cpyffi)
 
 # build the pypyffi toy application
 # (eventually this might go into a seperate project?)
 add_executable(pypyffi src/pypyffi.cpp)
-target_link_libraries(pypyffi ${PYTHON_LIBRARIES} ${Boost_PYTHON_LIBRARY} pyffi)
+target_link_libraries(pypyffi ${PYTHON_LIBRARIES} ${Boost_PYTHON_LIBRARY} cpyffi)
 
 # build the tests
 enable_testing()

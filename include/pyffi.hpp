@@ -35,31 +35,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include <boost/python.hpp>
-#include "pyffi.hpp"
+#ifndef __PYFFI_HPP_INCLUDED
+#define __PYFFI_HPP_INCLUDED
 
+#include <boost/python.hpp>
 using namespace boost::python;
 
-int main(int argc, char **argv) {
-	try {
-		Py_Initialize();
-		// get namespace
-		object main_module = import("__main__");
-		object main_namespace = main_module.attr("__dict__");
+//! The main pyffi module.
+namespace pyffi {
 
-		// set some objects in the namespace
-		// - import all format namespaces
-		// - possibly, set up some convenience functions (load & save?)
-		// - perhaps, if called from for instance a gui, automatically load
-		//   data, and have it automatically saved upon exit of the
-		//   interpreter
-		// for now, just do a little test
-		// simply import the pyffi module
-		import("sys").attr("path").attr("append")(""); // make sure current dir is in path
-		main_namespace["pyffi"] = import("pyffi");
-		// start interactive console, using the main namespace
-		import("code").attr("InteractiveConsole")(main_namespace).attr("interact")();
-	} catch (error_already_set) {
-		PyErr_Print();
-	}
-}
+//! Version information.
+const std::string version = "1.2.4";
+const int hexversion = 0x00010204;
+
+}; // namespace pyffi
+
+#endif

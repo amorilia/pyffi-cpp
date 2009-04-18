@@ -102,28 +102,28 @@ FileFormat::FileFormat(const std::string & filename) {
 	// for debugging
 	printf("Abstract syntax tree: \n%s\n\n", ast->toStringTree(ast)->chars);
 
-        nodes = antlr3CommonTreeNodeStreamNewTree(ast, ANTLR3_SIZE_HINT);
+	nodes = antlr3CommonTreeNodeStreamNewTree(ast, ANTLR3_SIZE_HINT);
 	if (nodes == NULL) {
-	        parser->free(parser);
+		parser->free(parser);
 		tokens->free(tokens);
 		lex->free(lex);
 		input->close(input);
 		throw runtime_error("Could not create nodes for '" + filename + "' (insufficient memory?).");
 	};
-        walker = FFIFileFormatNew(nodes);
+	walker = FFIFileFormatNew(nodes);
 	if (walker == NULL) {
-                nodes->free(nodes);
-	        parser->free(parser);
+		nodes->free(nodes);
+		parser->free(parser);
 		tokens->free(tokens);
 		lex->free(lex);
 		input->close(input);
 		throw runtime_error("Could not create walker for '" + filename + "' (insufficient memory?).");
 	};
-        walker->ffi(walker, this);
+	walker->ffi(walker, this);
 
 	// release memory
-        if (walker) walker->free(walker);
-        if (nodes) nodes->free(nodes);
+	if (walker) walker->free(walker);
+	if (nodes) nodes->free(nodes);
 	if (parser) parser->free(parser);
 	if (tokens) tokens->free(tokens);
 	if (lex) lex->free(lex);
