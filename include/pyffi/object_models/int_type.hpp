@@ -73,7 +73,9 @@ public:
 	//! Assignment (from any integral type).
 	template<typename ValueType> IntType & operator=(const ValueType & value) {
 		if (boost::integer_traits<ValueType>::is_integral) {
-			if ((value >= boost::integer_traits<IntegralType>::const_min) && (value <= boost::integer_traits<IntegralType>::const_max)) {
+			// the intmax_t cast fixes a bug when comparing
+			// (uint32_t)0 with (int32_t)-1
+			if (((intmax_t)boost::integer_traits<IntegralType>::const_min <= value) && (value <= boost::integer_traits<IntegralType>::const_max)) {
 				Object::operator=((IntegralType)value);
 			} else {
 				// raise value error
@@ -101,7 +103,7 @@ public:
 		out.write((const char *)&buf, sizeof(buf));
 	};
 
-}; // class AnyType
+}; // class IntType
 
 }; // namespace object_models
 

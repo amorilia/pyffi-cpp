@@ -88,10 +88,91 @@ BOOST_AUTO_TEST_CASE(assign_by_value_test) {
 
 	// casting to incompatible type fails
 	BOOST_CHECK_THROW(i = 1.0f, type_error);
+}
 
+BOOST_AUTO_TEST_CASE(range_check_uint8_test) {
 	// range check error
-	BOOST_CHECK_THROW(i = 256, value_error);
+	IntType<uint8_t> i;
 	BOOST_CHECK_THROW(i = -1, value_error);
+	i = 0;
+	BOOST_CHECK_EQUAL(i.get(), 0);
+	i = 0xff;
+	BOOST_CHECK_EQUAL(i.get(), 0xff);
+	BOOST_CHECK_THROW(i = 0x100, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_uint16_test) {
+	IntType<uint16_t> i;
+	BOOST_CHECK_THROW(i = -1, value_error);
+	i = 0;
+	BOOST_CHECK_EQUAL(i.get(), 0);
+	i = 0xffff;
+	BOOST_CHECK_EQUAL(i.get(), 0xffff);
+	BOOST_CHECK_THROW(i = 0x10000, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_uint32_test) {
+	IntType<uint32_t> i;
+	BOOST_CHECK_THROW(i = -1, value_error);
+	i = 0;
+	BOOST_CHECK_EQUAL(i.get(), 0);
+	i = 0xffffffff;
+	BOOST_CHECK_EQUAL(i.get(), 0xffffffff);
+	BOOST_CHECK_THROW(i = 0x100000000, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_uint64_test) {
+	IntType<uint64_t> i;
+	BOOST_CHECK_THROW(i = -1, value_error);
+	i = 0;
+	BOOST_CHECK_EQUAL(i.get(), 0);
+	i = 0xffffffffffffffff;
+	BOOST_CHECK_EQUAL(i.get(), 0xffffffffffffffff);
+	// can't create constant with this value
+	//BOOST_CHECK_THROW(i = 0x10000000000000000LLL, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_int8_test) {
+	// range check error
+	IntType<int8_t> i;
+	BOOST_CHECK_THROW(i = -0x81, value_error);
+	i = -0x80;
+	BOOST_CHECK_EQUAL(i.get(), -0x80);
+	i = 0x7f;
+	BOOST_CHECK_EQUAL(i.get(), 0x7f);
+	BOOST_CHECK_THROW(i = 0x80, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_int16_test) {
+	IntType<int16_t> i;
+	BOOST_CHECK_THROW(i = -0x8001, value_error);
+	i = -0x8000;
+	BOOST_CHECK_EQUAL(i.get(), -0x8000);
+	i = 0x7fff;
+	BOOST_CHECK_EQUAL(i.get(), 0x7fff);
+	BOOST_CHECK_THROW(i = 0x8000, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_int32_test) {
+	IntType<int32_t> i;
+	BOOST_CHECK_THROW(i = -0x80000001L, value_error);
+	i = -0x80000000L;
+	BOOST_CHECK_EQUAL(i.get(), -0x80000000L);
+	i = 0x7fffffff;
+	BOOST_CHECK_EQUAL(i.get(), 0x7fffffff);
+	BOOST_CHECK_THROW(i = 0x80000000L, value_error);
+}
+
+BOOST_AUTO_TEST_CASE(range_check_int64_test) {
+	IntType<int64_t> i;
+	// can't create constant with this value
+	//BOOST_CHECK_THROW(i = -0x8000000000000001LLL, value_error);
+	// apparently can't create constant with this value either with gcc 4.4
+	//i = -0x8000000000000000LL;
+	//BOOST_CHECK_EQUAL(i.get(), -0x8000000000000000LL);
+	i = 0x7fffffffffffffff;
+	BOOST_CHECK_EQUAL(i.get(), 0x7fffffffffffffff);
+	BOOST_CHECK_THROW(i = 0x8000000000000000, value_error);
 }
 
 BOOST_AUTO_TEST_CASE(assign_by_object_test) {
