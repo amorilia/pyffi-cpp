@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE niftoolsxml>
+<niftoolsxml version="0.7.0.0">
+    <!--Basic Types-->
+
+    <basic name="bool" count="1" niflibtype="bool" nifskopetype="bool">
+        A boolean; 32-bit from 4.0.0.2, and 8-bit from 4.1.0.1 on.
+    </basic>
+
+    <basic name="byte" count="1" niflibtype="byte" nifskopetype="byte">
+        An unsigned 8-bit integer.
+    </basic>
+
+    <basic name="Flags" count="0" niflibtype="unsigned short" nifskopetype="flags">
+        A 16-bit integer, used for bit flags.  Function varies by object type.
+    </basic>
+
+    <basic name="float" count="0" niflibtype="float" nifskopetype="float">
+        A standard 32-bit floating point number.
+    </basic>
+
+    <basic name="HeaderString" count="0" niflibtype="HeaderString" nifskopetype="headerstring">
+        A variable length string that ends with a newline character (0x0A).  The string starts as follows depending on the version:
+
+        Version &lt;= 10.0.1.0:  &#039;NetImmerse File Format&#039;
+        Version &gt;= 10.1.0.0:  &#039;Gamebryo File Format&#039;
+    </basic>
+
+    <basic name="Ptr" count="0" niflibtype="*" nifskopetype="uplink" istemplate="1">
+        A signed 32-bit integer, referring to a object before this one in the hierarchy.  Examples:  Bones, gravity objects.
+    </basic>
+
+    <basic name="Ref" count="0" niflibtype="Ref" nifskopetype="link" istemplate="1">
+        A signed 32-bit integer, used to refer to another object; -1 means no reference. These should always point down the hierarchy. Other types are used for indexes that point to objects higher up.
+    </basic>
+
+    <basic name="StringOffset" count="0" niflibtype="unsigned int" nifskopetype="stringoffset">
+        A 32-bit unsigned integer, used to refer to strings in a NiStringPalette.
+    </basic>
+
+</niftoolsxml>

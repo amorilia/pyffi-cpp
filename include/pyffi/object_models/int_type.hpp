@@ -36,7 +36,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <iostream>
+#include <boost/cstdint.hpp>
+#include <boost/integer_traits.hpp>
 
+#include "pyffi/object_models/any_type.hpp"
 #include "pyffi/object_models/object.hpp"
 
 namespace pyffi {
@@ -44,19 +47,60 @@ namespace pyffi {
 namespace object_models {
 
 /*!
- * Base class for all data that can be stored. Consists of read and write.
+ * Base class for integer data.
  */
 
-class AnyType : public pyffi::object_models::Object {
+template<typename IntegralType>
+class IntType : public pyffi::object_models::AnyType {
 public:
-	//! Copy constructor.
-	AnyType(const Object & object) : pyffi::object_models::Object(object) {};
-	//! Constructor to set the type and the value.
-	template<typename ValueType> AnyType(const ValueType & value) : pyffi::object_models::Object(value) {};
+	IntType() : AnyType((IntegralType)0) {};
+
+	//! Override assignment operator for convenience.
+	IntType & operator=(const Object & obj) {
+		Object::operator=(obj);
+		return *this;
+	};
+	//! Get reference to value stored in the object.
+	IntegralType & get() {
+		// should not throw!
+		return boost::any_cast<IntegralType &>(m_value);
+	};
+	//! Get const reference to value stored in the object.
+	const IntegralType & get() const {
+		// should not throw!
+		return boost::any_cast<const IntegralType &>(m_value);
+	};
+	//! Assignment (from any integral type).
+	template<typename ValueType> IntType & operator=(const ValueType & value) {
+		if (boost::integer_traits<ValueType>::is_integral) {
+			if ((value >= boost::integer_traits<IntegralType>::const_min) && (value <= boost::integer_traits<IntegralType>::const_max)) {
+				Object::operator=((IntegralType)value);
+			} else {
+				// raise value error
+				std::stringstream ss;
+				ss << "Value out of range (required between " << boost::integer_traits<IntegralType>::const_min << " and " << boost::integer_traits<IntegralType>::const_max << " but got " << value << ").";
+				throw value_error(ss.str());
+			}
+		} else {
+			// raise type error
+			throw type_error("Type mismatch on value assignment (required integral type but got " + std::string(typeid(value).name()) + ").");
+		}
+		return *this;
+	};
+
 	//! Read data from stream (TODO: with parameters taken from namespace).
-	virtual void read(std::istream & in) = 0;
+	void read(std::istream & in) {
+		IntegralType buf;
+		in.read((char *)&buf, sizeof(buf));
+		get() = buf;
+	};
+
 	//! Write data to stream (TODO: with parameters taken from namespace).
-	virtual void write(std::ostream & out) const = 0;
+	void write(std::ostream & out) const {
+		const IntegralType buf = get();
+		out.write((const char *)&buf, sizeof(buf));
+	};
+
 }; // class AnyType
 
 }; // namespace object_models

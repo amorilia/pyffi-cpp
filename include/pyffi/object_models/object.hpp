@@ -72,6 +72,14 @@ public:
 			throw type_error("Type mismatch on object get (required " + std::string(m_value.type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
 		};
 	};
+	//! Get const reference to value stored in the object.
+	template<typename ValueType> const ValueType & get() const {
+		try {
+			return boost::any_cast<const ValueType &>(m_value);
+		} catch (const boost::bad_any_cast &) {
+			throw type_error("Type mismatch on object get (required " + std::string(m_value.type().name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+		};
+	};
 	//! Override assignment operator so type cannot be changed.
 	Object & operator=(const Object & obj) {
 		if (m_value.type() != obj.m_value.type())
@@ -87,7 +95,7 @@ public:
 		m_value = value;
 		return *this;
 	};
-private:
+protected:
 	boost::any m_value;
 }; // class Object
 
