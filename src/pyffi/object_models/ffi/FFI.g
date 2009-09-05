@@ -19,11 +19,13 @@ tokens {
     FIELDARG;
     FIELDARGLIST;
     CLASS='class';
+    CLASSDEF;
     ELIF='elif';
     ELSE='else';
     FILEFORMAT='fileformat';
     IF='if';
     PARAMETER='parameter';
+    PARAMETERDEF;
     TYPE='type';
     TYPEDEF;
 }
@@ -265,7 +267,7 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | parameterblock | classblock)*
+    :   (typeblock | parameterblock | classdefine)*
     ;
 
 // Short documentation following a definition, followed by one or more newlines.
@@ -284,16 +286,16 @@ longdoc
     ;
 
 typeblock
-    :   TYPE^ blockbegin! typedefine+ blockend!
+    :   TYPE! blockbegin! typedefine+ blockend!
     ;
 
 parameterblock
-    :   PARAMETER^ blockbegin! fielddefine+ blockend!
+    :   PARAMETER! blockbegin! parameterdefine+ blockend!
     ;
 
-classblock
+classdefine
     :   longdoc CLASS TYPENAME blockbegin declarations class_fielddefines blockend
-        -> ^(CLASS ^(DOC longdoc) TYPENAME declarations class_fielddefines)
+        -> ^(CLASSDEF ^(DOC longdoc) TYPENAME declarations class_fielddefines)
     ;
 
 blockbegin
@@ -311,6 +313,13 @@ typedefine
         -> ^(TYPEDEF ^(DOC longdoc shortdoc) $alias $orig)
     ;
 
+// identical to fielddefine, except for head
+parameterdefine
+    :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
+        -> ^(PARAMETERDEF ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
+    ;
+
+// identical to parameterdefine, except for head
 fielddefine
     :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
         -> ^(FIELDDEF ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)

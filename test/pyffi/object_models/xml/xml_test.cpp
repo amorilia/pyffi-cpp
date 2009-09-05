@@ -66,4 +66,8 @@ BOOST_AUTO_TEST_CASE(version_test) {
 	FileFormat("test_version.xml");
 }
 
+BOOST_AUTO_TEST_CASE(basic_test) {
+	FileFormat("test_basic.xml");
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -38,7 +38,7 @@ ffi
     :   anytext
         (HEADER_XML anytext)? // not really required, but usually present
         (HEADER_DOCTYPE anytext)? // not really required, but usually present
-        TAG_START_ROOT anyattributes TAG_CLOSE anytext
+        TAG_START_ROOT anyattribute* TAG_CLOSE anytext
         declarations
         TAG_END_ROOT anytext
         EOF
@@ -55,13 +55,12 @@ doctext
     ;
 
 // extra attributes that we throw away
-anyattributes
-    :   (NAME ATTR_EQ ATTR_VALUE_START .* ATTR_VALUE_END)*
+anyattribute
+    :   NAME ATTR_EQ ATTR_VALUE_START .* ATTR_VALUE_END
     ;
 
 declarations
-    :   versionblock* //basicblock* enumblock* classblock*
-        -> 
+    :   (versiondefine | basicdefine /* | enumdefine | classdefine */ )*
 /*
 class FileVersion:
     String game
@@ -81,10 +80,9 @@ class FileVersion:
                ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION3)
            )
 */
-           versionblock*
     ;
 
-versionblock
+versiondefine
     :   TAG_START_VERSION version_numattribute TAG_CLOSE
         TEXT
         TAG_END_VERSION anytext
@@ -110,6 +108,19 @@ parameter:
 version_numattribute
     :   NAME_NUM ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
         -> INT
+    ;
+
+// matches typedefine in FFIFileFormat
+basicdefine
+    :   TAG_START_BASIC basic_nameattribute anyattribute* TAG_CLOSE
+        doctext
+        TAG_END_BASIC anytext
+        -> ^(TYPEDEF doctext basic_nameattribute)
+    ;
+
+basic_nameattribute
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START NAME ATTR_VALUE_END
+        -> NAME
     ;
 
 /*------------------------------------------------------------------
@@ -174,6 +185,22 @@ TAG_END_VERSION
     :   { !tagMode }?=> '</version>'
     ;
 
+TAG_START_BASIC
+    :   { !tagMode }?=> '<basic' { tagMode = true; }
+    ;
+
+TAG_END_BASIC
+    :   { !tagMode }?=> '</basic>'
+    ;
+
+TAG_START_ENUM
+    :   { !tagMode }?=> '<enum' { tagMode = true; }
+    ;
+
+TAG_END_ENUM
+    :   { !tagMode }?=> '</enum>'
+    ;
+
 TAG_CLOSE
     :   { tagMode }?=> '>' { tagMode = false; }
     ;
@@ -196,6 +223,10 @@ ATTR_VALUE_END
 
 NAME_NUM
     :   { tagMode }?=> 'num'
+    ;
+
+NAME_NAME
+    :   { tagMode }?=> 'name'
     ;
 
 NAME

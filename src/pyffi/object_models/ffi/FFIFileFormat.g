@@ -45,23 +45,19 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | parameterblock | classblock)*
+    :   (typedefine | parameterdefine | classdefine)*
     ;
 
-typeblock
-    :   ^(TYPE typedefine+)
-    ;
-
-parameterblock
-    :   ^(PARAMETER fielddefine+)
-    ;
-
-classblock
-    :   ^(CLASS ^(DOC SHORTDOC*) TYPENAME declarations class_fielddefines)
+classdefine
+    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME declarations class_fielddefines)
     ;
 
 typedefine
     :   ^(TYPEDEF ^(DOC SHORTDOC*) TYPENAME TYPENAME?)
+    ;
+
+parameterdefine
+    :   ^(PARAMETERDEF ^(DOC SHORTDOC*) TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 fielddefine
