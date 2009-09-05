@@ -26,6 +26,7 @@ tokens {
     PARAMETER='parameter';
     TYPE='type';
     TYPEDEF;
+    VERSION;
 }
 
 // target specific code
@@ -260,8 +261,8 @@ ffi
     ;
 
 formatdefine
-    :   longdoc FILEFORMAT FORMATNAME (',' FORMATNAME)* shortdoc
-        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME+)
+    :   longdoc FILEFORMAT (FORMATNAME (',' FORMATNAME)*)? shortdoc
+        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME*)
     ;
 
 declarations

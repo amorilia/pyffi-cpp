@@ -35,7 +35,7 @@ formatdefine[FileFormat *ff]
                 {
                     ff->extensions.push_back(get_string($n.text));
                 }
-            )+
+            )*
         )
     ;
 
@@ -70,7 +70,7 @@ class_fielddefines_ifelifelse_fragment
     ;
 
 class_fielddefines
-    :   ^(FIELD (class_fielddefines_ifelifelse_fragment | fielddefine)+)
+    :   class_fielddefines_ifelifelse_fragment | fielddefine+
     ;
 
 kwarg

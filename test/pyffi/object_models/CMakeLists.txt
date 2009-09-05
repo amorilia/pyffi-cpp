@@ -1,4 +1,5 @@
 add_subdirectory(ffi)
+add_subdirectory(xml)
 
 foreach(TEST object_test map_test object_map_test meta_struct_test)
   add_executable(${TEST} ${TEST}.cpp)

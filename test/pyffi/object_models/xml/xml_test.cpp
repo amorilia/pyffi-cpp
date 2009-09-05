@@ -35,27 +35,35 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
-#define PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
-#include "pyffi/object_models/file_format.hpp"
+#include "pyffi/exceptions.hpp"
+#include "pyffi/object_models/xml/file_format.hpp"
 
-namespace pyffi {
+using namespace pyffi::object_models::xml;
 
-namespace object_models {
+BOOST_AUTO_TEST_SUITE(xml_test_suite)
 
-namespace ffi {
+BOOST_AUTO_TEST_CASE(non_existing_file_test) {
+	BOOST_CHECK_THROW(FileFormat("non_existing_file.xml"), pyffi::io_error);
+}
 
-class FileFormat : public pyffi::object_models::FileFormat {
-public:
-	FileFormat() : pyffi::object_models::FileFormat() {};
-	FileFormat(const std::string & filename);
-}; // class FileFormat
+BOOST_AUTO_TEST_CASE(invalid_test) {
+	BOOST_CHECK_THROW(FileFormat("test_invalid.xml"), pyffi::syntax_error);
+}
 
-}; // namespace ffi
+BOOST_AUTO_TEST_CASE(minimal_test) {
+	FileFormat("test_minimal.xml");
+}
 
-}; // namespace object_models
+BOOST_AUTO_TEST_CASE(header_test) {
+	FileFormat("test_header.xml");
+}
 
-}; // namespace pyffi
+BOOST_AUTO_TEST_CASE(version_test) {
+	FileFormat("test_version.xml");
+}
 
-#endif
+BOOST_AUTO_TEST_SUITE_END()

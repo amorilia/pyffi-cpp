@@ -35,24 +35,26 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
-#define PYFFI_OM_FFI_FILE_FORMAT_HPP_INCLUDED
+#ifndef PYFFI_OM_XML_FILE_FORMAT_HPP_INCLUDED
+#define PYFFI_OM_XML_FILE_FORMAT_HPP_INCLUDED
 
-#include "pyffi/object_models/file_format.hpp"
+#include "pyffi/object_models/ffi/file_format.hpp"
 
 namespace pyffi {
 
 namespace object_models {
 
-namespace ffi {
+namespace xml {
 
-class FileFormat : public pyffi::object_models::FileFormat {
+// the xml model is essentially identical to ffi model, except for the
+// lexer and parser
+class FileFormat : public pyffi::object_models::ffi::FileFormat {
 public:
-	FileFormat() : pyffi::object_models::FileFormat() {};
+	FileFormat() : pyffi::object_models::ffi::FileFormat() {};
 	FileFormat(const std::string & filename);
 }; // class FileFormat
 
-}; // namespace ffi
+}; // namespace xml
 
 }; // namespace object_models
 
