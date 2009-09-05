@@ -47,7 +47,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy XMLParser.c XMLParser.cpp
     COMMAND ${CMAKE_COMMAND} -E copy FFIFileFormat.c FFIFileFormat.cpp
     # clean up
-    COMMAND ${CMAKE_COMMAND} -E remove FFILexer.c FFIParser.c XMLLexer.c XMLParser.c FFIFileFormat.c FFI.g XML.g FFIFileFormat.g FFI.tokens FFIFileFormat.tokens
+    COMMAND ${CMAKE_COMMAND} -E remove FFILexer.c FFIParser.c XMLLexer.c XMLParser.c FFIFileFormat.c FFI.g XML.g FFIFileFormat.g FFI.tokens XML.tokens FFIFileFormat.tokens
     WORKING_DIRECTORY ${PYFFI_BINARY_DIR}
     COMMENT "Generating antlr3 lexer and parser from FFI.g XML.g FFIFileFormat.g")
 

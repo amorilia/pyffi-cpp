@@ -22,18 +22,23 @@ options {
     std::string get_string(pANTLR3_STRING s) {
         return std::string((const char *)s->chars); 
     };
+
+    FileFormat *_fileformat;
 }
 
 ffi[FileFormat *ff]
-    :   formatdefine[ff] declarations
+@init {
+    _fileformat = ff;
+}
+    :   formatdefine declarations
     ;
 
-formatdefine[FileFormat *ff]
+formatdefine
     :   ^(FILEFORMAT 
             ^(DOC SHORTDOC*)
             (n=FORMATNAME
                 {
-                    ff->extensions.push_back(get_string($n.text));
+                    _fileformat->extensions.push_back(get_string($n.text));
                 }
             )*
         )

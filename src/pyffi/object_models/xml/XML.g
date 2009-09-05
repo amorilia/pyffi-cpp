@@ -38,10 +38,10 @@ ffi
     :   anytext
         (HEADER_XML anytext)? // not really required, but usually present
         (HEADER_DOCTYPE anytext)? // not really required, but usually present
-	TAG_START_ROOT anyattributes TAG_CLOSE anytext
-	declarations
-	TAG_END_ROOT anytext
-	EOF
+        TAG_START_ROOT anyattributes TAG_CLOSE anytext
+        declarations
+        TAG_END_ROOT anytext
+        EOF
         -> ^(FILEFORMAT DOC) declarations
     ;
 
@@ -60,14 +60,51 @@ anyattributes
     ;
 
 declarations
-    :   version_block* //basicblock* enumblock* classblock*
+    :   versionblock* //basicblock* enumblock* classblock*
+        -> 
+/*
+class FileVersion:
+    String game
+    Int64 version
+    Int64 user1
+    Int64 user2
+    Int64 user3
+*/
+/*
+           ^(CLASS
+               DOC
+               TYPENAME
+               ^(FIELDDEF DOC NAME_STRING NAME_GAME)
+               ^(FIELDDEF DOC NAME_INT64 NAME_VERSION)
+               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION)
+               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION2)
+               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION3)
+           )
+*/
+           versionblock*
     ;
 
-version_block
+versionblock
     :   TAG_START_VERSION version_numattribute TAG_CLOSE
-        doctext
+        TEXT
         TAG_END_VERSION anytext
-        -> ^(VERSION version_numattribute doctext)
+// for the time being, ignore
+/*
+<version num="1.2.3">GameName</version>
+
+->
+
+parameter:
+    GameName FileVersion(game="GameName", version=string_to_version_int("1.2.3"))
+*/
+/*
+        -> ^(PARAMETER ^(FIELDDEF DOC NAME_FILEVERSION TEXT
+               ^(FIELDARGLIST
+                  ^(FIELDARG NAME_GAME TEXT)
+                  ^(FIELDARG NAME_VERSION version_numattribute)
+               )
+           ))
+*/
     ;
 
 version_numattribute

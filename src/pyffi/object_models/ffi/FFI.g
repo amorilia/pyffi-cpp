@@ -26,7 +26,6 @@ tokens {
     PARAMETER='parameter';
     TYPE='type';
     TYPEDEF;
-    VERSION;
 }
 
 // target specific code
