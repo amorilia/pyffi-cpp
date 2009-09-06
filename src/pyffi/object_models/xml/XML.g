@@ -2,9 +2,9 @@ grammar XML;
 
 options {
     output=AST;
+    tokenVocab=FFI;
     language=C;
     ASTLabelType=pANTLR3_BASE_TREE;
-    tokenVocab=FFI;
 }
 
 @lexer::members {
@@ -35,23 +35,14 @@ parser:
 */
 
 ffi
-    :   anytext
-        (HEADER_XML anytext)? // not really required, but usually present
-        (HEADER_DOCTYPE anytext)? // not really required, but usually present
-        TAG_START_ROOT anyattribute* TAG_CLOSE anytext
+    :   SHORTDOC*
+        (HEADER_XML SHORTDOC*)? // not really required, but usually present
+        (HEADER_DOCTYPE SHORTDOC*)? // not really required, but usually present
+        TAG_START_ROOT anyattribute* TAG_CLOSE SHORTDOC*
         declarations
-        TAG_END_ROOT anytext
+        TAG_END_ROOT SHORTDOC*
         EOF
         -> ^(FILEFORMAT DOC) declarations
-    ;
-
-anytext
-    :   TEXT*
-    ;
-
-doctext
-    :   TEXT*
-        -> ^(DOC TEXT*)
     ;
 
 // extra attributes that we throw away
@@ -84,8 +75,8 @@ class FileVersion:
 
 versiondefine
     :   TAG_START_VERSION version_numattribute TAG_CLOSE
-        TEXT
-        TAG_END_VERSION anytext
+        doc=SHORTDOC
+        TAG_END_VERSION SHORTDOC*
 // for the time being, ignore
 /*
 <version num="1.2.3">GameName</version>
@@ -96,9 +87,9 @@ parameter:
     GameName FileVersion(game="GameName", version=string_to_version_int("1.2.3"))
 */
 /*
-        -> ^(PARAMETER ^(FIELDDEF DOC NAME_FILEVERSION TEXT
+        -> ^(PARAMETER ^(FIELDDEF DOC NAME_FILEVERSION SHORTDOC
                ^(FIELDARGLIST
-                  ^(FIELDARG NAME_GAME TEXT)
+                  ^(FIELDARG NAME_GAME SHORTDOC)
                   ^(FIELDARG NAME_VERSION version_numattribute)
                )
            ))
@@ -113,14 +104,14 @@ version_numattribute
 // matches typedefine in FFIFileFormat
 basicdefine
     :   TAG_START_BASIC basic_nameattribute anyattribute* TAG_CLOSE
-        doctext
-        TAG_END_BASIC anytext
-        -> ^(TYPEDEF doctext basic_nameattribute)
+        doc=SHORTDOC?
+        TAG_END_BASIC SHORTDOC*
+        -> ^(TYPEDEF ^(DOC $doc?) basic_nameattribute)
     ;
 
 basic_nameattribute
-    :   NAME_NAME ATTR_EQ ATTR_VALUE_START NAME ATTR_VALUE_END
-        -> NAME
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, ($t.text)->chars]
     ;
 
 /*------------------------------------------------------------------
@@ -251,7 +242,7 @@ WS
     ;
 
 // any text until the next tag
-TEXT
+SHORTDOC
     :   { !tagMode }?=> (~'<')*
     ;
 

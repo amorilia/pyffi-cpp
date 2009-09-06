@@ -248,7 +248,7 @@ NEWLINE
                 } while (indent < current_indent);
             } else {
                 ANTLR3_FPRINTF(stderr, "NEWLINE: Error: Bad indentation!\n");
-                /* TODO: set lexer error state */
+                // TODO: set lexer error state
             };
         }
     ;
