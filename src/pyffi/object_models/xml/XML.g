@@ -75,11 +75,37 @@ ffi
     :   SHORTDOC*
         (HEADER_XML SHORTDOC*)? // not really required, but usually present
         (HEADER_DOCTYPE SHORTDOC*)? // not really required, but usually present
-        TAG_START_ROOT anyattribute* TAG_CLOSE SHORTDOC*
+        t=TAG_START_ROOT anyattribute* TAG_CLOSE SHORTDOC*
         declarations
         TAG_END_ROOT SHORTDOC*
         EOF
-        -> ^(FILEFORMAT DOC) declarations
+        -> 
+/*
+# The nif file format.
+fileformat NIF, KF, KFA
+*/
+           ^(FILEFORMAT
+               ^(DOC SHORTDOC[$t, "The nif file format."])
+               FORMATNAME[$t, "NIF"]
+               FORMATNAME[$t, "KF"]
+               FORMATNAME[$t, "KFA"]
+           )
+/*
+class FileVersion:
+    String game
+    Int64 version
+    Int64 user1
+    Int64 user2
+*/
+           ^(CLASS
+               DOC
+               TYPENAME[$t, "FileVersion"]
+               ^(FIELDDEF DOC TYPENAME[$t, "String"] VARIABLENAME[$t, "game"])
+               ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "version"])
+               ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
+               ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user2"])
+           )
+           declarations
     ;
 
 // extra attributes that we throw away
@@ -89,25 +115,6 @@ anyattribute
 
 declarations
     :   (versiondefine | basicdefine /* | enumdefine | classdefine */ )*
-/*
-class FileVersion:
-    String game
-    Int64 version
-    Int64 user1
-    Int64 user2
-    Int64 user3
-*/
-/*
-           ^(CLASS
-               DOC
-               TYPENAME
-               ^(FIELDDEF DOC NAME_STRING NAME_GAME)
-               ^(FIELDDEF DOC NAME_INT64 NAME_VERSION)
-               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION)
-               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION2)
-               ^(FIELDDEF DOC NAME_INT64 NAME_USERVERSION3)
-           )
-*/
     ;
 
 versiondefine
