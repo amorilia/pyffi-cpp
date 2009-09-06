@@ -10,6 +10,43 @@ options {
 @lexer::members {
     bool tagMode = false;
     bool attrMode = false;
+        }
+
+@parser::header {
+    #include <string>
+}
+
+@parser::members {
+    // converts varname into a string formatted as a variable name
+    // (lower_case_with_underscores)
+    std::string newVarString(pANTLR3_STRING varname) {
+        // new length never exceeds original length
+        std::string buf;
+        int i = 0; // index into varname
+        bool underscore = false; // if last character added was an underscore
+        while ((varname->chars[i] == ' ') && (i < varname->len)) i++;
+        while (i < varname->len) {
+            if ((varname->chars[i] >= 'A') && (varname->chars[i] <= 'Z')) {
+                buf.push_back(varname->chars[i++] - 'A' + 'a');
+                underscore = false;
+            } else if ((varname->chars[i] >= 'a') && (varname->chars[i] <= 'z')) {
+                buf.push_back(varname->chars[i++]);
+                underscore = false;
+            } else if ((varname->chars[i] >= '0') && (varname->chars[i] <= '9')) {
+                buf.push_back(varname->chars[i++]);
+                underscore = false;
+            } else if (!underscore) {
+                // any other symbol becomes an underscore
+                buf.push_back('_');
+                i++;
+                underscore = true;
+            } else {
+                // do not put more than two underscores in a row
+                i++;
+            }
+        }
+        return buf;
+    }
 }
 
 /*------------------------------------------------------------------
@@ -74,31 +111,25 @@ class FileVersion:
     ;
 
 versiondefine
-    :   TAG_START_VERSION version_numattribute TAG_CLOSE
+    :   TAG_START_VERSION
+        NAME_NUM ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
+        TAG_CLOSE
         doc=SHORTDOC
         TAG_END_VERSION SHORTDOC*
-// for the time being, ignore
 /*
-<version num="1.2.3">GameName</version>
+<version num="1.2.3">Game Name</version>
 
 ->
 
 parameter:
-    GameName FileVersion(game="GameName", version=string_to_version_int("1.2.3"))
+    FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
-/*
-        -> ^(PARAMETER ^(FIELDDEF DOC NAME_FILEVERSION SHORTDOC
+        -> ^(PARAMETER ^(FIELDDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, (std::string("ver_") + newVarString($v.text)).c_str()]
                ^(FIELDARGLIST
-                  ^(FIELDARG NAME_GAME SHORTDOC)
-                  ^(FIELDARG NAME_VERSION version_numattribute)
+                  ^(FIELDARG VARIABLENAME[$doc, "game"] STRING[$doc, ($doc.text)->chars])
+                  ^(FIELDARG VARIABLENAME[$v, "version"] INT)
                )
            ))
-*/
-    ;
-
-version_numattribute
-    :   NAME_NUM ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
-        -> INT
     ;
 
 // matches typedefine in FFIFileFormat
