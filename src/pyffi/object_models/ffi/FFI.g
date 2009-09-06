@@ -262,27 +262,18 @@ ffi
     ;
 
 formatdefine
-    :   longdoc FILEFORMAT (FORMATNAME (',' FORMATNAME)*)? shortdoc
-        -> ^(FILEFORMAT ^(DOC longdoc shortdoc) FORMATNAME*)
+    :   longdoc? FILEFORMAT (FORMATNAME (',' FORMATNAME)*)? SHORTDOC? NEWLINE+
+        -> ^(FILEFORMAT ^(DOC longdoc? SHORTDOC?) FORMATNAME*)
     ;
 
 declarations
     :   (typeblock | parameterblock | classdefine)*
     ;
 
-// Short documentation following a definition, followed by one or more newlines.
-// Because short style documentation always should come at the end of a definition,
-// it includes the newline(s) that follow the definition (this makes the other parser
-// rules a bit simpler).
-shortdoc
-    :   SHORTDOC? (NEWLINE!)+
-    ;
-
-// Documentation preceeding a definition, with single newline following each line of text
-// the number of lines in the documentation is arbitrary, also zero lines is possible (i.e.
-// no documentation at all).
+// Documentation preceeding a definition, with single newline
+// following each line of text. The number of lines is arbitrary.
 longdoc
-    :   (SHORTDOC NEWLINE!)*
+    :   (SHORTDOC NEWLINE!)+
     ;
 
 typeblock
@@ -294,8 +285,8 @@ parameterblock
     ;
 
 classdefine
-    :   longdoc CLASS TYPENAME blockbegin declarations class_fielddefines blockend
-        -> ^(CLASSDEF ^(DOC longdoc) TYPENAME declarations class_fielddefines)
+    :   longdoc? CLASS TYPENAME blockbegin declarations class_fielddefines blockend
+        -> ^(CLASSDEF ^(DOC longdoc?) TYPENAME declarations class_fielddefines)
     ;
 
 blockbegin
@@ -307,22 +298,22 @@ blockend
     ;
 
 typedefine
-    :   longdoc TYPENAME shortdoc // basic type
-        -> ^(TYPEDEF ^(DOC longdoc shortdoc) TYPENAME)
-    |   longdoc alias=TYPENAME '=' orig=TYPENAME shortdoc // alias
-        -> ^(TYPEDEF ^(DOC longdoc shortdoc) $alias $orig)
+    :   longdoc? TYPENAME SHORTDOC? NEWLINE+ // basic type
+        -> ^(TYPEDEF ^(DOC longdoc? SHORTDOC?) TYPENAME)
+    |   longdoc? alias=TYPENAME '=' orig=TYPENAME SHORTDOC? NEWLINE+ // alias
+        -> ^(TYPEDEF ^(DOC longdoc? SHORTDOC?) $alias $orig)
     ;
 
 // identical to fielddefine, except for head
 parameterdefine
-    :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
-        -> ^(PARAMETERDEF ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
+    :   longdoc? TYPENAME VARIABLENAME fieldparameters? SHORTDOC? NEWLINE+
+        -> ^(PARAMETERDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 // identical to parameterdefine, except for head
 fielddefine
-    :   longdoc TYPENAME VARIABLENAME fieldparameters? shortdoc
-        -> ^(FIELDDEF ^(DOC longdoc shortdoc) TYPENAME VARIABLENAME fieldparameters?)
+    :   longdoc? TYPENAME VARIABLENAME fieldparameters? SHORTDOC? NEWLINE+
+        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 class_fielddefines_ifelifelse_fragment
