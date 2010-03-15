@@ -1,9 +1,12 @@
 grammar FFI;
 
 options {
-    language=C;
     output=AST;
+/*
+    language=C;
     ASTLabelType=pANTLR3_BASE_TREE;
+*/
+    ASTLabelType=CommonTree;
 }
 
 tokens {
@@ -49,7 +52,7 @@ tokens {
 
 // JAVA
 
-/*
+/**/
 
 @lexer::members {
     // keep track of indentation
@@ -114,7 +117,7 @@ NEWLINE
         }
     ;
 
-*/
+/**/
 
 // PYTHON
 // note: ANTLR defines Python members on class level, but we want to define an
@@ -191,6 +194,8 @@ NEWLINE
 
 // C
 
+/*
+
 @lexer::members {
     static int current_indent = 0;
 
@@ -257,6 +262,7 @@ NEWLINE
             };
         }
     ;
+*/
 
 /*------------------------------------------------------------------
  * PARSER RULES

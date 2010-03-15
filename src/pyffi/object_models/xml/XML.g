@@ -3,54 +3,59 @@ grammar XML;
 options {
     output=AST;
     tokenVocab=FFI;
+/*
     language=C;
     ASTLabelType=pANTLR3_BASE_TREE;
+*/
+    ASTLabelType=CommonTree;
 }
 
 @lexer::members {
+/*
     bool tagMode = false;
     bool attrMode = false;
-        }
+*/
+    boolean tagMode = false;
+    boolean attrMode = false;
+}
 
+/*
 @parser::header {
     #include <string>
 }
+*/
 
 @parser::members {
-    // doesn't work in header, so include it here
-    #include <boost/algorithm/string.hpp>
-
     // converts varname into a string formatted as a variable name
     // (lower_case_with_underscores)
-    std::string newVarString(pANTLR3_STRING varname) {
+    String newVarString(String varname) {
+        varname = varname.trim(); // trim whitespace
         // new length never exceeds original length
-        std::string buf;
+        StringBuffer buf = new StringBuffer(varname.length());
         int i = 0; // index into varname
-        bool underscore = false; // if last character added was an underscore
-        while ((varname->chars[i] == ' ') && (i < varname->len)) i++;
-        while (i < varname->len) {
-            if ((varname->chars[i] >= 'A') && (varname->chars[i] <= 'Z')) {
-                buf.push_back(varname->chars[i++] - 'A' + 'a');
+        boolean underscore = false; // if last character added was an underscore
+        while (i < varname.length()) {
+        	Character c = varname.charAt(i);
+            //if ((varname.charAt(i) >= 'A') && (varname.charAt[i] <= 'Z')) {
+            if (Character.isUpperCase(c)) {
+                buf.append(Character.toLowerCase(c));
                 underscore = false;
-            } else if ((varname->chars[i] >= 'a') && (varname->chars[i] <= 'z')) {
-                buf.push_back(varname->chars[i++]);
+            } else if (Character.isLowerCase(c)) {
+                buf.append(c);
                 underscore = false;
-            } else if ((varname->chars[i] >= '0') && (varname->chars[i] <= '9')) {
-                buf.push_back(varname->chars[i++]);
+            } else if (Character.isDigit(c)) {
+                buf.append(c);
                 underscore = false;
             } else if (!underscore) {
                 // any other symbol becomes an underscore
-                buf.push_back('_');
-                i++;
+                buf.append('_');
                 underscore = true;
             } else {
                 // do not put more than two underscores in a row
-                i++;
             }
+            i++;
         }
-        // strip trailing underscores (from trailing blanks)
-        boost::trim_right_if(buf, boost::is_any_of("_"));
-        return buf;
+        return buf.toString();
     }
 }
 
@@ -119,9 +124,9 @@ versiondefine
 parameter:
     FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
-        -> ^(PARAMETERDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, (std::string("ver_") + newVarString($v.text)).c_str()]
+        -> ^(PARAMETERDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, "ver_" + newVarString($v.text)]
                ^(FIELDARGLIST
-                  ^(FIELDARG VARIABLENAME[$doc, "game"] STRING[$doc, ($doc.text)->chars])
+                  ^(FIELDARG VARIABLENAME[$doc, "game"] STRING[$doc, $doc.text])
                   ^(FIELDARG VARIABLENAME[$v, "version"] INT)
                )
         )
@@ -191,16 +196,16 @@ bitflagsdefine
 
 struct_add
 @init {
-    int has_ver1 = 0;
-    int has_ver2 = 0;
-    int has_cond = 0;
+    boolean has_ver1 = false;
+    boolean has_ver2 = false;
+    boolean has_cond = false;
 }
     :   TAG_START_ADD
         ( name=attr_variable_name
         | type=attr_type_type
-        | {has_ver1=1;} ver1=attr_expression_ver1
-        | {has_ver2=1;} ver2=attr_expression_ver2
-        | {has_cond=1;} cond=attr_expression_cond
+        | {has_ver1=true;} ver1=attr_expression_ver1
+        | {has_ver2=true;} ver2=attr_expression_ver2
+        | {has_cond=true;} cond=attr_expression_cond
         | attr_expression_default
         | anyattribute
         )*
@@ -248,27 +253,27 @@ struct_add
 
 attr_variable_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> VARIABLENAME[$t, newVarString($t.text).c_str()]
+        -> VARIABLENAME[$t, newVarString($t.text)]
     ;
 
 attr_type_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars]
+        -> TYPENAME[$t, $t.text]
     ;
 
 attr_type_storage
     :   NAME_STORAGE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars]
+        -> TYPENAME[$t, $t.text]
     ;
 
 attr_type_type
     :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars]
+        -> TYPENAME[$t, $t.text]
     ;
 
 attr_constant_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> CONSTANTNAME[$t, ($t.text)->chars]
+        -> CONSTANTNAME[$t, $t.text]
     ;
 
 attr_expression_value
@@ -357,7 +362,7 @@ power
 
 atom
     :   NAME
-        -> VARIABLENAME[$NAME, newVarString($NAME.text).c_str()]
+        -> VARIABLENAME[$NAME, newVarString($NAME.text)]
     |   INT
     |   FLOAT
     |   LBRACKET! expression RBRACKET!
