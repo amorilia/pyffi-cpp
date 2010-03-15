@@ -36,7 +36,7 @@ ffi[FileFormat *ff]
 formatdefine
     :   ^(FILEFORMAT 
             ^(DOC SHORTDOC*)
-            (n=FORMATNAME
+            (n=CONSTANTNAME
                 {
                     _fileformat->extensions.push_back(get_string($n.text));
                 }
