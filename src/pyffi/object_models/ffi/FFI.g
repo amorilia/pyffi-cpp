@@ -301,7 +301,7 @@ classdefine
     ;
 
 blockbegin
-    :   COLON NEWLINE INDENT
+    :   COLON NEWLINE+ INDENT
     ;
 
 blockend
