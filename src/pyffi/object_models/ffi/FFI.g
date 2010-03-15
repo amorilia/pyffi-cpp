@@ -28,6 +28,9 @@ tokens {
     PARAMETERDEF;
     TYPE='type';
     TYPEDEF;
+    ENUM='enum';
+    ENUMDEF;
+    ENUMCONSTDEF;
 }
 
 // target specific code
@@ -267,7 +270,7 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | parameterblock | classdefine)*
+    :   (typeblock | parameterblock | classdefine | enumdefine)*
     ;
 
 // Documentation preceeding a definition, with single newline
@@ -283,6 +286,14 @@ typeblock
 parameterblock
     :   PARAMETER! blockbegin! parameterdefine+ blockend!
     ;
+
+enumdefine
+    :   longdoc? ENUM alias=TYPENAME '(' orig=TYPENAME ')' blockbegin enumconstant+ blockend
+        -> ^(ENUMDEF ^(DOC longdoc?) $alias $orig enumconstant+);
+
+enumconstant
+    :   longdoc? CONSTANTNAME '=' INT SHORTDOC? NEWLINE+
+        -> ^(ENUMCONSTDEF ^(DOC longdoc? SHORTDOC?) CONSTANTNAME INT);
 
 classdefine
     :   longdoc? CLASS TYPENAME blockbegin declarations class_fielddefines blockend
