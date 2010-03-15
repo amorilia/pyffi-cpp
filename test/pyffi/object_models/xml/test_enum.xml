@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE niftoolsxml>
+<niftoolsxml version="0.7.0.0">
+
+    <basic name="uint">
+        An unsigned 32-bit integer.
+    </basic>
+
+    <!--Enumerations
+        These are like C enums and consist of a list of options.  They can appear
+        as parts of compounds or niobjects.-->
+
+    <enum name="TexType" storage="uint">
+        The type of texture.
+        <option value="0" name="BASE_MAP">The basic texture used by most meshes.</option>
+        <option value="1" name="DARK_MAP">Used to darken the model with false lighting.</option>
+        <option value="2" name="DETAIL_MAP">Combined with base map for added detail.  Usually tiled over the mesh many times for close-up view.</option>
+        <option value="3" name="GLOSS_MAP">Allows the specularity (glossyness) of an object to differ across its surface.</option>
+        <option value="4" name="GLOW_MAP">Creates a glowing effect.  Basically an incandescence map.</option>
+        <option value="5" name="BUMP_MAP">Used to make the object appear to have more detail than it really does.</option>
+        <option value="6" name="NORMAL_MAP">Used to make the object appear to have more detail than it really does.</option>
+        <option value="7" name="UNKNOWN2_MAP">Unknown map.</option>
+        <option value="8" name="DECAL_0_MAP">For placing images on the object like stickers.</option>
+        <option value="9" name="DECAL_1_MAP">For placing images on the object like stickers.</option>
+        <option value="10" name="DECAL_2_MAP">For placing images on the object like stickers.</option>
+        <option value="11" name="DECAL_3_MAP">For placing images on the object like stickers.</option>
+    </enum>
+
+    <enum name="KeyType" storage="uint">
+        The type of animation interpolation (blending) that will be used on the associated key frames.
+        <option value="1" name="LINEAR_KEY">Use linear interpolation.</option>
+        <option value="2" name="QUADRATIC_KEY">Use quadratic interpolation.  Forward and back tangents will be stored.</option>
+        <option value="3" name="TBC_KEY">Use Tension Bias Continuity interpolation.  Tension, bias, and continuity will be stored.</option>
+        <option value="4" name="XYZ_ROTATION_KEY">For use only with rotation data.  Separate X, Y, and Z keys will be stored instead of using quaternions.</option>
+        <option value="5" name="UNKNOWN_KEY">Unknown.  Step function?</option>
+    </enum>
+
+</niftoolsxml>

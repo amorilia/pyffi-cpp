@@ -76,4 +76,9 @@ BOOST_AUTO_TEST_CASE(basic_test)
 	FileFormat("test_basic.xml");
 }
 
+BOOST_AUTO_TEST_CASE(enum_test)
+{
+	FileFormat("test_enum.xml");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
