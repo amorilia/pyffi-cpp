@@ -1,0 +1,33 @@
+fileformat TEST
+
+type:
+    UInt
+    Float
+
+# The type of animation interpolation (blending) that will be used on the
+# key frames.
+enum KeyType(UInt):
+    # Use linear interpolation.
+    LINEAR = 1
+
+    # Use quadratic interpolation. Forward and back tangents will be stored.
+    QUADRATIC = 2
+
+    # Use Tension Bias Continuity interpolation. Tension, bias, and
+    # continuity will be stored.
+    TBC = 3
+
+    # For use only with rotation data. Separate X, Y, and Z keys will be
+    # stored instead of using quaternions.</option>
+    XYZ_ROTATION = 4
+
+    # Unknown. Step function?
+    UNKNOWN = 5
+
+class Key:
+
+    parameter:
+        KeyType interpolation
+
+    Float time
+    UInt value
