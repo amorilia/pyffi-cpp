@@ -114,7 +114,7 @@ anyattribute
     ;
 
 declarations
-    :   (versiondefine | basicdefine /* | enumdefine | classdefine */ )*
+    :   (versiondefine | basicdefine | enumdefine /* | classdefine */ )*
     ;
 
 versiondefine
@@ -151,6 +151,35 @@ basic_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> TYPENAME[$t, ($t.text)->chars]
     ;
+
+enumdefine
+    :   TAG_START_ENUM enum_nameattribute enum_storageattribute TAG_CLOSE
+        doc=SHORTDOC?
+        enum_option+
+        TAG_END_ENUM SHORTDOC*
+        -> ^(ENUMDEF ^(DOC $doc) enum_nameattribute enum_storageattribute enum_option+);
+
+enum_nameattribute
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t];
+
+enum_storageattribute
+    :   NAME_STORAGE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t];
+
+enum_option
+    :   TAG_START_OPTION option_valueattribute option_nameattribute TAG_CLOSE
+        doc=SHORTDOC?
+        TAG_END_OPTION SHORTDOC*
+        -> ^(ENUMCONSTDEF ^(DOC $doc) option_nameattribute option_valueattribute);
+
+option_valueattribute
+    :   NAME_VALUE ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
+        -> INT;
+
+option_nameattribute
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> CONSTANTNAME[$t];
 
 /*------------------------------------------------------------------
  * LEXER RULES
@@ -230,6 +259,14 @@ TAG_END_ENUM
     :   { !tagMode }?=> '</enum>'
     ;
 
+TAG_START_OPTION
+    :   { !tagMode }?=> '<option' { tagMode = true; }
+    ;
+
+TAG_END_OPTION
+    :   { !tagMode }?=> '</option>'
+    ;
+
 TAG_CLOSE
     :   { tagMode }?=> '>' { tagMode = false; }
     ;
@@ -258,8 +295,16 @@ NAME_NAME
     :   { tagMode }?=> 'name'
     ;
 
+NAME_VALUE
+    :   { tagMode }?=> 'value'
+    ;
+
+NAME_STORAGE
+    :   { tagMode }?=> 'storage'
+    ;
+
 NAME
-    :   { tagMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT)*
+    :   { tagMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT | '_')*
     ;
 
 HEADER_XML
