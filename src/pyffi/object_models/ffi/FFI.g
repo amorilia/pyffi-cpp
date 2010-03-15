@@ -262,8 +262,8 @@ ffi
     ;
 
 formatdefine
-    :   longdoc? FILEFORMAT (FORMATNAME (',' FORMATNAME)*)? SHORTDOC? NEWLINE+
-        -> ^(FILEFORMAT ^(DOC longdoc? SHORTDOC?) FORMATNAME*)
+    :   longdoc? FILEFORMAT (CONSTANTNAME (',' CONSTANTNAME)*)? SHORTDOC? NEWLINE+
+        -> ^(FILEFORMAT ^(DOC longdoc? SHORTDOC?) CONSTANTNAME*)
     ;
 
 declarations
@@ -402,8 +402,8 @@ UCLETTER
     :   'A'..'Z'
     ;
 
-// format name (this identifies the file extension)
-FORMATNAME
+// constant name (this identifies the file extension)
+CONSTANTNAME
     :   (UCLETTER | DIGITS | '_')+
     ;
 

@@ -86,9 +86,9 @@ fileformat NIF, KF, KFA
 */
            ^(FILEFORMAT
                ^(DOC SHORTDOC[$t, "The nif file format."])
-               FORMATNAME[$t, "NIF"]
-               FORMATNAME[$t, "KF"]
-               FORMATNAME[$t, "KFA"]
+               CONSTANTNAME[$t, "NIF"]
+               CONSTANTNAME[$t, "KF"]
+               CONSTANTNAME[$t, "KFA"]
            )
 /*
 class FileVersion:
