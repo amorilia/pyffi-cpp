@@ -114,7 +114,7 @@ anyattribute
     ;
 
 declarations
-    :   (versiondefine | basicdefine | enumdefine /* | classdefine */ )*
+    :   (versiondefine | basicdefine | enumdefine | structdefine)*
     ;
 
 versiondefine
@@ -180,6 +180,31 @@ option_valueattribute
 option_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> CONSTANTNAME[$t];
+
+structdefine
+    :   TAG_START_STRUCT struct_nameattribute anyattribute* TAG_CLOSE
+    	doc=SHORTDOC?
+        struct_add*
+        TAG_END_STRUCT SHORTDOC*
+        -> ^(CLASSDEF ^(DOC $doc) struct_nameattribute struct_add*);
+
+struct_nameattribute
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, $t.text];
+
+struct_add
+    :   TAG_START_ADD add_nameattribute add_typeattribute anyattribute* TAG_CLOSE
+        doc=SHORTDOC?
+        TAG_END_ADD SHORTDOC*
+        -> ^(FIELDDEF ^(DOC $doc) add_typeattribute add_nameattribute);
+
+add_nameattribute
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> VARIABLENAME[$t, $t.text];
+
+add_typeattribute
+    :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, $t.text];
 
 /*------------------------------------------------------------------
  * LEXER RULES
@@ -267,6 +292,22 @@ TAG_END_OPTION
     :   { !tagMode }?=> '</option>'
     ;
 
+TAG_START_STRUCT
+    :   { !tagMode }?=> ('<' ('compound'|'object'|'struct')) { tagMode = true; }
+    ;
+
+TAG_END_STRUCT
+    :   { !tagMode }?=> ('</' ('compound'|'object'|'struct') '>')
+    ;
+
+TAG_START_ADD
+    :   { !tagMode }?=> '<add' { tagMode = true; }
+    ;
+
+TAG_END_ADD
+    :   { !tagMode }?=> '</add>'
+    ;
+
 TAG_CLOSE
     :   { tagMode }?=> '>' { tagMode = false; }
     ;
@@ -301,6 +342,10 @@ NAME_VALUE
 
 NAME_STORAGE
     :   { tagMode }?=> 'storage'
+    ;
+
+NAME_TYPE
+    :   { tagMode }?=> 'type'
     ;
 
 NAME
