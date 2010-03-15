@@ -47,7 +47,8 @@ using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(int_type_test_suite)
 
-BOOST_AUTO_TEST_CASE(constructor_test) {
+BOOST_AUTO_TEST_CASE(constructor_test)
+{
 	// test default constructor
 	IntType<uint8_t> i;
 	BOOST_CHECK_EQUAL(i.get(), 0);
@@ -58,7 +59,8 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 	BOOST_CHECK_EQUAL(i.get(), j.get());
 }
 
-BOOST_AUTO_TEST_CASE(get_test) {
+BOOST_AUTO_TEST_CASE(get_test)
+{
 	// check that get returns assigned value
 	IntType<uint8_t> i;
 	i = 5;
@@ -69,7 +71,8 @@ BOOST_AUTO_TEST_CASE(get_test) {
 	BOOST_CHECK_EQUAL(i.get(), 6);
 }
 
-BOOST_AUTO_TEST_CASE(assign_by_value_test) {
+BOOST_AUTO_TEST_CASE(assign_by_value_test)
+{
 	IntType<uint8_t> i;
 
 	// test assignment of correct type
@@ -90,7 +93,8 @@ BOOST_AUTO_TEST_CASE(assign_by_value_test) {
 	BOOST_CHECK_THROW(i = 1.0f, type_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_uint8_test) {
+BOOST_AUTO_TEST_CASE(range_check_uint8_test)
+{
 	// range check error
 	IntType<uint8_t> i;
 	BOOST_CHECK_THROW(i = -1, value_error);
@@ -101,7 +105,8 @@ BOOST_AUTO_TEST_CASE(range_check_uint8_test) {
 	BOOST_CHECK_THROW(i = 0x100, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_uint16_test) {
+BOOST_AUTO_TEST_CASE(range_check_uint16_test)
+{
 	IntType<uint16_t> i;
 	BOOST_CHECK_THROW(i = -1, value_error);
 	i = 0;
@@ -111,7 +116,8 @@ BOOST_AUTO_TEST_CASE(range_check_uint16_test) {
 	BOOST_CHECK_THROW(i = 0x10000, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_uint32_test) {
+BOOST_AUTO_TEST_CASE(range_check_uint32_test)
+{
 	IntType<uint32_t> i;
 	BOOST_CHECK_THROW(i = -1, value_error);
 	i = 0;
@@ -121,7 +127,8 @@ BOOST_AUTO_TEST_CASE(range_check_uint32_test) {
 	BOOST_CHECK_THROW(i = 0x100000000, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_uint64_test) {
+BOOST_AUTO_TEST_CASE(range_check_uint64_test)
+{
 	IntType<uint64_t> i;
 	BOOST_CHECK_THROW(i = -1, value_error);
 	i = 0;
@@ -132,7 +139,8 @@ BOOST_AUTO_TEST_CASE(range_check_uint64_test) {
 	//BOOST_CHECK_THROW(i = 0x10000000000000000LLL, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_int8_test) {
+BOOST_AUTO_TEST_CASE(range_check_int8_test)
+{
 	// range check error
 	IntType<int8_t> i;
 	BOOST_CHECK_THROW(i = -0x81, value_error);
@@ -143,7 +151,8 @@ BOOST_AUTO_TEST_CASE(range_check_int8_test) {
 	BOOST_CHECK_THROW(i = 0x80, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_int16_test) {
+BOOST_AUTO_TEST_CASE(range_check_int16_test)
+{
 	IntType<int16_t> i;
 	BOOST_CHECK_THROW(i = -0x8001, value_error);
 	i = -0x8000;
@@ -153,7 +162,8 @@ BOOST_AUTO_TEST_CASE(range_check_int16_test) {
 	BOOST_CHECK_THROW(i = 0x8000, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_int32_test) {
+BOOST_AUTO_TEST_CASE(range_check_int32_test)
+{
 	IntType<int32_t> i;
 	BOOST_CHECK_THROW(i = -0x80000001L, value_error);
 	i = -0x80000000L;
@@ -163,7 +173,8 @@ BOOST_AUTO_TEST_CASE(range_check_int32_test) {
 	BOOST_CHECK_THROW(i = 0x80000000L, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(range_check_int64_test) {
+BOOST_AUTO_TEST_CASE(range_check_int64_test)
+{
 	IntType<int64_t> i;
 	// can't create constant with this value
 	//BOOST_CHECK_THROW(i = -0x8000000000000001LLL, value_error);
@@ -175,7 +186,8 @@ BOOST_AUTO_TEST_CASE(range_check_int64_test) {
 	BOOST_CHECK_THROW(i = 0x8000000000000000, value_error);
 }
 
-BOOST_AUTO_TEST_CASE(assign_by_object_test) {
+BOOST_AUTO_TEST_CASE(assign_by_object_test)
+{
 	IntType<uint8_t> i;
 
 	// check assigning value via another IntType

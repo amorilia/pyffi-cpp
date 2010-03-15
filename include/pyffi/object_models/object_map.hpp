@@ -44,14 +44,17 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/map.hpp"
 #include "pyffi/object_models/object.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 /*!
  * A convenience wrapper around Map<Object>.
  */
-class ObjectMap : private Map<Object> {
+class ObjectMap : private Map<Object>
+{
 public:
 	//! Add an object.
 	template<typename ValueType> void add(const std::string & name, const ValueType & value) {

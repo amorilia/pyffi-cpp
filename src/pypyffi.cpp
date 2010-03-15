@@ -40,7 +40,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace boost::python;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	try {
 		Py_Initialize();
 		// get namespace

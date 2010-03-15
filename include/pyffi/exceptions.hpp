@@ -40,62 +40,71 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdexcept>
 
-namespace pyffi {
+namespace pyffi
+{
 
 //! Thrown on syntax error.
-class syntax_error : public std::runtime_error {
+class syntax_error : public std::runtime_error
+{
 public:
 	syntax_error(const std::string & msg)
-			: std::runtime_error(msg) {};
+		: std::runtime_error(msg) {};
 };
 
 //! Thrown on runtime error (convenience wrapper around std::runtime_error).
-class runtime_error : public std::runtime_error {
+class runtime_error : public std::runtime_error
+{
 public:
 	runtime_error(const std::string & msg)
-			: std::runtime_error(msg) {};
+		: std::runtime_error(msg) {};
 };
 
 //! Thrown on name mismatch.
-class name_error : public runtime_error {
+class name_error : public runtime_error
+{
 public:
 	name_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 //! Thrown on type mismatch.
-class type_error : public runtime_error {
+class type_error : public runtime_error
+{
 public:
 	type_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 //! Thrown on value mismatch.
-class value_error : public runtime_error {
+class value_error : public runtime_error
+{
 public:
 	value_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 //! Thrown on attribute mismatch.
-class attribute_error : public runtime_error {
+class attribute_error : public runtime_error
+{
 public:
 	attribute_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 //! Thrown on key mismatch.
-class key_error : public runtime_error {
+class key_error : public runtime_error
+{
 public:
 	key_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 //! Thrown on input/output error.
-class io_error : public runtime_error {
+class io_error : public runtime_error
+{
 public:
 	io_error(const std::string & msg)
-			: runtime_error(msg) {};
+		: runtime_error(msg) {};
 };
 
 }; // namespace pyffi

@@ -42,16 +42,19 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/any_type.hpp"
 #include "pyffi/object_models/object.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 /*!
  * Base class for integer data.
  */
 
 template<typename IntegralType>
-class IntType : public pyffi::object_models::AnyType {
+class IntType : public pyffi::object_models::AnyType
+{
 public:
 	IntType() : AnyType((IntegralType)0) {};
 

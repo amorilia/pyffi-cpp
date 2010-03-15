@@ -44,13 +44,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "meta_struct.hpp"
 #include "struct.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 //class Expression;
 
-class Expression {
+class Expression
+{
 public:
 	/*!
 	 * Construct an expression from an expression string, where attributes
@@ -58,7 +61,7 @@ public:
 	 */
 	Expression(const std::string & expr,
 	           boost::shared_ptr<MetaStruct> meta_struct)
-			: meta_struct(meta_struct), left_index(-1), right_index(-1), left_value(0), right_value(0), oper(NONE) {};
+		: meta_struct(meta_struct), left_index(-1), right_index(-1), left_value(0), right_value(0), oper(NONE) {};
 	//! Evaluate the expression from the given structure.
 	int eval(const Struct & struc) const {
 		return 0;

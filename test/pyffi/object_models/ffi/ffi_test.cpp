@@ -46,39 +46,48 @@ using namespace pyffi::object_models::ffi;
 
 BOOST_AUTO_TEST_SUITE(ffi_test_suite)
 
-BOOST_AUTO_TEST_CASE(non_existing_file_test) {
+BOOST_AUTO_TEST_CASE(non_existing_file_test)
+{
 	BOOST_CHECK_THROW(FileFormat("non_existing_file.ffi"), pyffi::io_error);
 }
 
-BOOST_AUTO_TEST_CASE(invalid_test) {
+BOOST_AUTO_TEST_CASE(invalid_test)
+{
 	BOOST_CHECK_THROW(FileFormat("test_invalid.ffi"), pyffi::syntax_error);
 }
 
-BOOST_AUTO_TEST_CASE(type_test) {
+BOOST_AUTO_TEST_CASE(type_test)
+{
 	FileFormat("test_type.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(type_doc_test) {
+BOOST_AUTO_TEST_CASE(type_doc_test)
+{
 	FileFormat("test_type_doc.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(class_test) {
+BOOST_AUTO_TEST_CASE(class_test)
+{
 	FileFormat("test_class.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(parameter_test) {
+BOOST_AUTO_TEST_CASE(parameter_test)
+{
 	FileFormat("test_parameter.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(kwargs_test) {
+BOOST_AUTO_TEST_CASE(kwargs_test)
+{
 	FileFormat("test_kwargs.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(conditions_test) {
+BOOST_AUTO_TEST_CASE(conditions_test)
+{
 	FileFormat("test_conditions.ffi");
 }
 
-BOOST_AUTO_TEST_CASE(enum_test) {
+BOOST_AUTO_TEST_CASE(enum_test)
+{
 	FileFormat("test_enum.ffi");
 }
 

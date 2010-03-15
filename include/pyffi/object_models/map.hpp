@@ -49,9 +49,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "pyffi/exceptions.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 // unordered_map introduced in boost 1.36.0
 #if BOOST_VERSION >= 13600

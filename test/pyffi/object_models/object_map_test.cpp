@@ -47,11 +47,13 @@ using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(object_map_test_suite)
 
-BOOST_AUTO_TEST_CASE(declare_test) {
+BOOST_AUTO_TEST_CASE(declare_test)
+{
 	BOOST_CHECK_NO_THROW(ObjectMap omap);
 }
 
-BOOST_AUTO_TEST_CASE(add_test) {
+BOOST_AUTO_TEST_CASE(add_test)
+{
 	ObjectMap omap;
 
 	// add arguments of various types
@@ -69,7 +71,8 @@ BOOST_AUTO_TEST_CASE(add_test) {
 	BOOST_CHECK_THROW(omap.add<int>("arg3", 10), value_error);
 }
 
-BOOST_AUTO_TEST_CASE(constructor_test) {
+BOOST_AUTO_TEST_CASE(constructor_test)
+{
 	// test default constructor
 	BOOST_CHECK_NO_THROW(ObjectMap());
 
@@ -92,7 +95,8 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 	BOOST_CHECK_EQUAL(omap2.get<int>("arg1"), 5);
 }
 
-BOOST_AUTO_TEST_CASE(get_test) {
+BOOST_AUTO_TEST_CASE(get_test)
+{
 	// set up arguments
 	ObjectMap omap;
 	BOOST_CHECK_NO_THROW(omap.add<char>("char1", 's'));

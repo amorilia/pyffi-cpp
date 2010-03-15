@@ -47,11 +47,13 @@ using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(meta_struct_test_suite)
 
-BOOST_AUTO_TEST_CASE(declare_test) {
+BOOST_AUTO_TEST_CASE(declare_test)
+{
 	BOOST_CHECK_NO_THROW(MetaStruct ms);
 }
 
-BOOST_AUTO_TEST_CASE(add_test) {
+BOOST_AUTO_TEST_CASE(add_test)
+{
 	MetaStruct ms;
 	PMetaAttribute ma1(new MetaAttribute(5));
 	PMetaAttribute ma2(new MetaAttribute('y'));
@@ -69,7 +71,8 @@ BOOST_AUTO_TEST_CASE(add_test) {
 	BOOST_CHECK_THROW(ms.add("arg3", ma4), value_error);
 }
 
-BOOST_AUTO_TEST_CASE(index_test) {
+BOOST_AUTO_TEST_CASE(index_test)
+{
 	MetaStruct ms;
 	PMetaAttribute ma1(new MetaAttribute(5));
 	PMetaAttribute ma2(new MetaAttribute('y'));

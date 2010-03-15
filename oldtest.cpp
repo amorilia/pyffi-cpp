@@ -42,7 +42,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace pyffi;
 
-void init_testformat(Format & testformat) {
+void init_testformat(Format & testformat)
+{
 	// testformat is initialized here explicitly
 	// this could be done from an xml file
 	PMetaStruct ObjClass = testformat.add_struct("ObjClass");
@@ -55,7 +56,8 @@ void init_testformat(Format & testformat) {
 	ObjClass2->add_attr("z", Struct(testformat.get_struct("ObjClass")));
 }
 
-int main() {
+int main()
+{
 	// set up format description
 
 	Format testformat;

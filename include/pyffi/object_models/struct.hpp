@@ -45,19 +45,22 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "object.hpp"
 #include "meta_struct.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 /*!
  * A structure instance. This class serves to create an instance of a
  * MetaStruct.
  */
-class Struct {
+class Struct
+{
 public:
 	//! Create structure from a metaclass description.
 	Struct(PMetaStruct meta_struct)
-			: meta_struct(meta_struct) {
+		: meta_struct(meta_struct) {
 		BOOST_FOREACH(const MetaAttribute & meta_attribute, meta_struct->meta_attributes) {
 			// push back a copy of the default value
 			objects.push_back(Object(meta_attribute.default_value));
@@ -65,7 +68,7 @@ public:
 	}
 	//! Copy constructor.
 	Struct(const Struct & struc)
-			: meta_struct(struc.meta_struct), objects(struc.objects) {};
+		: meta_struct(struc.meta_struct), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & get_attr(const std::string & name) {
 		std::size_t index;

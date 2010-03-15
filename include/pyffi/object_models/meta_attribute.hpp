@@ -43,9 +43,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "object.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 class Expression;
 
@@ -53,17 +55,18 @@ class Expression;
  * The MetaAttribute class stores information about the attributes of a
  * structure.
  */
-class MetaAttribute {
+class MetaAttribute
+{
 public:
 	/*!
 	 * Initialize information about the attribute: type and default value.
 	 */
 	template<typename ValueType>
 	MetaAttribute(const ValueType & default_value)
-			: default_value(default_value), shape() {};
+		: default_value(default_value), shape() {};
 	template<typename ValueType>
 	MetaAttribute(const ValueType & default_value, const std::vector<boost::shared_ptr<Expression> > & shape)
-			: default_value(default_value), shape(shape) {};
+		: default_value(default_value), shape(shape) {};
 private:
 	/*!
 	 * default_value plays both the role of storing the type of the

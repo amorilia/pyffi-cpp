@@ -43,16 +43,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "pyffi/exceptions.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 /*!
  * A boost::any variant which can contain any type but that cannot
  * change type once created. All objects (i.e. any data that can take
  * particular values) have this type.
  */
-class Object {
+class Object
+{
 public:
 	//! Default constructor throws.
 	Object() {
@@ -60,10 +63,10 @@ public:
 	};
 	//! Copy constructor.
 	Object(const Object & object)
-			: m_value(object.m_value) {};
+		: m_value(object.m_value) {};
 	//! Constructor to set the type and the value.
 	template<typename ValueType> Object(const ValueType & value)
-			: m_value(value) {};
+		: m_value(value) {};
 	//! Get reference to value stored in the object.
 	template<typename ValueType> ValueType & get() {
 		try {

@@ -46,27 +46,33 @@ using namespace pyffi::object_models::xml;
 
 BOOST_AUTO_TEST_SUITE(xml_test_suite)
 
-BOOST_AUTO_TEST_CASE(non_existing_file_test) {
+BOOST_AUTO_TEST_CASE(non_existing_file_test)
+{
 	BOOST_CHECK_THROW(FileFormat("non_existing_file.xml"), pyffi::io_error);
 }
 
-BOOST_AUTO_TEST_CASE(invalid_test) {
+BOOST_AUTO_TEST_CASE(invalid_test)
+{
 	BOOST_CHECK_THROW(FileFormat("test_invalid.xml"), pyffi::syntax_error);
 }
 
-BOOST_AUTO_TEST_CASE(minimal_test) {
+BOOST_AUTO_TEST_CASE(minimal_test)
+{
 	FileFormat("test_minimal.xml");
 }
 
-BOOST_AUTO_TEST_CASE(header_test) {
+BOOST_AUTO_TEST_CASE(header_test)
+{
 	FileFormat("test_header.xml");
 }
 
-BOOST_AUTO_TEST_CASE(version_test) {
+BOOST_AUTO_TEST_CASE(version_test)
+{
 	FileFormat("test_version.xml");
 }
 
-BOOST_AUTO_TEST_CASE(basic_test) {
+BOOST_AUTO_TEST_CASE(basic_test)
+{
 	FileFormat("test_basic.xml");
 }
 

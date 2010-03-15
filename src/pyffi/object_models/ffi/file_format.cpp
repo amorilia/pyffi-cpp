@@ -46,17 +46,21 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/ffi/file_format.hpp"
 #include "pyffi/exceptions.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
-namespace ffi {
+namespace ffi
+{
 
 /*
  * Main entry point for lexing, parsing, and walking.
  */
 
-FileFormat::FileFormat(const std::string & filename) {
+FileFormat::FileFormat(const std::string & filename)
+{
 	// set up the antlr structures
 	pANTLR3_INPUT_STREAM input = NULL;
 	pFFILexer lex = NULL;

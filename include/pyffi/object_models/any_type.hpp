@@ -39,15 +39,18 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "pyffi/object_models/object.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 /*!
  * Base class for all data that can be stored. Consists of read and write.
  */
 
-class AnyType : public pyffi::object_models::Object {
+class AnyType : public pyffi::object_models::Object
+{
 public:
 	//! Copy constructor.
 	AnyType(const Object & object) : pyffi::object_models::Object(object) {};

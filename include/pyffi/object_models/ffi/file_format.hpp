@@ -40,13 +40,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "pyffi/object_models/file_format.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
-namespace ffi {
+namespace ffi
+{
 
-class FileFormat : public pyffi::object_models::FileFormat {
+class FileFormat : public pyffi::object_models::FileFormat
+{
 public:
 	FileFormat() : pyffi::object_models::FileFormat() {};
 	FileFormat(const std::string & filename);

@@ -40,15 +40,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "pyffi/object_models/ffi/file_format.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
-namespace xml {
+namespace xml
+{
 
 // the xml model is essentially identical to ffi model, except for the
 // lexer and parser
-class FileFormat : public pyffi::object_models::ffi::FileFormat {
+class FileFormat : public pyffi::object_models::ffi::FileFormat
+{
 public:
 	FileFormat() : pyffi::object_models::ffi::FileFormat() {};
 	FileFormat(const std::string & filename);

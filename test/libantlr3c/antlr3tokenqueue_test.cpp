@@ -45,18 +45,21 @@ POSSIBILITY OF SUCH DAMAGE.
 
 BOOST_AUTO_TEST_SUITE(tokenqueue_test_suite)
 
-BOOST_AUTO_TEST_CASE(declare_test) {
+BOOST_AUTO_TEST_CASE(declare_test)
+{
 	// check that declaration does not throw
 	BOOST_CHECK_NO_THROW(TokenQueue tq);
 }
 
-BOOST_AUTO_TEST_CASE(reset_test) {
+BOOST_AUTO_TEST_CASE(reset_test)
+{
 	TokenQueue tq;
 	// check that reset does not throw
 	BOOST_CHECK_NO_THROW(token_queue_reset(&tq));
 }
 
-BOOST_AUTO_TEST_CASE(is_empty_test) {
+BOOST_AUTO_TEST_CASE(is_empty_test)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	// check that queue is empty after resetting
@@ -69,7 +72,8 @@ BOOST_AUTO_TEST_CASE(is_empty_test) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
-BOOST_AUTO_TEST_CASE(fifo_test1) {
+BOOST_AUTO_TEST_CASE(fifo_test1)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	// create two tokens
@@ -90,7 +94,8 @@ BOOST_AUTO_TEST_CASE(fifo_test1) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
-BOOST_AUTO_TEST_CASE(fifo_test2) {
+BOOST_AUTO_TEST_CASE(fifo_test2)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	ANTLR3_COMMON_TOKEN tok1;
@@ -112,7 +117,8 @@ BOOST_AUTO_TEST_CASE(fifo_test2) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
-BOOST_AUTO_TEST_CASE(fifo_test3) {
+BOOST_AUTO_TEST_CASE(fifo_test3)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	ANTLR3_COMMON_TOKEN toklist[100];
@@ -128,7 +134,8 @@ BOOST_AUTO_TEST_CASE(fifo_test3) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
-BOOST_AUTO_TEST_CASE(pop_empty_test) {
+BOOST_AUTO_TEST_CASE(pop_empty_test)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	ANTLR3_COMMON_TOKEN tok1;
@@ -149,7 +156,8 @@ BOOST_AUTO_TEST_CASE(pop_empty_test) {
 	BOOST_CHECK_EQUAL(token_queue_is_empty(&tq), 1);
 }
 
-BOOST_AUTO_TEST_CASE(push_full_test) {
+BOOST_AUTO_TEST_CASE(push_full_test)
+{
 	TokenQueue tq;
 	token_queue_reset(&tq);
 	ANTLR3_COMMON_TOKEN tok1;

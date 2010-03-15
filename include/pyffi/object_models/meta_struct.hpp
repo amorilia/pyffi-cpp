@@ -44,12 +44,15 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/map.hpp"
 #include "pyffi/object_models/meta_attribute.hpp"
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 //! Stores all information attached to a structure.
-class MetaStruct {
+class MetaStruct
+{
 public:
 	//! Size.
 	typedef std::vector<MetaAttribute>::size_type size_type;

@@ -18,7 +18,8 @@
 #endif
 
 //! Create random string.
-std::string random_string(int len) {
+std::string random_string(int len)
+{
 	std::string ret;
 	for (int i=0; i < len; ++i) {
 		int num;
@@ -34,7 +35,8 @@ std::string random_string(int len) {
 	return ret;
 }
 
-void impl_map(const std::vector<std::string> & names) {
+void impl_map(const std::vector<std::string> & names)
+{
 	std::map<std::string, int> dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -44,7 +46,8 @@ void impl_map(const std::vector<std::string> & names) {
 };
 
 #if (BOOST_VERSION >= 103600)
-void impl_hash_map(const std::vector<std::string> & names) {
+void impl_hash_map(const std::vector<std::string> & names)
+{
 	boost::unordered_map<std::string, int> dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -71,7 +74,8 @@ struct name_hash2 : std::unary_function<std::string, std::size_t> {
 	}
 };
 
-void impl_hash_map2(const std::vector<std::string> & names) {
+void impl_hash_map2(const std::vector<std::string> & names)
+{
 	boost::unordered_map<std::string, int, name_hash2> dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -96,7 +100,8 @@ struct name_hash3 : std::unary_function<std::string, std::size_t> {
 	}
 };
 
-void impl_hash_map3(const std::vector<std::string> & names) {
+void impl_hash_map3(const std::vector<std::string> & names)
+{
 	boost::unordered_map<std::string, int, name_hash2> dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -106,7 +111,8 @@ void impl_hash_map3(const std::vector<std::string> & names) {
 };
 #endif
 
-void impl_python_dict(const std::vector<std::string> & names) {
+void impl_python_dict(const std::vector<std::string> & names)
+{
 	boost::python::dict dict1;
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -117,7 +123,8 @@ void impl_python_dict(const std::vector<std::string> & names) {
 
 class Test {};
 
-void impl_python_class(const std::vector<std::string> & names) {
+void impl_python_class(const std::vector<std::string> & names)
+{
 	boost::python::object dict1 = boost::python::class_<Test>("Test");
 	for (int i=0; i < NUM_TRIALS; i++) {
 		BOOST_FOREACH(const std::string & name, names) {
@@ -126,7 +133,8 @@ void impl_python_class(const std::vector<std::string> & names) {
 	};
 };
 
-int main(void) {
+int main(void)
+{
 	Py_Initialize();
 
 	clock_t t;

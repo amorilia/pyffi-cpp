@@ -40,7 +40,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace boost::python;
 
-BOOST_PYTHON_MODULE(_pyffi) {
+BOOST_PYTHON_MODULE(_pyffi)
+{
 	scope current;
 	current.attr("__version__") = pyffi::version;
 	current.attr("__hexversion__") = pyffi::hexversion;

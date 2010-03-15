@@ -46,11 +46,13 @@ using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(map_test_suite)
 
-BOOST_AUTO_TEST_CASE(declare_test) {
+BOOST_AUTO_TEST_CASE(declare_test)
+{
 	BOOST_CHECK_NO_THROW(Map<int> intmap);
 }
 
-BOOST_AUTO_TEST_CASE(add_test) {
+BOOST_AUTO_TEST_CASE(add_test)
+{
 	Map<int> intmap;
 
 	// add arguments
@@ -65,7 +67,8 @@ BOOST_AUTO_TEST_CASE(add_test) {
 	BOOST_CHECK_EQUAL(intmap.get("arg2"), 2);
 }
 
-BOOST_AUTO_TEST_CASE(get_test) {
+BOOST_AUTO_TEST_CASE(get_test)
+{
 	Map<int> intmap;
 
 	// add arguments

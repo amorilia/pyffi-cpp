@@ -47,7 +47,8 @@ using namespace pyffi::object_models;
 
 BOOST_AUTO_TEST_SUITE(object_test_suite)
 
-BOOST_AUTO_TEST_CASE(constructor_test) {
+BOOST_AUTO_TEST_CASE(constructor_test)
+{
 	// test default constructor
 	BOOST_CHECK_THROW(Object(), type_error);
 
@@ -68,7 +69,8 @@ BOOST_AUTO_TEST_CASE(constructor_test) {
 	BOOST_CHECK_EQUAL(obj_str.get<std::string>(), obj_str_copy.get<std::string>());
 }
 
-BOOST_AUTO_TEST_CASE(get_test) {
+BOOST_AUTO_TEST_CASE(get_test)
+{
 	// check that get returns assigned value
 	Object obj_short(short(5));
 	BOOST_CHECK_EQUAL(obj_short.get<short>(), 5);
@@ -84,7 +86,8 @@ BOOST_AUTO_TEST_CASE(get_test) {
 	BOOST_CHECK_EQUAL(obj_short.get<short>(), 10);
 }
 
-BOOST_AUTO_TEST_CASE(assign_by_value_test) {
+BOOST_AUTO_TEST_CASE(assign_by_value_test)
+{
 	Object obj(50);
 
 	// check assigning different value
@@ -97,7 +100,8 @@ BOOST_AUTO_TEST_CASE(assign_by_value_test) {
 	BOOST_CHECK_THROW(obj = std::string("Hello world!"), type_error);
 }
 
-BOOST_AUTO_TEST_CASE(assign_by_object_test) {
+BOOST_AUTO_TEST_CASE(assign_by_object_test)
+{
 	Object obj(50);
 
 	// check assigning different value
@@ -117,7 +121,8 @@ BOOST_AUTO_TEST_CASE(assign_by_object_test) {
 	BOOST_CHECK_EQUAL(Object(obj).get<int>(), 102);
 }
 
-BOOST_AUTO_TEST_CASE(shared_object_test) {
+BOOST_AUTO_TEST_CASE(shared_object_test)
+{
 	PObject p_obj1(new Object(10));
 	PObject p_obj2(p_obj1);
 

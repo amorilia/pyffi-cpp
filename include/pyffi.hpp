@@ -42,7 +42,8 @@ POSSIBILITY OF SUCH DAMAGE.
 using namespace boost::python;
 
 //! The main pyffi module.
-namespace pyffi {
+namespace pyffi
+{
 
 //! Version information.
 const std::string version = "1.2.4";

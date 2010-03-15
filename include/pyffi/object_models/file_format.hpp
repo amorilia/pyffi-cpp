@@ -47,12 +47,15 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/struct.hpp"
 */
 
-namespace pyffi {
+namespace pyffi
+{
 
-namespace object_models {
+namespace object_models
+{
 
 //! Stores all information attached to a format.
-class FileFormat : private ObjectMap {
+class FileFormat : private ObjectMap
+{
 public:
 	//! The file extensions of the format (nif, cgf, tga, dds, ...)
 	std::list<std::string> extensions;
