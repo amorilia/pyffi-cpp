@@ -293,11 +293,11 @@ TAG_END_OPTION
     ;
 
 TAG_START_STRUCT
-    :   { !tagMode }?=> ('<' ('compound'|'object'|'struct')) { tagMode = true; }
+    :   { !tagMode }?=> ('<' ('compound'|'niobject'|'struct')) { tagMode = true; }
     ;
 
 TAG_END_STRUCT
-    :   { !tagMode }?=> ('</' ('compound'|'object'|'struct') '>')
+    :   { !tagMode }?=> ('</' ('compound'|'niobject'|'struct') '>')
     ;
 
 TAG_START_ADD
