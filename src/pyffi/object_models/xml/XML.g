@@ -207,17 +207,60 @@ add_typeattribute
         -> TYPENAME[$t, $t.text];
 
 expression
+	:   or_test
+    ;
+
+or_test
+	:   and_test (OP_LOGICAL_OR e2=and_test)*
+    ;
+
+and_test
+    :   not_test (OP_LOGICAL_AND not_test)*
+    ;
+
+not_test
+	:   OP_NOT not_test
+	|   comparison
+	;
+
+comparison
+    :   or_expr (comp_op or_expr)*
+    ;
+
+comp_op
+	:   OP_EQ
+	|   OP_NEQ
+	|   OP_GT
+	|   OP_LT
+	|   OP_GTEQ
+	|   OP_LTEQ
+	;
+
+or_expr
+    : and_expr (OP_BITWISE_OR and_expr)*
+	;
+
+and_expr
+    : shift_expr (OP_BITWISE_AND shift_expr)*
+	;
+
+shift_expr
+    : arith_expr ((OP_LEFTSHIFT|OP_RIGHTSHIFT) arith_expr)*
+	;
+
+arith_expr
+    : term ((OP_PLUS|OP_MINUS) term)*
+	;
+
+term
+    : atom ((OP_MULTIPLY | OP_DIVIDE | OP_MODULO) atom)*
+	;
+
+atom
     :   NAME
     |   INT
     |   FLOAT
-    |   e1=expression OP_EQ e2=expression
-    |   e1=expression OP_NEQ e2=expression
-    |   e1=expression OP_LOGICAL_AND e2=expression
-    |   e1=expression OP_BITWISE_AND e2=expression
-    |   e1=expression OP_LOGICAL_OR e2=expression
-    |   e1=expression OP_BITWISE_OR e2=expression
-    |   OP_NOT e1=expression
-    |   LBRACKET e1=expression RBRACKET
+    |   LBRACKET expression RBRACKET
     ;
 
 /*------------------------------------------------------------------
@@ -238,13 +281,13 @@ DIGITS
 
 INT
     // hex
-    :   '0x' ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )+
+    :   { tagMode && attrMode }?=> '0x' ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' )+
     // octal
-    |   '0o' ( '0' .. '7')+
+    |   { tagMode && attrMode }?=> '0o' ( '0' .. '7')+
     // binary
-    |   '0b' ( '0' .. '1')+
+    |   { tagMode && attrMode }?=> '0b' ( '0' .. '1')+
     // decimal, or version integer
-    |   DIGITS ('.' DIGITS)*
+    |   { tagMode && attrMode }?=> DIGITS ('.' DIGITS)*
     ;
 
 fragment
@@ -253,7 +296,7 @@ EXPONENT
     ;
 
 FLOAT
-    :   DIGITS '.' DIGITS EXPONENT? 'f'
+    :   { tagMode && attrMode }?=> DIGITS '.' DIGITS EXPONENT? 'f'
     ;
 
 fragment
@@ -323,11 +366,11 @@ TAG_END_ADD
     ;
 
 TAG_CLOSE
-    :   { tagMode }?=> '>' { tagMode = false; }
+    :   { tagMode && !attrMode }?=> '>' { tagMode = false; }
     ;
 
 TAG_END
-    :   { tagMode }?=> '/>' { tagMode = false; }
+    :   { tagMode && !attrMode }?=> '/>' { tagMode = false; }
     ;
 
 ATTR_EQ
@@ -343,23 +386,23 @@ ATTR_VALUE_END
     ;
 
 NAME_NUM
-    :   { tagMode }?=> 'num'
+    :   { tagMode && !attrMode }?=> 'num'
     ;
 
 NAME_NAME
-    :   { tagMode }?=> 'name'
+    :   { tagMode && !attrMode }?=> 'name'
     ;
 
 NAME_VALUE
-    :   { tagMode }?=> 'value'
+    :   { tagMode && !attrMode }?=> 'value'
     ;
 
 NAME_STORAGE
-    :   { tagMode }?=> 'storage'
+    :   { tagMode && !attrMode }?=> 'storage'
     ;
 
 NAME_TYPE
-    :   { tagMode }?=> 'type'
+    :   { tagMode && !attrMode }?=> 'type'
     ;
 
 NAME
@@ -372,6 +415,24 @@ OP_EQ
 
 OP_NEQ
     :   { tagMode && attrMode }?=> '!=';
+
+OP_RIGHTSHIFT
+    :   { tagMode && attrMode }?=> '>>';
+
+OP_LEFTSHIFT
+    :   { tagMode && attrMode }?=> '<<';
+
+OP_GTEQ
+    :   { tagMode && attrMode }?=> '>=';
+
+OP_LTEQ
+    :   { tagMode && attrMode }?=> '<=';
+
+OP_GT
+    :   { tagMode && attrMode }?=> '>';
+
+OP_LT
+    :   { tagMode && attrMode }?=> '<';
 
 OP_NOT
     :   { tagMode && attrMode }?=> '!';
@@ -387,6 +448,21 @@ OP_LOGICAL_OR
 
 OP_BITWISE_OR
     :   { tagMode && attrMode }?=> '|';
+
+OP_MINUS
+    :   { tagMode && attrMode }?=> '-';
+
+OP_PLUS
+    :   { tagMode && attrMode }?=> '-';
+
+OP_MULTIPLY
+    :   { tagMode && attrMode }?=> '*';
+
+OP_DIVIDE
+    :   { tagMode && attrMode }?=> '/';
+
+OP_MODULO
+    :   { tagMode && attrMode }?=> '%';
 
 LBRACKET
     :   { tagMode && attrMode }?=> '(';
