@@ -212,7 +212,7 @@ expression
     ;
 
 or_test
-	:   and_test (OP_LOGICAL_OR e2=and_test)*
+	:   and_test (OP_LOGICAL_OR and_test)*
     ;
 
 and_test
