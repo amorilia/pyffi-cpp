@@ -109,8 +109,9 @@ class FileVersion:
     ;
 
 // extra attributes that we throw away
+// (OP_MULTIPLY handles niflibtype="*" for the Ptr type in nif.xml)
 anyattribute
-    :   NAME ATTR_EQ ATTR_VALUE_START expression ATTR_VALUE_END
+    :   NAME ATTR_EQ ATTR_VALUE_START (expression | OP_MULTIPLY) ATTR_VALUE_END
     ;
 
 declarations
