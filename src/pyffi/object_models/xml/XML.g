@@ -110,7 +110,7 @@ class FileVersion:
 
 // extra attributes that we throw away
 anyattribute
-    :   NAME ATTR_EQ ATTR_VALUE_START .* ATTR_VALUE_END
+    :   NAME ATTR_EQ ATTR_VALUE_START expression ATTR_VALUE_END
     ;
 
 declarations
@@ -205,6 +205,20 @@ add_nameattribute
 add_typeattribute
     :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> TYPENAME[$t, $t.text];
+
+expression
+    :   NAME
+    |   INT
+    |   FLOAT
+    |   e1=expression OP_EQ e2=expression
+    |   e1=expression OP_NEQ e2=expression
+    |   e1=expression OP_LOGICAL_AND e2=expression
+    |   e1=expression OP_BITWISE_AND e2=expression
+    |   e1=expression OP_LOGICAL_OR e2=expression
+    |   e1=expression OP_BITWISE_OR e2=expression
+    |   OP_NOT e1=expression
+    |   LBRACKET e1=expression RBRACKET
+    ;
 
 /*------------------------------------------------------------------
  * LEXER RULES
@@ -317,7 +331,7 @@ TAG_END
     ;
 
 ATTR_EQ
-    :   { tagMode }?=> '='
+    :   { tagMode && !attrMode }?=> '='
     ;
 
 ATTR_VALUE_START
@@ -349,8 +363,36 @@ NAME_TYPE
     ;
 
 NAME
-    :   { tagMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT | '_')*
+    :   { tagMode && !attrMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT)*
+    |   { tagMode && attrMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT | '_' | ' ')*
     ;
+
+OP_EQ
+    :   { tagMode && attrMode }?=> '==';
+
+OP_NEQ
+    :   { tagMode && attrMode }?=> '!=';
+
+OP_NOT
+    :   { tagMode && attrMode }?=> '!';
+
+OP_LOGICAL_AND
+    :   { tagMode && attrMode }?=> '&amp;&amp;';
+
+OP_BITWISE_AND
+    :   { tagMode && attrMode }?=> '&amp;';
+
+OP_LOGICAL_OR
+    :   { tagMode && attrMode }?=> '||';
+
+OP_BITWISE_OR
+    :   { tagMode && attrMode }?=> '|';
+
+LBRACKET
+    :   { tagMode && attrMode }?=> '(';
+
+RBRACKET
+    :   { tagMode && attrMode }?=> ')';
 
 HEADER_XML
     :   { !tagMode }?=> '<?xml' .* '?>'
