@@ -94,8 +94,8 @@ expression
     |   INT
     |   FLOAT
     |   STRING
-    |   ^(OP_LOGICAL_OR expression+)
-    |   ^(OP_LOGICAL_AND expression+)
+    |   ^(OP_LOGICAL_OR expression expression)
+    |   ^(OP_LOGICAL_AND expression expression)
     |   ^(OP_LOGICAL_NOT expression)
     |   ^(OP_EQ expression expression)
     |   ^(OP_NEQ expression expression)
@@ -103,10 +103,10 @@ expression
     |   ^(OP_LT expression expression)
     |   ^(OP_GTEQ expression expression)
     |   ^(OP_LTEQ expression expression)
-    |   ^(OP_BITWISE_OR expression expression+)
-    |   ^(OP_BITWISE_AND expression expression+)
-    |   ^(OP_LEFTSHIFT expression expression+)
-    |   ^(OP_RIGHTSHIFT expression expression+)
+    |   ^(OP_BITWISE_OR expression expression)
+    |   ^(OP_BITWISE_AND expression expression)
+    |   ^(OP_LEFTSHIFT expression expression)
+    |   ^(OP_RIGHTSHIFT expression expression)
     |   ^(OP_PLUS expression expression)
     |   ^(OP_MINUS expression expression)
     |   ^(OP_NEGATE expression)
