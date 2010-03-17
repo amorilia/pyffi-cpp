@@ -130,27 +130,36 @@ parameter:
 // matches typedefine in FFIFileFormat
 basicdefine
     :   TAG_START_BASIC (name=attr_type_name|anyattribute)* TAG_CLOSE
-        doc=SHORTDOC?
+        doc=SHORTDOC*
         TAG_END_BASIC SHORTDOC*
         -> ^(TYPEDEF ^(DOC $doc?) $name)
     ;
 
 enumdefine
-    :   TAG_START_ENUM (name=attr_type_name|type=attr_type_storage)* TAG_CLOSE
-        doc=SHORTDOC?
+    :   TAG_START_ENUM
+        ( name=attr_type_name
+        | type=attr_type_storage
+        | attr_expression_ver1
+        | attr_expression_ver2
+        | anyattribute
+        )* TAG_CLOSE
+        doc=SHORTDOC*
         enum_option+
         TAG_END_ENUM SHORTDOC*
         -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+)
     ;
 
 enum_option
-    :   TAG_START_OPTION attr_int_value attr_constant_name TAG_CLOSE
-        doc=SHORTDOC?
-        TAG_END_OPTION SHORTDOC*
-        -> ^(ENUMCONSTDEF ^(DOC $doc) attr_constant_name attr_int_value)
-    |   TAG_START_OPTION attr_int_value attr_constant_name
-        TAG_END SHORTDOC*
-        -> ^(ENUMCONSTDEF ^(DOC) attr_constant_name attr_int_value)
+    :   TAG_START_OPTION
+        ( value=attr_int_value
+        | name=attr_constant_name 
+        | anyattribute
+        )*
+        ( TAG_CLOSE doc=SHORTDOC* TAG_END_OPTION
+        | TAG_END
+        )
+        SHORTDOC*
+        -> ^(ENUMCONSTDEF ^(DOC $doc) $name $value)
     ;
 
 structdefine
@@ -160,7 +169,7 @@ structdefine
         | attr_expression_ver2
         | anyattribute
         )* TAG_CLOSE
-    	doc=SHORTDOC?
+    	doc=SHORTDOC*
         struct_add*
         TAG_END_STRUCT SHORTDOC*
         -> ^(CLASSDEF ^(DOC $doc) $name struct_add*);
@@ -172,7 +181,7 @@ bitflagsdefine
         ( name=attr_type_name
         | type=attr_type_storage
         )* TAG_CLOSE
-    	doc=SHORTDOC?
+    	doc=SHORTDOC*
         enum_option+
         TAG_END_BITFLAGS SHORTDOC*
         -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+);
@@ -192,7 +201,7 @@ struct_add
         | anyattribute
         )*
         ( TAG_CLOSE
-          doc=SHORTDOC?
+          doc=SHORTDOC*
           TAG_END_ADD
         | TAG_END
         )
