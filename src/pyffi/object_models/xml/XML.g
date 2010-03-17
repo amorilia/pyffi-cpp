@@ -102,7 +102,7 @@ anyattribute
     ;
 
 declarations
-    :   (versiondefine | basicdefine | enumdefine | structdefine)*
+    :   (versiondefine | basicdefine | enumdefine | structdefine | bitflagsdefine)*
     ;
 
 versiondefine
@@ -159,6 +159,18 @@ structdefine
         struct_add*
         TAG_END_STRUCT SHORTDOC*
         -> ^(CLASSDEF ^(DOC $doc) $name struct_add*);
+
+// for the time being, bitflags are converted to enums
+// TODO: implement bitstructs in the FFI grammar and use them here
+bitflagsdefine
+    :   TAG_START_BITFLAGS
+        ( name=attr_type_name
+        | type=attr_type_storage
+        )* TAG_CLOSE
+    	doc=SHORTDOC?
+        enum_option+
+        TAG_END_BITFLAGS SHORTDOC*
+        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+);
 
 struct_add
 @init {
@@ -411,6 +423,14 @@ TAG_START_OPTION
 
 TAG_END_OPTION
     :   { !tagMode }?=> '</option>'
+    ;
+
+TAG_START_BITFLAGS
+    :   { !tagMode }?=> '<bitflags' { tagMode = true; }
+    ;
+
+TAG_END_BITFLAGS
+    :   { !tagMode }?=> '</bitflags>'
     ;
 
 TAG_START_STRUCT
