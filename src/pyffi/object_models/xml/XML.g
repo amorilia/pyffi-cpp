@@ -165,29 +165,69 @@ option_nameattribute
         -> CONSTANTNAME[$t, ($t.text)->chars];
 
 structdefine
-    :   TAG_START_STRUCT struct_nameattribute anyattribute* TAG_CLOSE
+    :   TAG_START_STRUCT
+        ( name=struct_nameattribute
+        | ver1attribute
+        | ver2attribute
+        | anyattribute
+        )* TAG_CLOSE
     	doc=SHORTDOC?
         struct_add*
         TAG_END_STRUCT SHORTDOC*
-        -> ^(CLASSDEF ^(DOC $doc) struct_nameattribute struct_add*);
+        -> ^(CLASSDEF ^(DOC $doc) $name struct_add*);
 
 struct_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> TYPENAME[$t, ($t.text)->chars];
 
 struct_add
-    :   TAG_START_ADD add_nameattribute add_typeattribute anyattribute* TAG_CLOSE
+@init {
+    int has_ver1 = 0;
+    int has_ver2 = 0;
+}
+    :   TAG_START_ADD
+        ( name=add_nameattribute
+        | type=add_typeattribute
+        | {has_ver1=1;} ver1=ver1attribute
+        | {has_ver2=1;} ver2=ver2attribute
+        | anyattribute
+        )* TAG_CLOSE
         doc=SHORTDOC?
         TAG_END_ADD SHORTDOC*
-        -> ^(FIELDDEF ^(DOC $doc) add_typeattribute add_nameattribute);
+        -> {has_ver1 && has_ver2}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $ver2)
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> {has_ver1 && !has_ver2}?
+           ^(IF[$TAG_START_ADD, "if"]
+                $ver1
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> {!has_ver1 && has_ver2}?
+           ^(IF[$TAG_START_ADD, "if"]
+                $ver2
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> ^(FIELDDEF ^(DOC $doc) $type $name)
+    ;
 
 add_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> VARIABLENAME[$t, ($t.text)->chars];
+        -> VARIABLENAME[$t, ($t.text)->chars]
+    ;
 
 add_typeattribute
     :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars];
+        -> TYPENAME[$t, ($t.text)->chars]
+    ;
+
+ver1attribute
+    :   NAME_VER1 ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
+        -> ^(OP_GTEQ[$NAME_VER1, ">="] VARIABLENAME[$NAME_VER1, "version"] $v)
+    ;
+
+ver2attribute
+    :   NAME_VER2 ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
+        -> ^(OP_LTEQ[$NAME_VER2, "<="] VARIABLENAME[$NAME_VER2, "version"] $v)
+    ;
 
 expression
 	:   or_test
@@ -398,6 +438,14 @@ NAME_STORAGE
 
 NAME_TYPE
     :   { tagMode && !attrMode }?=> 'type'
+    ;
+
+NAME_VER1
+    :   { tagMode && !attrMode }?=> 'ver1'
+    ;
+
+NAME_VER2
+    :   { tagMode && !attrMode }?=> 'ver2'
     ;
 
 NAME
