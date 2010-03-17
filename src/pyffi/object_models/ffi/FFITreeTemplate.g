@@ -1,0 +1,147 @@
+/* 
+  Tree grammar for FFI, with templates.
+*/
+tree grammar FFITreeTemplate;
+
+options {
+    output=template;
+    tokenVocab=FFI;
+}
+
+/*------------------------------------------------------------------
+ * PARSER RULES
+ *------------------------------------------------------------------*/
+
+ffi
+    :   formatdefine declarations
+        -> ffi(head={$formatdefine.st}, decls={$declarations.st})
+    ;
+
+doc
+    :   ^(DOC (docstrings+=SHORTDOC)*)
+        -> doc(docstrings={$docstrings})
+    ;
+
+formatdefine
+    :   ^(FILEFORMAT 
+            doc
+            (n+=CONSTANTNAME)*
+        )
+        -> formatdefine(doc={$doc.st}, names={$n})
+    ;
+
+declarations
+    :   ( defs+=typedefine
+        | defs+=parameterdefine
+        | defs+=classdefine
+        | defs+=enumdefine)*
+        -> templatehelper(arg={$defs})
+    ;
+
+enumdefine
+    :   ^(ENUMDEF doc
+          name=TYPENAME type=TYPENAME
+          (constants+=enumconstant)+
+        )
+        -> enumdefine(doc={$doc.st}, name={$name.text}, type={$type.text}, constants={$constants})
+    ;
+
+enumconstant
+    :   ^(ENUMCONSTDEF doc CONSTANTNAME INT)
+        -> enumconstant(doc={$doc.st}, name={$CONSTANTNAME.text}, value={$INT.text})
+    ;
+
+classdefine
+    :   ^(CLASSDEF doc TYPENAME declarations class_fielddefines)
+        -> classdefine(doc={$doc.st}, type={$TYPENAME.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
+    ;
+
+typedefine
+    :   ^(TYPEDEF doc type=TYPENAME (orig=TYPENAME)?)
+        -> {$orig}? aliasdefine(doc={$doc.st}, type={$type.text}, orig={$orig.text})
+        -> typedefine(doc={$doc.st}, type={$type.text})
+    ;
+
+parameterdefine
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
+        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text})
+    ;
+
+fielddefine
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldparameters?)
+        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text})
+    ;
+
+class_fielddefines_ifelifelse_fragment
+    :   ^(IF ifexp=expression ifdefs=class_fielddefines
+            (^(ELIF elifexp=expression elifdefs=class_fielddefines))*
+            (^(ELSE elsedefs=class_fielddefines))?
+        )
+        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp.st}, elifdefs={$elifdefs.st}, elsedefs={$elsedefs.st})
+    ;
+
+class_fielddefines
+    :   (defs+=class_fielddefines_ifelifelse_fragment | defs+=fielddefine)+
+        -> templatehelper(arg={$defs})
+    ;
+
+kwarg
+    :   ^(FIELDARG VARIABLENAME expression)
+    ;
+
+fieldparameters
+    :   ^(FIELDARGLIST kwarg+)
+    ;
+
+expression
+    :   VARIABLENAME
+        -> templatehelper(arg={$VARIABLENAME.text})
+    |   INT
+        -> templatehelper(arg={$INT.text})
+    |   FLOAT
+        -> templatehelper(arg={$FLOAT.text})
+    |   STRING
+        -> templatehelper(arg={$STRING.text})
+    |   ^(OP_LOGICAL_OR e1=expression e2=expression)
+        -> op_logical_or(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_LOGICAL_AND e1=expression e2=expression)
+        -> op_logical_and(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_LOGICAL_NOT expression)
+        -> op_logical_not(e1={$e1.st})
+    |   ^(OP_EQ e1=expression e2=expression)
+        -> op_eq(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_NEQ e1=expression expression)
+        -> op_neq(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_GT e1=expression e2=expression)
+        -> op_gt(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_LT e1=expression e2=expression)
+        -> op_lt(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_GTEQ e1=expression e2=expression)
+        -> op_gteq(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_LTEQ e1=expression e2=expression)
+        -> op_lteq(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_BITWISE_OR e1=expression e2=expression)
+        -> op_bitwise_or(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_BITWISE_AND e1=expression e2=expression)
+        -> op_bitwise_and(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_LEFTSHIFT e1=expression e2=expression)
+        -> op_left_shift(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_RIGHTSHIFT e1=expression e2=expression)
+        -> op_right_shift(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_PLUS e1=expression e2=expression)
+        -> op_plus(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_MINUS e1=expression e2=expression)
+        -> op_minus(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_NEGATE e1=expression)
+        -> op_negate_not(e1={$e1.st})
+    |   ^(OP_BITWISE_NOT e1=expression)
+        -> op_bitwise_not(e1={$e1.st})
+    |   ^(OP_MULTIPLY e1=expression e2=expression)
+        -> op_logical_and(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_DIVIDE e1=expression e2=expression)
+        -> op_logical_and(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_MODULO e1=expression e2=expression)
+        -> op_logical_and(e1={$e1.st}, e2={$e2.st})
+    |   ^(OP_POWER e1=expression e2=expression)
+        -> op_power(e1={$e1.st}, e2={$e2.st})
+    ;
