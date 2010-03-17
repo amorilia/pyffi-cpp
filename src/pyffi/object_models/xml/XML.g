@@ -173,7 +173,8 @@ structdefine
     	doc=SHORTDOC*
         struct_add*
         TAG_END_STRUCT SHORTDOC*
-        -> ^(CLASSDEF ^(DOC $doc) $name struct_add*);
+        -> ^(CLASSDEF ^(DOC $doc) $name struct_add*)
+    ;
 
 // for the time being, bitflags are converted to enums
 // TODO: implement bitstructs in the FFI grammar and use them here
@@ -185,7 +186,8 @@ bitflagsdefine
     	doc=SHORTDOC*
         enum_option+
         TAG_END_BITFLAGS SHORTDOC*
-        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+);
+        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+)
+    ;
 
 struct_add
 @init {
@@ -266,7 +268,8 @@ attr_type_type
 
 attr_constant_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> CONSTANTNAME[$t, ($t.text)->chars];
+        -> CONSTANTNAME[$t, ($t.text)->chars]
+    ;
 
 attr_expression_value
     :   NAME_VALUE! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
@@ -283,8 +286,7 @@ attr_expression_ver2
     ;
 
 attr_expression_cond
-    :   NAME_COND ATTR_EQ ATTR_VALUE_START expression ATTR_VALUE_END
-        -> expression
+    :   NAME_COND! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
     ;
 
 attr_expression_default
@@ -293,7 +295,6 @@ attr_expression_default
 
 expression
 	:   or_test
-        -> or_test
     ;
 
 or_test
@@ -307,7 +308,6 @@ and_test
 not_test
 	:   OP_LOGICAL_NOT^ not_test
 	|   comparison
-        -> comparison
 	;
 
 comparison
