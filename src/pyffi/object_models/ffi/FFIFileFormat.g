@@ -77,7 +77,7 @@ class_fielddefines_ifelifelse_fragment
     ;
 
 class_fielddefines
-    :   class_fielddefines_ifelifelse_fragment | fielddefine+
+    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
     ;
 
 kwarg
