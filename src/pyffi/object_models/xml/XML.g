@@ -194,15 +194,15 @@ expression
     ;
 
 or_test
-	:   and_test (OP_LOGICAL_OR and_test)*
+	:   and_test (OP_LOGICAL_OR^ and_test)*
     ;
 
 and_test
-    :   not_test (OP_LOGICAL_AND not_test)*
+    :   not_test (OP_LOGICAL_AND^ not_test)*
     ;
 
 not_test
-	:   OP_LOGICAL_NOT not_test
+	:   OP_LOGICAL_NOT^ not_test
 	|   comparison
 	;
 
@@ -220,39 +220,42 @@ comp_op
 	;
 
 or_expr
-    :   and_expr (OP_BITWISE_OR and_expr)*
+    :   and_expr (OP_BITWISE_OR^ and_expr)*
 	;
 
 and_expr
-    :   shift_expr (OP_BITWISE_AND shift_expr)*
+    :   shift_expr (OP_BITWISE_AND^ shift_expr)*
 	;
 
 shift_expr
-    :   arith_expr ((OP_LEFTSHIFT|OP_RIGHTSHIFT) arith_expr)*
+    :   arith_expr ((OP_LEFTSHIFT^|OP_RIGHTSHIFT^) arith_expr)*
 	;
 
 arith_expr
-    :   term ((OP_PLUS|OP_MINUS) term)*
+    :   term ((OP_PLUS^|OP_MINUS^) term)*
 	;
 
 term
-    :   factor ((OP_MULTIPLY | OP_DIVIDE | OP_MODULO) factor)*
+    :   factor ((OP_MULTIPLY^ | OP_DIVIDE^ | OP_MODULO^) factor)*
 	;
 
 factor
-	:   (OP_PLUS|OP_MINUS|OP_BITWISE_NOT) factor
+    :   OP_PLUS! factor
+    |   op=OP_MINUS factor
+        -> ^(OP_NEGATE[$op, "-"] factor)
+    |   OP_BITWISE_NOT^ factor
 	|   power
 	;
 
 power
-	:   atom (options {greedy=true;}:OP_POWER factor)?
+	:   atom (options {greedy=true;}:OP_POWER^ factor)?
 	;
 
 atom
     :   NAME
     |   INT
     |   FLOAT
-    |   LBRACKET expression RBRACKET
+    |   LBRACKET! expression RBRACKET!
     ;
 
 /*------------------------------------------------------------------
