@@ -151,7 +151,7 @@ enumdefine
 
 enum_option
     :   TAG_START_OPTION
-        ( value=attr_int_value
+        ( value=attr_expression_value
         | name=attr_constant_name 
         | attr_expression_default
         | anyattribute
@@ -268,9 +268,9 @@ attr_constant_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> CONSTANTNAME[$t, ($t.text)->chars];
 
-attr_int_value
-    :   NAME_VALUE ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
-        -> INT;
+attr_expression_value
+    :   NAME_VALUE! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
+    ;
 
 attr_expression_ver1
     :   NAME_VER1 ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
