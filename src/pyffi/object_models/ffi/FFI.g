@@ -31,6 +31,8 @@ tokens {
     ENUM='enum';
     ENUMDEF;
     ENUMCONSTDEF;
+    // OP_MINUS is converted into OP_NEGATE if it corresponds to negation
+    OP_NEGATE;
 }
 
 // target specific code
@@ -486,19 +488,19 @@ OP_LT
     :   '<';
 
 OP_LOGICAL_NOT
-    :   '!';
+    :   'not';
 
 OP_BITWISE_NOT
     :   '~';
 
 OP_LOGICAL_AND
-    :   '&&';
+    :   'and';
 
 OP_BITWISE_AND
     :   '&';
 
 OP_LOGICAL_OR
-    :   '||';
+    :   'or';
 
 OP_BITWISE_OR
     :   '|';
