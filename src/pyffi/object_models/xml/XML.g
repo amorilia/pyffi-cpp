@@ -53,24 +53,6 @@ options {
  * PARSER RULES
  *------------------------------------------------------------------*/
 
-/*
-
-Note about whitespace:
-
-We ignore whitespace in tags by sending it to the hidden channel
-but not in between tags because it might be part of the documentation.
-However the lexer does not know about the structure of the file, and
-cannot make the distinction between text that can be ignored, and text
-that is part of the documentation. So, we delegate this distinction to the
-parser:
-
-  * whitespace or text in between tags is explicitly modelled through
-    "anytext", which should never be part of the AST; however
-
-  * if the text is documentation, use "doctext", and add it to the AST.
-
-*/
-
 ffi
     :   SHORTDOC*
         (HEADER_XML SHORTDOC*)? // not really required, but usually present
