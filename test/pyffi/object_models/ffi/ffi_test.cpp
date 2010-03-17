@@ -91,4 +91,9 @@ BOOST_AUTO_TEST_CASE(enum_test)
 	FileFormat("test_enum.ffi");
 }
 
+BOOST_AUTO_TEST_CASE(expression_test)
+{
+	FileFormat("test_expression.ffi");
+}
+
 BOOST_AUTO_TEST_SUITE_END()

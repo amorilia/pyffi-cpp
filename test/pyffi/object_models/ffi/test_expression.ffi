@@ -1,0 +1,77 @@
+fileformat TEST
+
+type:
+    UInt
+
+parameter:
+    UInt version
+    UInt user1
+    UInt user2
+
+# A test class.
+class TestComparison:
+    if version == 20:
+        UInt x1
+    if version <= 15:
+        UInt x2
+    if version >= 25:
+        UInt x3
+    if version < 10:
+        UInt x4
+    if version > 30:
+        UInt x5
+    if version != 0:
+        UInt x6
+
+# A test class.
+class TestArith:
+    if version + 20:
+        UInt x1
+    if version - 15:
+        UInt x2
+    if version * 25:
+        UInt x3
+    if -version:
+        UInt x4
+    if +version:
+        UInt x5
+    if user1 ** 3:
+        UInt x6
+    if 3 ** user2:
+        UInt x7
+    if version + user1 * user2:
+        UInt x8
+    if version & 1024:
+        UInt x9
+    if version | 0x07:
+        UInt x10
+    if ~version:
+        UInt x11
+    if version / 20:
+        UInt x12
+    if 200 % version:
+        UInt x13
+
+# A test class.
+class TestLogical:
+    if version and user1:
+        UInt x1
+    if version or user1:
+        UInt x2
+    if not user2:
+        UInt x3
+    if user1 or user2 or version and user2 or user1 and version and user2:
+        UInt x3
+
+# A test class.
+class TestBrackets:
+    if (version == 20):
+        UInt x1
+    if ((version <= 15)):
+        UInt x2
+    if (version >= 25) and (user <= 10):
+        UInt x3
+    if (user1 or user2) and not version:
+        UInt x4
+    if user1 or user2 or (~version and user1 <= 5) and (user1 & (0x0F + version) or user2 >= (20 * user3)):
+        UInt x5
