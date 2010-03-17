@@ -153,6 +153,7 @@ enum_option
     :   TAG_START_OPTION
         ( value=attr_int_value
         | name=attr_constant_name 
+        | attr_expression_default
         | anyattribute
         )*
         ( TAG_CLOSE doc=SHORTDOC* TAG_END_OPTION
@@ -198,6 +199,7 @@ struct_add
         | {has_ver1=1;} ver1=attr_expression_ver1
         | {has_ver2=1;} ver2=attr_expression_ver2
         | {has_cond=1;} cond=attr_expression_cond
+        | attr_expression_default
         | anyattribute
         )*
         ( TAG_CLOSE
@@ -283,6 +285,10 @@ attr_expression_ver2
 attr_expression_cond
     :   NAME_COND ATTR_EQ ATTR_VALUE_START expression ATTR_VALUE_END
         -> expression
+    ;
+
+attr_expression_default
+    :   NAME_DEFAULT ATTR_EQ ATTR_VALUE_START .* ATTR_VALUE_END
     ;
 
 expression
@@ -517,6 +523,10 @@ NAME_VER2
 
 NAME_COND
     :   { tagMode && !attrMode }?=> 'cond'
+    ;
+
+NAME_DEFAULT
+    :   { tagMode && !attrMode }?=> 'default'
     ;
 
 NAME
