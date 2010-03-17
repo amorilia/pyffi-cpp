@@ -17,6 +17,9 @@ options {
 }
 
 @parser::members {
+    // doesn't work in header, so include it here
+    #include <boost/algorithm/string.hpp>
+
     // converts varname into a string formatted as a variable name
     // (lower_case_with_underscores)
     std::string newVarString(pANTLR3_STRING varname) {
@@ -45,6 +48,8 @@ options {
                 i++;
             }
         }
+        // strip trailing underscores (from trailing blanks)
+        boost::trim_right_if(buf, boost::is_any_of("_"));
         return buf;
     }
 }
@@ -209,7 +214,7 @@ struct_add
 
 attr_variable_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> VARIABLENAME[$t, ($t.text)->chars]
+        -> VARIABLENAME[$t, newVarString($t.text).c_str()]
     ;
 
 attr_type_name
@@ -316,6 +321,7 @@ power
 
 atom
     :   NAME
+        -> VARIABLENAME[$NAME, newVarString($NAME.text).c_str()]
     |   INT
     |   FLOAT
     |   LBRACKET! expression RBRACKET!
