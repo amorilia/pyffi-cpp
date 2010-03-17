@@ -124,51 +124,30 @@ parameter:
 
 // matches typedefine in FFIFileFormat
 basicdefine
-    :   TAG_START_BASIC basic_nameattribute anyattribute* TAG_CLOSE
+    :   TAG_START_BASIC (name=attr_type_name|anyattribute)* TAG_CLOSE
         doc=SHORTDOC?
         TAG_END_BASIC SHORTDOC*
-        -> ^(TYPEDEF ^(DOC $doc?) basic_nameattribute)
-    ;
-
-basic_nameattribute
-    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars]
+        -> ^(TYPEDEF ^(DOC $doc?) $name)
     ;
 
 enumdefine
-    :   TAG_START_ENUM enum_nameattribute enum_storageattribute TAG_CLOSE
+    :   TAG_START_ENUM (name=attr_type_name|type=attr_type_storage)* TAG_CLOSE
         doc=SHORTDOC?
         enum_option+
         TAG_END_ENUM SHORTDOC*
-        -> ^(ENUMDEF ^(DOC $doc) enum_nameattribute enum_storageattribute enum_option+);
-
-enum_nameattribute
-    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars];
-
-enum_storageattribute
-    :   NAME_STORAGE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars];
+        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+);
 
 enum_option
-    :   TAG_START_OPTION option_valueattribute option_nameattribute TAG_CLOSE
+    :   TAG_START_OPTION attr_int_value attr_constant_name TAG_CLOSE
         doc=SHORTDOC?
         TAG_END_OPTION SHORTDOC*
-        -> ^(ENUMCONSTDEF ^(DOC $doc) option_nameattribute option_valueattribute);
-
-option_valueattribute
-    :   NAME_VALUE ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
-        -> INT;
-
-option_nameattribute
-    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> CONSTANTNAME[$t, ($t.text)->chars];
+        -> ^(ENUMCONSTDEF ^(DOC $doc) attr_constant_name attr_int_value);
 
 structdefine
     :   TAG_START_STRUCT
-        ( name=struct_nameattribute
-        | ver1attribute
-        | ver2attribute
+        ( name=attr_type_name
+        | attr_expression_ver1
+        | attr_expression_ver2
         | anyattribute
         )* TAG_CLOSE
     	doc=SHORTDOC?
@@ -176,61 +155,104 @@ structdefine
         TAG_END_STRUCT SHORTDOC*
         -> ^(CLASSDEF ^(DOC $doc) $name struct_add*);
 
-struct_nameattribute
-    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, ($t.text)->chars];
-
 struct_add
 @init {
     int has_ver1 = 0;
     int has_ver2 = 0;
+    int has_cond = 0;
 }
     :   TAG_START_ADD
-        ( name=add_nameattribute
-        | type=add_typeattribute
-        | {has_ver1=1;} ver1=ver1attribute
-        | {has_ver2=1;} ver2=ver2attribute
+        ( name=attr_variable_name
+        | type=attr_type_type
+        | {has_ver1=1;} ver1=attr_expression_ver1
+        | {has_ver2=1;} ver2=attr_expression_ver2
+        | {has_cond=1;} cond=attr_expression_cond
         | anyattribute
         )* TAG_CLOSE
         doc=SHORTDOC?
         TAG_END_ADD SHORTDOC*
-        -> {has_ver1 && has_ver2}?
+        // has_cond
+        -> {has_ver1 && has_ver2 && has_cond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                    ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                        $ver1 $ver2)
+                    $cond)
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> {has_ver1 && !has_ver2 && has_cond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $cond)
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> {!has_ver1 && has_ver2 && has_cond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $cond)
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        -> {!has_ver1 && !has_ver2 && has_cond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                $cond
+                ^(FIELDDEF ^(DOC $doc) $type $name))
+        // !has_cond
+        -> {has_ver1 && has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $ver2)
                 ^(FIELDDEF ^(DOC $doc) $type $name))
-        -> {has_ver1 && !has_ver2}?
+        -> {has_ver1 && !has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver1
                 ^(FIELDDEF ^(DOC $doc) $type $name))
-        -> {!has_ver1 && has_ver2}?
+        -> {!has_ver1 && has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver2
                 ^(FIELDDEF ^(DOC $doc) $type $name))
         -> ^(FIELDDEF ^(DOC $doc) $type $name)
     ;
 
-add_nameattribute
+attr_variable_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> VARIABLENAME[$t, ($t.text)->chars]
     ;
 
-add_typeattribute
+attr_type_name
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, ($t.text)->chars]
+    ;
+
+attr_type_storage
+    :   NAME_STORAGE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, ($t.text)->chars]
+    ;
+
+attr_type_type
     :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> TYPENAME[$t, ($t.text)->chars]
     ;
 
-ver1attribute
+attr_constant_name
+    :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> CONSTANTNAME[$t, ($t.text)->chars];
+
+attr_int_value
+    :   NAME_VALUE ATTR_EQ ATTR_VALUE_START INT ATTR_VALUE_END
+        -> INT;
+
+attr_expression_ver1
     :   NAME_VER1 ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
         -> ^(OP_GTEQ[$NAME_VER1, ">="] VARIABLENAME[$NAME_VER1, "version"] $v)
     ;
 
-ver2attribute
+attr_expression_ver2
     :   NAME_VER2 ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
         -> ^(OP_LTEQ[$NAME_VER2, "<="] VARIABLENAME[$NAME_VER2, "version"] $v)
     ;
 
+attr_expression_cond
+    :   NAME_COND ATTR_EQ ATTR_VALUE_START expression ATTR_VALUE_END
+        -> expression
+    ;
+
 expression
 	:   or_test
+        -> or_test
     ;
 
 or_test
@@ -244,10 +266,11 @@ and_test
 not_test
 	:   OP_LOGICAL_NOT^ not_test
 	|   comparison
+        -> comparison
 	;
 
 comparison
-    :   or_expr (comp_op or_expr)*
+    :   or_expr (comp_op^ or_expr)*
     ;
 
 comp_op
@@ -446,6 +469,10 @@ NAME_VER1
 
 NAME_VER2
     :   { tagMode && !attrMode }?=> 'ver2'
+    ;
+
+NAME_COND
+    :   { tagMode && !attrMode }?=> 'cond'
     ;
 
 NAME
