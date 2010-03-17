@@ -349,13 +349,71 @@ fieldparameters
         -> ^(FIELDARGLIST kwarg+)
     ;
 
-// TODO: operators such as and, or, not, ...
 expression
+	:   or_test
+    ;
+
+or_test
+	:   and_test (OP_LOGICAL_OR and_test)*
+    ;
+
+and_test
+    :   not_test (OP_LOGICAL_AND not_test)*
+    ;
+
+not_test
+	:   OP_LOGICAL_NOT not_test
+	|   comparison
+	;
+
+comparison
+    :   or_expr (comp_op or_expr)*
+    ;
+
+comp_op
+	:   OP_EQ
+	|   OP_NEQ
+	|   OP_GT
+	|   OP_LT
+	|   OP_GTEQ
+	|   OP_LTEQ
+	;
+
+or_expr
+    :   and_expr (OP_BITWISE_OR and_expr)*
+	;
+
+and_expr
+    :   shift_expr (OP_BITWISE_AND shift_expr)*
+	;
+
+shift_expr
+    :   arith_expr ((OP_LEFTSHIFT|OP_RIGHTSHIFT) arith_expr)*
+	;
+
+arith_expr
+    :   term ((OP_PLUS|OP_MINUS) term)*
+	;
+
+term
+    :   factor ((OP_MULTIPLY | OP_DIVIDE | OP_MODULO) factor)*
+	;
+
+factor
+	:   (OP_PLUS|OP_MINUS|OP_BITWISE_NOT) factor
+	|   power
+	;
+
+power
+	:   atom (options {greedy=true;}:OP_POWER factor)?
+	;
+
+atom
     :   VARIABLENAME
     |   INT
     |   FLOAT
     |   STRING
-    |   '(' expression ')' // remove brackets
+    |   LBRACKET expression RBRACKET
     ;
 
 /*------------------------------------------------------------------
@@ -402,6 +460,72 @@ FLOAT
 COLON
     :   ':'
     ;
+
+OP_EQ
+    :   '==';
+
+OP_NEQ
+    :   '!=';
+
+OP_RIGHTSHIFT
+    :   '>>';
+
+OP_LEFTSHIFT
+    :   '<<';
+
+OP_GTEQ
+    :   '>=';
+
+OP_LTEQ
+    :   '<=';
+
+OP_GT
+    :   '>';
+
+OP_LT
+    :   '<';
+
+OP_LOGICAL_NOT
+    :   '!';
+
+OP_BITWISE_NOT
+    :   '~';
+
+OP_LOGICAL_AND
+    :   '&&';
+
+OP_BITWISE_AND
+    :   '&';
+
+OP_LOGICAL_OR
+    :   '||';
+
+OP_BITWISE_OR
+    :   '|';
+
+OP_POWER
+    :   '**';
+
+OP_MINUS
+    :   '-';
+
+OP_PLUS
+    :   '+';
+
+OP_MULTIPLY
+    :   '*';
+
+OP_DIVIDE
+    :   '/';
+
+OP_MODULO
+    :   '%';
+
+LBRACKET
+    :   '(';
+
+RBRACKET
+    :   ')';
 
 fragment
 LCLETTER

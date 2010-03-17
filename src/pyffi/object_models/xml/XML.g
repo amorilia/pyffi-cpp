@@ -202,7 +202,7 @@ and_test
     ;
 
 not_test
-	:   OP_NOT not_test
+	:   OP_LOGICAL_NOT not_test
 	|   comparison
 	;
 
@@ -220,23 +220,32 @@ comp_op
 	;
 
 or_expr
-    : and_expr (OP_BITWISE_OR and_expr)*
+    :   and_expr (OP_BITWISE_OR and_expr)*
 	;
 
 and_expr
-    : shift_expr (OP_BITWISE_AND shift_expr)*
+    :   shift_expr (OP_BITWISE_AND shift_expr)*
 	;
 
 shift_expr
-    : arith_expr ((OP_LEFTSHIFT|OP_RIGHTSHIFT) arith_expr)*
+    :   arith_expr ((OP_LEFTSHIFT|OP_RIGHTSHIFT) arith_expr)*
 	;
 
 arith_expr
-    : term ((OP_PLUS|OP_MINUS) term)*
+    :   term ((OP_PLUS|OP_MINUS) term)*
 	;
 
 term
-    : atom ((OP_MULTIPLY | OP_DIVIDE | OP_MODULO) atom)*
+    :   factor ((OP_MULTIPLY | OP_DIVIDE | OP_MODULO) factor)*
+	;
+
+factor
+	:   (OP_PLUS|OP_MINUS|OP_BITWISE_NOT) factor
+	|   power
+	;
+
+power
+	:   atom (options {greedy=true;}:OP_POWER factor)?
 	;
 
 atom
@@ -417,8 +426,11 @@ OP_GT
 OP_LT
     :   { tagMode && attrMode }?=> '<';
 
-OP_NOT
+OP_LOGICAL_NOT
     :   { tagMode && attrMode }?=> '!';
+
+OP_BITWISE_NOT
+    :   { tagMode && attrMode }?=> '~';
 
 OP_LOGICAL_AND
     :   { tagMode && attrMode }?=> '&amp;&amp;';
@@ -432,11 +444,14 @@ OP_LOGICAL_OR
 OP_BITWISE_OR
     :   { tagMode && attrMode }?=> '|';
 
+OP_POWER
+    :   { tagMode && attrMode }?=> '**';
+
 OP_MINUS
     :   { tagMode && attrMode }?=> '-';
 
 OP_PLUS
-    :   { tagMode && attrMode }?=> '-';
+    :   { tagMode && attrMode }?=> '+';
 
 OP_MULTIPLY
     :   { tagMode && attrMode }?=> '*';
