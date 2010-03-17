@@ -331,10 +331,9 @@ fielddefine
 
 class_fielddefines_ifelifelse_fragment
     :
-        IF ifexp=expression blockbegin ifdefines=class_fielddefines blockend
-        (ELIF elifexp=expression blockbegin elifdefines=class_fielddefines blockend)*
-        (ELSE blockbegin elsedefines=class_fielddefines blockend)?
-        -> ^(IF $ifexp $ifdefines ^(ELIF $elifexp $elifdefines) ^(ELSE $elsedefines))
+        IF^ expression blockbegin! class_fielddefines blockend!
+        (ELIF^ expression blockbegin! class_fielddefines blockend!)*
+        (ELSE^ blockbegin! class_fielddefines blockend!)?
     ;
 
 class_fielddefines

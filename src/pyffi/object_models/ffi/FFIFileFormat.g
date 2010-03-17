@@ -71,9 +71,10 @@ fielddefine
     ;
 
 class_fielddefines_ifelifelse_fragment
-    :   ^(IF ifexp=expression ifdefines=class_fielddefines
-          ^(ELIF elifexp=expression elifdefines=class_fielddefines)
-          ^(ELSE elsedefines=class_fielddefines))
+    :   ^(IF expression class_fielddefines
+            (^(ELIF expression class_fielddefines))*
+            (^(ELSE class_fielddefines))?
+        )
     ;
 
 class_fielddefines
