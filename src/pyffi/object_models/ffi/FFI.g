@@ -402,7 +402,10 @@ term
 	;
 
 factor
-	:   (OP_PLUS^|OP_MINUS^|OP_BITWISE_NOT^) factor
+    :   OP_PLUS! factor
+    |   op=OP_MINUS factor
+        -> ^(OP_NEGATE[$op, "-"] factor)
+    |   OP_BITWISE_NOT^ factor
 	|   power
 	;
 
