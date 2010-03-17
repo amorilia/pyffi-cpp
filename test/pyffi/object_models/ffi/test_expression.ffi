@@ -51,6 +51,8 @@ class TestArith:
         UInt x12
     if 200 % version:
         UInt x13
+    if version + user1 - user2 + 10 + 6 * 3 ** 9 % 7 - 30:
+        UInt x14
 
 # A test class.
 class TestLogical:
