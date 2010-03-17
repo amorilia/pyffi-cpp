@@ -144,11 +144,11 @@ enumdefine
 
 enum_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t];
+        -> TYPENAME[$t, ($t.text)->chars];
 
 enum_storageattribute
     :   NAME_STORAGE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t];
+        -> TYPENAME[$t, ($t.text)->chars];
 
 enum_option
     :   TAG_START_OPTION option_valueattribute option_nameattribute TAG_CLOSE
@@ -162,7 +162,7 @@ option_valueattribute
 
 option_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> CONSTANTNAME[$t];
+        -> CONSTANTNAME[$t, ($t.text)->chars];
 
 structdefine
     :   TAG_START_STRUCT struct_nameattribute anyattribute* TAG_CLOSE
@@ -173,7 +173,7 @@ structdefine
 
 struct_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, $t.text];
+        -> TYPENAME[$t, ($t.text)->chars];
 
 struct_add
     :   TAG_START_ADD add_nameattribute add_typeattribute anyattribute* TAG_CLOSE
@@ -183,11 +183,11 @@ struct_add
 
 add_nameattribute
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> VARIABLENAME[$t, $t.text];
+        -> VARIABLENAME[$t, ($t.text)->chars];
 
 add_typeattribute
     :   NAME_TYPE ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, $t.text];
+        -> TYPENAME[$t, ($t.text)->chars];
 
 expression
 	:   or_test
