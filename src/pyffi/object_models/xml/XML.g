@@ -140,13 +140,18 @@ enumdefine
         doc=SHORTDOC?
         enum_option+
         TAG_END_ENUM SHORTDOC*
-        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+);
+        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+)
+    ;
 
 enum_option
     :   TAG_START_OPTION attr_int_value attr_constant_name TAG_CLOSE
         doc=SHORTDOC?
         TAG_END_OPTION SHORTDOC*
-        -> ^(ENUMCONSTDEF ^(DOC $doc) attr_constant_name attr_int_value);
+        -> ^(ENUMCONSTDEF ^(DOC $doc) attr_constant_name attr_int_value)
+    |   TAG_START_OPTION attr_int_value attr_constant_name
+        TAG_END SHORTDOC*
+        -> ^(ENUMCONSTDEF ^(DOC) attr_constant_name attr_int_value)
+    ;
 
 structdefine
     :   TAG_START_STRUCT
@@ -185,9 +190,13 @@ struct_add
         | {has_ver2=1;} ver2=attr_expression_ver2
         | {has_cond=1;} cond=attr_expression_cond
         | anyattribute
-        )* TAG_CLOSE
-        doc=SHORTDOC?
-        TAG_END_ADD SHORTDOC*
+        )*
+        ( TAG_CLOSE
+          doc=SHORTDOC?
+          TAG_END_ADD
+        | TAG_END
+        )
+        SHORTDOC*
         // has_cond
         -> {has_ver1 && has_ver2 && has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
@@ -503,7 +512,7 @@ NAME_COND
 
 NAME
     :   { tagMode && !attrMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT)*
-    |   { tagMode && attrMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT | '_' | ' ')*
+    |   { tagMode && attrMode }?=> (UCLETTER | LCLETTER) (UCLETTER | LCLETTER | DIGIT | '_' | ' ' | '?')*
     ;
 
 OP_EQ
@@ -513,22 +522,22 @@ OP_NEQ
     :   { tagMode && attrMode }?=> '!=';
 
 OP_RIGHTSHIFT
-    :   { tagMode && attrMode }?=> '>>';
+    :   { tagMode && attrMode }?=> ('>>' | '&gt;&gt;');
 
 OP_LEFTSHIFT
-    :   { tagMode && attrMode }?=> '<<';
+    :   { tagMode && attrMode }?=> ('<<' | '&lt;&lt;');
 
 OP_GTEQ
-    :   { tagMode && attrMode }?=> '>=';
+    :   { tagMode && attrMode }?=> ('>=' | '&gt;=');
 
 OP_LTEQ
-    :   { tagMode && attrMode }?=> '<=';
+    :   { tagMode && attrMode }?=> ('<=' | '&lt;=');
 
 OP_GT
-    :   { tagMode && attrMode }?=> '>';
+    :   { tagMode && attrMode }?=> ('>' | '&gt;');
 
 OP_LT
-    :   { tagMode && attrMode }?=> '<';
+    :   { tagMode && attrMode }?=> ('<' | '&lt;');
 
 OP_LOGICAL_NOT
     :   { tagMode && attrMode }?=> '!';
