@@ -90,8 +90,8 @@ class_fielddefines_ifelifelse_fragment
     ;
 
 class_fielddefines
-    :   class_fielddefine+
-        -> templatehelper(arg={$class_fielddefines.st})
+    :   (defs+=class_fielddefine)+
+        -> templatehelper(arg={$defs})
     ;
 
 class_fielddefine
