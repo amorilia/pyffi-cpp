@@ -24,6 +24,11 @@ enum <name>(<type>):
     <constants>
 >>
 
+enumconstant(doc, name, value) ::= <<
+<doc>
+<name>=<value>
+>>
+
 classdefine(doc, type, decls, fields) ::= <<
 <doc>
 class <type>:
