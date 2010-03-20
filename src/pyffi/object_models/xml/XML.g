@@ -146,7 +146,7 @@ enumdefine
         doc=SHORTDOC*
         enum_option+
         TAG_END_ENUM SHORTDOC*
-        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+)
+        -> ^(ENUMDEF ^(DOC $doc?) $name $type enum_option+)
     ;
 
 enum_option
@@ -160,7 +160,7 @@ enum_option
         | TAG_END
         )
         SHORTDOC*
-        -> ^(ENUMCONSTDEF ^(DOC $doc) $name $value)
+        -> ^(ENUMCONSTDEF ^(DOC $doc?) $name $value)
     ;
 
 structdefine
@@ -173,7 +173,7 @@ structdefine
     	doc=SHORTDOC*
         struct_add*
         TAG_END_STRUCT SHORTDOC*
-        -> ^(CLASSDEF ^(DOC $doc) $name struct_add*)
+        -> ^(CLASSDEF ^(DOC $doc?) $name struct_add*)
     ;
 
 // for the time being, bitflags are converted to enums
@@ -186,7 +186,7 @@ bitflagsdefine
     	doc=SHORTDOC*
         enum_option+
         TAG_END_BITFLAGS SHORTDOC*
-        -> ^(ENUMDEF ^(DOC $doc) $name $type enum_option+)
+        -> ^(ENUMDEF ^(DOC $doc?) $name $type enum_option+)
     ;
 
 struct_add
@@ -217,33 +217,33 @@ struct_add
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver1 $ver2)
                     $cond)
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         -> {has_ver1 && !has_ver2 && has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $cond)
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         -> {!has_ver1 && has_ver2 && has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $cond)
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         -> {!has_ver1 && !has_ver2 && has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $cond
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         // !has_cond
         -> {has_ver1 && has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $ver2)
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         -> {has_ver1 && !has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver1
-                ^(FIELDDEF ^(DOC $doc) $type $name))
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
         -> {!has_ver1 && has_ver2 && !has_cond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver2
-                ^(FIELDDEF ^(DOC $doc) $type $name))
-        -> ^(FIELDDEF ^(DOC $doc) $type $name)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> ^(FIELDDEF ^(DOC $doc?) $type $name)
     ;
 
 attr_variable_name
