@@ -8,52 +8,61 @@ ffi(head, decls) ::= <<
 <decls>
 >>
 
-declarations(arg) ::= <<
-declarations:
-    <arg>
->>
-
 formatdefine(doc, names) ::= <<
 <doc>
 fileformat <names; separator=", ">
+
 >>
 
 enumdefine(doc, name, type, constants) ::= <<
+
 <doc>
 enum <name>(<type>):
     <constants>
+
 >>
 
 enumconstant(doc, name, value) ::= <<
+
 <doc>
-<name>=<value>
+<name> = <value>
+
 >>
 
 classdefine(doc, type, decls, fields) ::= <<
+
 <doc>
 class <type>:
     <decls>
     <fields>
+
 >>
 
 typedefine(doc, type) ::= <<
-<doc>
+
 type:
+    <doc>
     <type>
+
 >>
 
 fielddefine(doc, type, name) ::= <<
+
 <doc>
 <type> <name>
+
 >>
 
 parameterdefine(doc, type, name) ::= <<
-<doc>
+
 parameter:
+    <doc>
     <type> <name>
+
 >>
 
 ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
+
 if <ifexp>:
     <ifdefs>
 <if(elifexp)>
@@ -66,6 +75,7 @@ elif <exp>:
 else:
     <elsedefs>
 <endif>
+
 >>
 
 docstring(str) ::= <<
@@ -86,3 +96,22 @@ fieldparameters(kwargs) ::= <<
 
 op_logical_or(e1, e2) ::= "(<e1> or <e2>)"
 op_logical_and(e1, e2) ::= "(<e1> and <e2>)"
+op_logical_not(e1) ::= "(not <e1>)"
+op_eq(e1, e2) ::= "(<e1> == <e2>)"
+op_neq(e1, e2) ::= "(<e1> != <e2>)"
+op_gt(e1, e2) ::= "(<e1> > <e2>)"
+op_lt(e1, e2) ::= "(<e1> < <e2>)"
+op_gteq(e1, e2) ::= "(<e1> >= <e2>)"
+op_lteq(e1, e2) ::= "(<e1> <= <e2>)"
+op_bitwise_or(e1, e2) ::= "(<e1> | <e2>)"
+op_bitwise_and(e1, e2) ::= "(<e1> & <e2>)"
+op_leftshift(e1, e2) ::= "(<e1> << <e2>)"
+op_rightshift(e1, e2) ::= "(<e1> >> <e2>)"
+op_plus(e1, e2) ::= "(<e1> + <e2>)"
+op_minus(e1, e2) ::= "(<e1> - <e2>)"
+op_negate(e1) ::= "(-<e1>)"
+op_bitwise_not(e1) ::= "(~<e1>)"
+op_multiply(e1, e2) ::= "(<e1> * <e2>)"
+op_divide(e1, e2) ::= "(<e1> / <e2>)"
+op_modulo(e1, e2) ::= "(<e1> % <e2>)"
+op_power(e1, e2) ::= "(<e1> ** <e2>)"
