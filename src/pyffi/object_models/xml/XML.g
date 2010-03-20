@@ -84,7 +84,7 @@ class FileVersion:
     Int64 user1
     Int64 user2
 */
-           ^(CLASS
+           ^(CLASSDEF
                DOC
                TYPENAME[$t, "FileVersion"]
                ^(FIELDDEF DOC TYPENAME[$t, "String"] VARIABLENAME[$t, "game"])
