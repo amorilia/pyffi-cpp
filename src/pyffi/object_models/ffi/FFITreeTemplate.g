@@ -14,7 +14,7 @@ options {
  *------------------------------------------------------------------*/
 
 ffi
-    :   formatdefine declarations
+    :   formatdefine declarations?
         -> ffi(head={$formatdefine.st}, decls={$declarations.st})
     ;
 
@@ -32,7 +32,7 @@ formatdefine
     ;
 
 declarations
-    :   (decls+=declaration)*
+    :   (decls+=declaration)+
         -> templatehelper(arg={$decls})
     ;
 
@@ -42,8 +42,7 @@ declaration
     |   parameterdefine
         -> templatehelper(arg={$parameterdefine.st})
     |   classdefine
-//        -> templatehelper(arg={$classdefine.st})
-        -> declarations(arg={$classdefine.st})
+        -> templatehelper(arg={$classdefine.st})
     |   enumdefine
         -> templatehelper(arg={$enumdefine.st})
     ;
@@ -62,7 +61,7 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME declarations class_fielddefines)
+    :   ^(CLASSDEF doc TYPENAME declarations? class_fielddefines)
         -> classdefine(doc={$doc.st}, type={$TYPENAME.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
     ;
 
