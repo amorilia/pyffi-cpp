@@ -63,7 +63,7 @@ ffi
         (HEADER_XML SHORTDOC*)? // not really required, but usually present
         (HEADER_DOCTYPE SHORTDOC*)? // not really required, but usually present
         t=TAG_START_ROOT anyattribute* TAG_CLOSE SHORTDOC*
-        declarations
+        declarations?
         TAG_END_ROOT SHORTDOC*
         EOF
         -> 
@@ -92,7 +92,7 @@ class FileVersion:
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user2"])
            )
-           declarations
+           declarations?
     ;
 
 // extra attributes that we throw away
@@ -102,7 +102,7 @@ anyattribute
     ;
 
 declarations
-    :   (versiondefine | basicdefine | enumdefine | structdefine | bitflagsdefine)*
+    :   (versiondefine | basicdefine | enumdefine | structdefine | bitflagsdefine)+
     ;
 
 versiondefine
