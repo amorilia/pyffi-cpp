@@ -35,10 +35,15 @@ class <type>:
 
 >>
 
-typedefine(doc, type) ::= <<
+typeblock(types) ::= <<
 type:
-    <doc>
-    <type>
+    <types>
+
+>>
+
+typedefine(doc, type) ::= <<
+<doc>
+<type>
 
 >>
 
@@ -48,23 +53,25 @@ fielddefine(doc, type, name) ::= <<
 
 >>
 
-parameterdefine(doc, type, name, kwargs) ::= <<
+parameterblock(parameters) ::= <<
 parameter:
-    <doc>
-    <type> <name><if(kwargs)><kwargs><endif>
+    <parameters>
+
+>>
+
+parameterdefine(doc, type, name, kwargs) ::= <<
+<doc>
+<type> <name><if(kwargs)><kwargs><endif>
 
 >>
 
 ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
 if <ifexp>:
-    <ifdefs>
-<if(elifexp)><elifexp,elifdefs:{exp, defs|
+    <ifdefs><if(elifexp)><elifexp,elifdefs:{exp, defs|
 elif <exp>:
     <defs>
-}>
-<endif><if(elsedefs)>else:
-    <elsedefs>
-<endif>
+}><endif><if(elsedefs)>else:
+    <elsedefs><endif>
 >>
 
 docstring(str) ::= <<

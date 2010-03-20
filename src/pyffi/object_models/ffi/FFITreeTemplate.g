@@ -37,10 +37,10 @@ declarations
     ;
 
 declaration
-    :   typedefine
-        -> templatehelper(arg={$typedefine.st})
-    |   parameterdefine
-        -> templatehelper(arg={$parameterdefine.st})
+    :   (options{greedy=true;}: types+=typedefine)+
+        -> typeblock(types={$types})
+    |   (options{greedy=true;}: parameters+=parameterdefine)+
+        -> parameterblock(parameters={$parameters})
     |   classdefine
         -> templatehelper(arg={$classdefine.st})
     |   enumdefine
