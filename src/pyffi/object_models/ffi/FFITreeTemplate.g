@@ -56,12 +56,12 @@ enumdefine
     ;
 
 enumconstant
-    :   ^(ENUMCONSTDEF doc CONSTANTNAME INT)
-        -> enumconstant(doc={$doc.st}, name={$CONSTANTNAME.text}, value={$INT.text})
+    :   ^(ENUMCONSTDEF doc CONSTANTNAME expression)
+        -> enumconstant(doc={$doc.st}, name={$CONSTANTNAME.text}, value={$expression.st})
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME declarations? class_fielddefines)
+    :   ^(CLASSDEF doc TYPENAME declarations? class_fielddefines?)
         -> classdefine(doc={$doc.st}, type={$TYPENAME.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
     ;
 
@@ -150,7 +150,7 @@ expression
     |   ^(OP_MINUS e1=expression e2=expression)
         -> op_minus(e1={$e1.st}, e2={$e2.st})
     |   ^(OP_NEGATE e1=expression)
-        -> op_negate_not(e1={$e1.st})
+        -> op_negate(e1={$e1.st})
     |   ^(OP_BITWISE_NOT e1=expression)
         -> op_bitwise_not(e1={$e1.st})
     |   ^(OP_MULTIPLY e1=expression e2=expression)
