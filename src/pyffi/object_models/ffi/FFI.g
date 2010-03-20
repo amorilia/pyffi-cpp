@@ -263,7 +263,7 @@ NEWLINE
  *------------------------------------------------------------------*/
 
 ffi
-    :   formatdefine declarations EOF!
+    :   formatdefine declarations? EOF!
     ;
 
 formatdefine
@@ -272,7 +272,7 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | parameterblock | classdefine | enumdefine)*
+    :   (typeblock | parameterblock | classdefine | enumdefine)+
     ;
 
 // Documentation preceeding a definition, with single newline
@@ -298,8 +298,8 @@ enumconstant
         -> ^(ENUMCONSTDEF ^(DOC longdoc? SHORTDOC?) CONSTANTNAME INT);
 
 classdefine
-    :   longdoc? CLASS TYPENAME blockbegin declarations class_fielddefines blockend
-        -> ^(CLASSDEF ^(DOC longdoc?) TYPENAME declarations class_fielddefines)
+    :   longdoc? CLASS TYPENAME blockbegin declarations? class_fielddefines blockend
+        -> ^(CLASSDEF ^(DOC longdoc?) TYPENAME declarations? class_fielddefines)
     ;
 
 blockbegin
