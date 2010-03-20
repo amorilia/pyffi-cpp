@@ -45,7 +45,8 @@ public class xml2ffi {
 			XMLParser parser = new XMLParser(tokens);
 			XMLParser.ffi_return r = parser.ffi();
 			CommonTree t = (CommonTree)r.getTree();
-			System.out.println(t.toStringTree());
+			// for debugging:
+			//System.out.println(t.toStringTree());
 			CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
 			nodes.setTokenStream(tokens);
 			FFITreeTemplate gen = new FFITreeTemplate(nodes);
