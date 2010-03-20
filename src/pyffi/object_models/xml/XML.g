@@ -84,14 +84,16 @@ class FileVersion:
     Int64 user1
     Int64 user2
 */
+/* XXX temporarily disabled
            ^(CLASSDEF
-               DOC
+               ^(DOC SHORTDOC[$t, "Describes the file version."])
                TYPENAME[$t, "FileVersion"]
                ^(FIELDDEF DOC TYPENAME[$t, "String"] VARIABLENAME[$t, "game"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "version"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user2"])
            )
+*/
            declarations?
     ;
 
@@ -119,12 +121,12 @@ versiondefine
 parameter:
     FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
-        -> ^(PARAMETER ^(FIELDDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, (std::string("ver_") + newVarString($v.text)).c_str()]
+        -> ^(PARAMETERDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, (std::string("ver_") + newVarString($v.text)).c_str()]
                ^(FIELDARGLIST
                   ^(FIELDARG VARIABLENAME[$doc, "game"] STRING[$doc, ($doc.text)->chars])
                   ^(FIELDARG VARIABLENAME[$v, "version"] INT)
                )
-           ))
+        )
     ;
 
 // matches typedefine in FFIFileFormat
