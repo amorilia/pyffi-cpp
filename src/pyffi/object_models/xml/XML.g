@@ -111,7 +111,7 @@ versiondefine
     :   TAG_START_VERSION
         NAME_NUM ATTR_EQ ATTR_VALUE_START v=INT ATTR_VALUE_END
         TAG_CLOSE
-        doc=SHORTDOC
+        doc=SHORTDOC*
         TAG_END_VERSION SHORTDOC*
 /*
 <version num="1.2.3">Game Name</version>
@@ -615,13 +615,17 @@ COMMENTS
     ;
 
 // ignore whitespace in tagmode
+// and leading outside tagmode
 WS
     :   { tagMode }?=> (' ' | '\t' | '\r' | '\n' )+ { $channel=HIDDEN; }
+    |   { !tagMode }?=> (' '|'\t')* '\r'? '\n' (' '|'\t')* { $channel=HIDDEN; }
     ;
+
+
 
 // any text until the next tag
 SHORTDOC
-    :   { !tagMode }?=> (~'<')*
+    :   { !tagMode }?=> (~('<'|'\n'))*
     ;
 
 // temporary rule to match anything not yet implemented    
