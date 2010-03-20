@@ -6,6 +6,7 @@ tree grammar FFITreeTemplate;
 options {
     output=template;
     tokenVocab=FFI;
+    ASTLabelType=CommonTree;
 }
 
 /*------------------------------------------------------------------
@@ -18,8 +19,8 @@ ffi
     ;
 
 doc
-    :   ^(DOC (docstrings+=SHORTDOC)*)
-        -> doc(docstrings={$docstrings})
+    :   ^(DOC (docstr+=SHORTDOC)*)
+        -> doc(docstrings={$docstr})
     ;
 
 formatdefine
@@ -31,11 +32,20 @@ formatdefine
     ;
 
 declarations
-    :   ( defs+=typedefine
-        | defs+=parameterdefine
-        | defs+=classdefine
-        | defs+=enumdefine)*
-        -> templatehelper(arg={$defs})
+    :   (decls+=declaration)*
+        -> templatehelper(arg={$decls})
+    ;
+
+declaration
+    :   typedefine
+        -> templatehelper(arg={$typedefine.st})
+    |   parameterdefine
+        -> templatehelper(arg={$parameterdefine.st})
+    |   classdefine
+//        -> templatehelper(arg={$classdefine.st})
+        -> declarations(arg={$classdefine.st})
+    |   enumdefine
+        -> templatehelper(arg={$enumdefine.st})
     ;
 
 enumdefine
@@ -58,7 +68,7 @@ classdefine
 
 typedefine
     :   ^(TYPEDEF doc type=TYPENAME (orig=TYPENAME)?)
-        -> {$orig}? aliasdefine(doc={$doc.st}, type={$type.text}, orig={$orig.text})
+        -> {$orig.text != null}? aliasdefine(doc={$doc.st}, type={$type.text}, orig={$orig.text})
         -> typedefine(doc={$doc.st}, type={$type.text})
     ;
 
@@ -74,23 +84,31 @@ fielddefine
 
 class_fielddefines_ifelifelse_fragment
     :   ^(IF ifexp=expression ifdefs=class_fielddefines
-            (^(ELIF elifexp=expression elifdefs=class_fielddefines))*
+            (^(ELIF elifexp+=expression elifdefs+=class_fielddefines))*
             (^(ELSE elsedefs=class_fielddefines))?
         )
-        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp.st}, elifdefs={$elifdefs.st}, elsedefs={$elsedefs.st})
+        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp}, elifdefs={$elifdefs}, elsedefs={$elsedefs.st})
     ;
 
 class_fielddefines
-    :   (defs+=class_fielddefines_ifelifelse_fragment | defs+=fielddefine)+
-        -> templatehelper(arg={$defs})
+    :   class_fielddefine+
+    ;
+
+class_fielddefine
+    :   class_fielddefines_ifelifelse_fragment
+        -> templatehelper(arg={$class_fielddefines_ifelifelse_fragment.st})
+    |   fielddefine
+        -> templatehelper(arg={$fielddefine.st})
     ;
 
 kwarg
     :   ^(FIELDARG VARIABLENAME expression)
+        -> kwarg(name={$VARIABLENAME.text}, exp={$expression.st})
     ;
 
 fieldparameters
     :   ^(FIELDARGLIST kwarg+)
+        -> fieldparameters(kwargs={$kwarg.st})
     ;
 
 expression

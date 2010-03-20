@@ -1,0 +1,83 @@
+group ffi;
+
+templatehelper(arg) ::= "<arg>"
+
+ffi(head, decls) ::= <<
+<head>
+
+<decls>
+>>
+
+declarations(arg) ::= <<
+declarations:
+    <arg>
+>>
+
+formatdefine(doc, names) ::= <<
+<doc>
+fileformat <names; separator=", ">
+>>
+
+enumdefine(doc, name, type, constants) ::= <<
+<doc>
+enum <name>(<type>):
+    <constants>
+>>
+
+classdefine(doc, type, decls, fields) ::= <<
+<doc>
+class <type>:
+    <decls>
+    <fields>
+>>
+
+typedefine(doc, type) ::= <<
+<doc>
+type:
+    <type>
+>>
+
+fielddefine(doc, type, name) ::= <<
+<doc>
+<type> <name>
+>>
+
+parameterdefine(doc, type, name) ::= <<
+<doc>
+parameter:
+    <type> <name>
+>>
+
+ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
+if <ifexp>:
+    <ifdefs>
+<if(elifexp)>
+<elifexp,elifdefs:{exp, defs|
+elif <exp>:
+    <defs>
+}>
+<endif>
+<if(elsedefs)>
+else:
+    <elsedefs>
+<endif>
+>>
+
+docstring(str) ::= <<
+# <str>
+>>
+
+doc(docstrings) ::= <<
+<docstrings:docstring()>
+>>
+
+kwarg(name, exp) ::= <<
+<name>=<exp>
+>>
+
+fieldparameters(kwargs) ::= <<
+(<kwargs; separator=", ">)
+>>
+
+op_logical_or(e1, e2) ::= "(<e1> or <e2>)"
+op_logical_and(e1, e2) ::= "(<e1> and <e2>)"

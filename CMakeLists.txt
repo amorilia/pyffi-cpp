@@ -1,82 +1,95 @@
 cmake_minimum_required(VERSION 2.6)
-project(PYFFI)
+project(XML2FFI)
 
-# find boost
-find_package(Boost REQUIRED COMPONENTS python unit_test_framework)
-include_directories(${Boost_INCLUDE_DIRS})
+# compile a java file in the binary directory to a class file in the binary
+# directory (with $CLASSPATH and binary directory as classpath)
+function(java_compile javafile)
+    add_custom_command(
+        OUTPUT ${javafile}.class
+	DEPENDS ${javafile}.java ${ARGN}
+	COMMAND ${JAVA_COMPILE} -cp $ENV{CLASSPATH}:${XML2FFI_BINARY_DIR} -d ${XML2FFI_BINARY_DIR} ${javafile}.java
+	WORKING_DIRECTORY ${XML2FFI_BINARY_DIR}
+    )
+    add_custom_target(${javafile}_class
+        DEPENDS ${javafile}.class
+    )
+endfunction(java_compile)
 
-# find python
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_PATH})
+# make lexer and parser in binary directory
+# optional argument is extra tokens dependency
+function(antlr_lexpar grammar)
+    add_custom_command(
+        OUTPUT
+            ${grammar}Lexer.java
+            ${grammar}Parser.java
+            ${grammar}.tokens
+        DEPENDS
+            ${grammar}.g
+            ${ARGN}
+        # generate lexer and parser
+        COMMAND ${JAVA_RUNTIME} org.antlr.Tool ${grammar}.g
+        WORKING_DIRECTORY ${XML2FFI_BINARY_DIR}
+        COMMENT "Generating antlr3 lexer and parser from ${grammar}.g"
+    )
+    java_compile(${grammar}Lexer)
+    java_compile(${grammar}Parser)
+endfunction(antlr_lexpar)
 
-# build external dependencies
-add_subdirectory(extern)
+# make walker from tree grammar
+function(antlr_tree grammar basegrammar)
+    add_custom_command(
+        OUTPUT
+            ${grammar}.java
+            ${grammar}.tokens
+        DEPENDS
+            ${grammar}.g
+            ${basegrammar}Lexer.java
+            ${basegrammar}Parser.java
+            ${basegrammar}.tokens
+        # generate lexer and parser
+        COMMAND ${JAVA_RUNTIME} org.antlr.Tool ${grammar}.g
+        WORKING_DIRECTORY ${XML2FFI_BINARY_DIR}
+        COMMENT "Generating antlr3 tree walker from ${grammar}.g"
+    )
+    java_compile(${grammar}
+        ${basegrammar}Lexer.class
+        ${basegrammar}Parser.class)
+endfunction(antlr_tree)
 
-# generate lexer and parser source code
-# the grammar must be in the same directory as the generated code
-# so first copy the grammar file to the build directory
-find_package(Java REQUIRED)
+antlr_lexpar(FFI)
+antlr_lexpar(XML FFI.tokens)
+antlr_tree(FFITreeTemplate XML)
+java_compile(xml2ffi
+  XMLLexer.class
+  XMLParser.class
+  FFITreeTemplate.class)
+
+# copy relevant files to binary directory
 add_custom_command(
     OUTPUT
-        ${PYFFI_BINARY_DIR}/FFILexer.cpp
-        ${PYFFI_BINARY_DIR}/FFILexer.h
-        ${PYFFI_BINARY_DIR}/FFIParser.cpp
-        ${PYFFI_BINARY_DIR}/FFIParser.h
-        ${PYFFI_BINARY_DIR}/XMLLexer.cpp
-        ${PYFFI_BINARY_DIR}/XMLLexer.h
-        ${PYFFI_BINARY_DIR}/XMLParser.cpp
-        ${PYFFI_BINARY_DIR}/XMLParser.h
-        ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp
-        ${PYFFI_BINARY_DIR}/FFIFileFormat.h
+       ${XML2FFI_BINARY_DIR}/FFI.g
+       ${XML2FFI_BINARY_DIR}/FFITreeTemplate.g
+       ${XML2FFI_BINARY_DIR}/ffi.stg
+       ${XML2FFI_BINARY_DIR}/XML.g
+       ${XML2FFI_BINARY_DIR}/xml2ffi.java
     DEPENDS
-        ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g
-        ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g
-        ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.g
-    # copy grammar to build dir
-    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g FFI.g
-    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g XML.g
-    COMMAND ${CMAKE_COMMAND} -E copy ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.g FFIFileFormat.g
-    # generate lexer, parser, and walker
-    COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFI.g
-    COMMAND ${JAVA_RUNTIME} org.antlr.Tool XML.g
-    COMMAND ${JAVA_RUNTIME} org.antlr.Tool FFIFileFormat.g
-    # change extension of files to force cmake to use C++ compiler
-    COMMAND ${CMAKE_COMMAND} -E copy FFILexer.c FFILexer.cpp
-    COMMAND ${CMAKE_COMMAND} -E copy FFIParser.c FFIParser.cpp
-    COMMAND ${CMAKE_COMMAND} -E copy XMLLexer.c XMLLexer.cpp
-    COMMAND ${CMAKE_COMMAND} -E copy XMLParser.c XMLParser.cpp
-    COMMAND ${CMAKE_COMMAND} -E copy FFIFileFormat.c FFIFileFormat.cpp
-    # clean up
-    COMMAND ${CMAKE_COMMAND} -E remove FFILexer.c FFIParser.c XMLLexer.c XMLParser.c FFIFileFormat.c FFI.g XML.g FFIFileFormat.g FFI.tokens XML.tokens FFIFileFormat.tokens
-    WORKING_DIRECTORY ${PYFFI_BINARY_DIR}
-    COMMENT "Generating antlr3 lexer and parser from FFI.g XML.g FFIFileFormat.g")
+       ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g
+       ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeTemplate.g
+       ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg
+       ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g
+       ${XML2FFI_SOURCE_DIR}/src/xml2ffi.java
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeTemplate.g ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/xml2ffi.java ${XML2FFI_BINARY_DIR}
+)
 
-# include pyffi headers
-include_directories(${PYFFI_SOURCE_DIR}/include)
-
-# include lexer and parser headers
-include_directories(${PYFFI_BINARY_DIR})
-
-# include antlr3 headers
-include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
-
-# build the actual library
-add_library(pyffi
-    src/pyffi/object_models/ffi/file_format.cpp
-    src/pyffi/object_models/xml/file_format.cpp
-    ${PYFFI_BINARY_DIR}/FFILexer.cpp
-    ${PYFFI_BINARY_DIR}/FFIParser.cpp
-    ${PYFFI_BINARY_DIR}/XMLLexer.cpp
-    ${PYFFI_BINARY_DIR}/XMLParser.cpp
-    ${PYFFI_BINARY_DIR}/FFIFileFormat.cpp)
-target_link_libraries(pyffi antlr3c)
-
-# build the tests
-enable_testing()
-add_subdirectory(test)
-
-# build the benchmarks
-add_subdirectory(benchmark)
-
-# build other application(s) and python wrapper
-add_subdirectory(src)
+add_custom_target(translate ALL
+    DEPENDS
+        xml2ffi.class
+        ${XML2FFI_BINARY_DIR}/ffi.stg
+    COMMAND ${CMAKE_COMMAND} -E make_directory xml2ffi_test
+    COMMAND ${JAVA_RUNTIME} -cp $ENV{CLASSPATH}:${XML2FFI_BINARY_DIR} xml2ffi ${XML2FFI_SOURCE_DIR}/test/ xml2ffi_test/
+    WORKING_DIRECTORY ${XML2FFI_BINARY_DIR}
+)

@@ -29,6 +29,7 @@ public class xml2ffi {
 			// ensure correct extension on input and output files
 			if (!input.toString().endsWith(".xml")) {
 				System.out.println(input.toString() + " skipped");
+				return;
 			};
 			if (!output.toString().endsWith(ext)) {
 				String outputfilename = output.toString();
@@ -44,13 +45,14 @@ public class xml2ffi {
 			XMLParser parser = new XMLParser(tokens);
 			XMLParser.ffi_return r = parser.ffi();
 			CommonTree t = (CommonTree)r.getTree();
+			System.out.println(t.toStringTree());
 			CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
 			nodes.setTokenStream(tokens);
-			FFITreeTemplateParser gen = new FFITreeTemplateParser(nodes);
+			FFITreeTemplate gen = new FFITreeTemplate(nodes);
 
 			// generate C++ code
 			gen.setTemplateLib(stg);
-			FFITreeTemplateParser.ffi_return result = gen.ffi(input.getName(), output.toString());
+			FFITreeTemplate.ffi_return result = gen.ffi();
 			BufferedWriter ffi = new BufferedWriter(new FileWriter(output.toString()));
 			ffi.write(result.toString());
 			ffi.close();
