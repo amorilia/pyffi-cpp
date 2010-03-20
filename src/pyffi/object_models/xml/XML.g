@@ -84,7 +84,6 @@ class FileVersion:
     Int64 user1
     Int64 user2
 */
-/* XXX temporarily disabled
            ^(CLASSDEF
                ^(DOC SHORTDOC[$t, "Describes the file version."])
                TYPENAME[$t, "FileVersion"]
@@ -93,7 +92,6 @@ class FileVersion:
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user2"])
            )
-*/
            declarations?
     ;
 
