@@ -119,7 +119,7 @@ expression
     |   FLOAT
         -> templatehelper(arg={$FLOAT.text})
     |   STRING
-        -> templatehelper(arg={$STRING.text})
+        -> string(text={$STRING.text})
     |   ^(OP_LOGICAL_OR e1=expression e2=expression)
         -> op_logical_or(e1={$e1.st}, e2={$e2.st})
     |   ^(OP_LOGICAL_AND e1=expression e2=expression)
@@ -128,7 +128,7 @@ expression
         -> op_logical_not(e1={$e1.st})
     |   ^(OP_EQ e1=expression e2=expression)
         -> op_eq(e1={$e1.st}, e2={$e2.st})
-    |   ^(OP_NEQ e1=expression expression)
+    |   ^(OP_NEQ e1=expression e2=expression)
         -> op_neq(e1={$e1.st}, e2={$e2.st})
     |   ^(OP_GT e1=expression e2=expression)
         -> op_gt(e1={$e1.st}, e2={$e2.st})

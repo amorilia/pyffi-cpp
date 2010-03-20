@@ -15,7 +15,6 @@ fileformat <names; separator=", ">
 >>
 
 enumdefine(doc, name, type, constants) ::= <<
-
 <doc>
 enum <name>(<type>):
     <constants>
@@ -23,14 +22,12 @@ enum <name>(<type>):
 >>
 
 enumconstant(doc, name, value) ::= <<
-
 <doc>
 <name> = <value>
 
 >>
 
 classdefine(doc, type, decls, fields) ::= <<
-
 <doc>
 class <type>:
     <decls>
@@ -39,7 +36,6 @@ class <type>:
 >>
 
 typedefine(doc, type) ::= <<
-
 type:
     <doc>
     <type>
@@ -47,14 +43,12 @@ type:
 >>
 
 fielddefine(doc, type, name) ::= <<
-
 <doc>
 <type> <name>
 
 >>
 
 parameterdefine(doc, type, name, kwargs) ::= <<
-
 parameter:
     <doc>
     <type> <name><if(kwargs)><kwargs><endif>
@@ -62,20 +56,15 @@ parameter:
 >>
 
 ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
-
 if <ifexp>:
     <ifdefs>
-<if(elifexp)>
-<elifexp,elifdefs:{exp, defs|
+<if(elifexp)><elifexp,elifdefs:{exp, defs|
 elif <exp>:
     <defs>
 }>
-<endif>
-<if(elsedefs)>
-else:
+<endif><if(elsedefs)>else:
     <elsedefs>
 <endif>
-
 >>
 
 docstring(str) ::= <<
@@ -115,3 +104,5 @@ op_multiply(e1, e2) ::= "(<e1> * <e2>)"
 op_divide(e1, e2) ::= "(<e1> / <e2>)"
 op_modulo(e1, e2) ::= "(<e1> % <e2>)"
 op_power(e1, e2) ::= "(<e1> ** <e2>)"
+
+string(text) ::= "\"<text>\""
