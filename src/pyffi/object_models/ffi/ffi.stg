@@ -53,11 +53,11 @@ fielddefine(doc, type, name) ::= <<
 
 >>
 
-parameterdefine(doc, type, name) ::= <<
+parameterdefine(doc, type, name, kwargs) ::= <<
 
 parameter:
     <doc>
-    <type> <name>
+    <type> <name><if(kwargs)><kwargs><endif>
 
 >>
 

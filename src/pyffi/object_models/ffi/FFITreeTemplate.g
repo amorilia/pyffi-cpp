@@ -73,7 +73,7 @@ typedefine
 
 parameterdefine
     :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
-        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text})
+        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, kwargs={$fieldparameters.st})
     ;
 
 fielddefine
@@ -91,6 +91,7 @@ class_fielddefines_ifelifelse_fragment
 
 class_fielddefines
     :   class_fielddefine+
+        -> templatehelper(arg={$class_fielddefines.st})
     ;
 
 class_fielddefine
@@ -106,8 +107,8 @@ kwarg
     ;
 
 fieldparameters
-    :   ^(FIELDARGLIST kwarg+)
-        -> fieldparameters(kwargs={$kwarg.st})
+    :   ^(FIELDARGLIST (k+=kwarg)+)
+        -> fieldparameters(kwargs={$k})
     ;
 
 expression
