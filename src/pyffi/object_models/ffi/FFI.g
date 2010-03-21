@@ -23,6 +23,7 @@ tokens {
     FIELDARGLIST;
     CLASS='class';
     CLASSDEF;
+    BASE;
     ELIF='elif';
     ELSE='else';
     FILEFORMAT='fileformat';
@@ -304,8 +305,8 @@ enumconstant
         -> ^(ENUMCONSTDEF ^(DOC longdoc? SHORTDOC?) CONSTANTNAME INT);
 
 classdefine
-    :   longdoc? CLASS TYPENAME blockbegin declarations? class_fielddefines blockend
-        -> ^(CLASSDEF ^(DOC longdoc?) TYPENAME declarations? class_fielddefines)
+    :   longdoc? CLASS name=TYPENAME ('(' base=TYPENAME ')')? blockbegin declarations? class_fielddefines blockend
+        -> ^(CLASSDEF ^(DOC longdoc?) $name ^(BASE $base?) declarations? class_fielddefines)
     ;
 
 blockbegin

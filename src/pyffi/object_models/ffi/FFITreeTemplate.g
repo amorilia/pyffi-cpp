@@ -61,8 +61,9 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME declarations? class_fielddefines?)
-        -> classdefine(doc={$doc.st}, type={$TYPENAME.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
+    :   ^(CLASSDEF doc name=TYPENAME ^(BASE (base=TYPENAME)?) declarations? class_fielddefines?)
+        -> {$base.text != null}? classdefine(doc={$doc.st}, type={$name.text}, base={$base.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
+        -> classdefine(doc={$doc.st}, type={$name.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
     ;
 
 typedefine
