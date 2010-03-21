@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(XML2FFI)
 
+find_package(Java REQUIRED)
+
 # compile a java file in the binary directory to a class file in the binary
 # directory (with $CLASSPATH and binary directory as classpath)
 function(java_compile javafile)
