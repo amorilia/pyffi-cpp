@@ -30,6 +30,10 @@ enumconstant(doc, name, value) ::= <<
 classdefine(doc, type, decls, fields) ::= <<
 <doc>
 class <type>:
+<if(!decls)><if(!fields)>
+    pass
+
+<endif><endif>
     <decls>
     <fields>
 
