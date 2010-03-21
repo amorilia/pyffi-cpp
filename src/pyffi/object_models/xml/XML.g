@@ -199,6 +199,7 @@ struct_add
     boolean has_ver1 = false;
     boolean has_ver2 = false;
     boolean has_cond = false;
+    boolean has_vercond = false;
 }
     :   TAG_START_ADD
         ( name=attr_variable_name
@@ -206,6 +207,7 @@ struct_add
         | {has_ver1=true;} ver1=attr_expression_ver1
         | {has_ver2=true;} ver2=attr_expression_ver2
         | {has_cond=true;} cond=attr_expression_cond
+        | {has_vercond=true;} vercond=attr_expression_vercond
         | attr_expression_default
         | anyattribute
         )*
@@ -215,36 +217,84 @@ struct_add
         | TAG_END
         )
         SHORTDOC*
-        // has_cond
-        -> {has_ver1 && has_ver2 && has_cond}?
+        // has_cond && has_vercond
+        -> {has_ver1 && has_ver2 && has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                    ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                        ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                            $ver1 $ver2)
+                        $cond)
+                    $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {has_ver1 && !has_ver2 && has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                    ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                        $ver1 $cond)
+                    $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {!has_ver1 && has_ver2 && has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                    ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                        $ver2 $cond)
+                    $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {!has_ver1 && !has_ver2 && has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $cond $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        // !has_cond && has_vercond
+        -> {has_ver1 && has_ver2 && !has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                    ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
+                        $ver1 $ver2)
+                    $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {has_ver1 && !has_ver2 && !has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {!has_ver1 && has_ver2 && !has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $vercond)
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        -> {!has_ver1 && !has_ver2 && !has_cond && has_vercond}?
+           ^(IF[$TAG_START_ADD, "if"]
+                $vercond
+                ^(FIELDDEF ^(DOC $doc?) $type $name))
+        // has_cond && !has_vercond
+        -> {has_ver1 && has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver1 $ver2)
                     $cond)
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        -> {has_ver1 && !has_ver2 && has_cond}?
+        -> {has_ver1 && !has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $cond)
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        -> {!has_ver1 && has_ver2 && has_cond}?
+        -> {!has_ver1 && has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $cond)
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        -> {!has_ver1 && !has_ver2 && has_cond}?
+        -> {!has_ver1 && !has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $cond
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        // !has_cond
-        -> {has_ver1 && has_ver2 && !has_cond}?
+        // !has_cond && !has_vercond
+        -> {has_ver1 && has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $ver2)
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        -> {has_ver1 && !has_ver2 && !has_cond}?
+        -> {has_ver1 && !has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver1
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
-        -> {!has_ver1 && has_ver2 && !has_cond}?
+        -> {!has_ver1 && has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver2
                 ^(FIELDDEF ^(DOC $doc?) $type $name))
@@ -292,6 +342,10 @@ attr_expression_ver2
 
 attr_expression_cond
     :   NAME_COND! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
+    ;
+
+attr_expression_vercond
+    :   NAME_VERCOND! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
     ;
 
 attr_expression_default
@@ -528,6 +582,10 @@ NAME_VER2
 
 NAME_COND
     :   { tagMode && !attrMode }?=> 'cond'
+    ;
+
+NAME_VERCOND
+    :   { tagMode && !attrMode }?=> 'vercond'
     ;
 
 NAME_DEFAULT
