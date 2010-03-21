@@ -16,41 +16,43 @@ options {
  *------------------------------------------------------------------*/
 
 ffi
-    :   formatdefine declarations
+    :   formatdefine declarations?
+    ;
+
+doc
+    :   ^(DOC SHORTDOC*)
     ;
 
 formatdefine
-    :   ^(FILEFORMAT 
-            ^(DOC SHORTDOC*)
-            (n=CONSTANTNAME
-            )*
-        )
+    :   ^(FILEFORMAT doc CONSTANTNAME*)
     ;
 
 declarations
-    :   (typedefine | parameterdefine | classdefine | enumdefine)*
+    :   (typedefine | parameterdefine | classdefine | enumdefine)+
     ;
 
 enumdefine
-    :   ^(ENUMDEF ^(DOC SHORTDOC*) TYPENAME TYPENAME enumconstant+);
+    :   ^(ENUMDEF doc TYPENAME TYPENAME enumconstant+)
+    ;
 
 enumconstant
-    :   ^(ENUMCONSTDEF ^(DOC SHORTDOC*) CONSTANTNAME INT);
+    :   ^(ENUMCONSTDEF doc CONSTANTNAME expression)
+    ;
 
 classdefine
-    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME declarations class_fielddefines)
+    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME) declarations? class_fielddefines?)
     ;
 
 typedefine
-    :   ^(TYPEDEF ^(DOC SHORTDOC*) TYPENAME TYPENAME?)
+    :   ^(TYPEDEF doc TYPENAME TYPENAME?)
     ;
 
 parameterdefine
-    :   ^(PARAMETERDEF ^(DOC SHORTDOC*) TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 fielddefine
-    :   ^(FIELDDEF ^(DOC SHORTDOC*) TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldparameters?)
     ;
 
 class_fielddefines_ifelifelse_fragment
@@ -61,7 +63,12 @@ class_fielddefines_ifelifelse_fragment
     ;
 
 class_fielddefines
-    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
+    :   class_fielddefine+
+    ;
+
+class_fielddefine
+    :   class_fielddefines_ifelifelse_fragment
+    |   fielddefine
     ;
 
 kwarg
