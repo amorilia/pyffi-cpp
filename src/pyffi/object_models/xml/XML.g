@@ -87,6 +87,7 @@ class FileVersion:
            ^(CLASSDEF
                ^(DOC SHORTDOC[$t, "Describes the file version."])
                TYPENAME[$t, "FileVersion"]
+               ^(BASE)
                ^(FIELDDEF DOC TYPENAME[$t, "String"] VARIABLENAME[$t, "game"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "version"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
@@ -166,6 +167,7 @@ enum_option
 structdefine
     :   TAG_START_STRUCT
         ( name=attr_type_name
+        | base=attr_type_inherit
         | attr_expression_ver1
         | attr_expression_ver2
         | anyattribute
@@ -173,7 +175,7 @@ structdefine
     	(doc+=SHORTDOC)*
         struct_add*
         TAG_END_STRUCT SHORTDOC*
-        -> ^(CLASSDEF ^(DOC $doc*) $name struct_add*)
+        -> ^(CLASSDEF ^(DOC $doc*) $name ^(BASE $base?) struct_add*)
     ;
 
 // for the time being, bitflags are converted to enums
@@ -299,6 +301,11 @@ struct_add
 attr_variable_name
     :   NAME_NAME ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
         -> VARIABLENAME[$t, newVarString($t.text).c_str()]
+    ;
+
+attr_type_inherit
+    :   NAME_INHERIT ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
+        -> TYPENAME[$t, $t.text]
     ;
 
 attr_type_name
@@ -561,6 +568,10 @@ NAME_VALUE
 
 NAME_STORAGE
     :   { tagMode && !attrMode }?=> 'storage'
+    ;
+
+NAME_INHERIT
+    :   { tagMode && !attrMode }?=> 'inherit'
     ;
 
 NAME_TYPE
