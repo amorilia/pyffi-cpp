@@ -44,18 +44,23 @@ public class xml2ffi {
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			XMLParser parser = new XMLParser(tokens);
 			XMLParser.ffi_return r = parser.ffi();
-			CommonTree t = (CommonTree)r.getTree();
 			// for debugging:
-			//System.out.println(t.toStringTree());
-			CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
+			//System.out.println(r.tree.toStringTree());
+
+			// optimize AST
+			CommonTreeNodeStream nodes = new CommonTreeNodeStream((Tree)r.tree);
+			nodes.setTokenStream(tokens);
+			FFITreeOpt opt = new FFITreeOpt(nodes);
+			FFITreeOpt.ffi_return r2 = opt.ffi();
+
+			// generate ffi code
+                        nodes = new  CommonTreeNodeStream((Tree)r2.tree);
 			nodes.setTokenStream(tokens);
 			FFITreeTemplate gen = new FFITreeTemplate(nodes);
-
-			// generate C++ code
 			gen.setTemplateLib(stg);
-			FFITreeTemplate.ffi_return result = gen.ffi();
+			FFITreeTemplate.ffi_return r3 = gen.ffi();
 			BufferedWriter ffi = new BufferedWriter(new FileWriter(output.toString()));
-			ffi.write(result.toString());
+			ffi.write(r3.st.toString());
 			ffi.close();
 		}
 	}

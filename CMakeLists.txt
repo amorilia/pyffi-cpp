@@ -60,27 +60,32 @@ endfunction(antlr_tree)
 
 antlr_lexpar(FFI)
 antlr_lexpar(XML FFI.tokens)
-antlr_tree(FFITreeTemplate XML)
+antlr_tree(FFITreeOpt FFI)
+antlr_tree(FFITreeTemplate FFI)
 java_compile(xml2ffi
   XMLLexer.class
   XMLParser.class
+  FFITreeOpt.class
   FFITreeTemplate.class)
 
 # copy relevant files to binary directory
 add_custom_command(
     OUTPUT
        ${XML2FFI_BINARY_DIR}/FFI.g
+       ${XML2FFI_BINARY_DIR}/FFITreeOpt.g
        ${XML2FFI_BINARY_DIR}/FFITreeTemplate.g
        ${XML2FFI_BINARY_DIR}/ffi.stg
        ${XML2FFI_BINARY_DIR}/XML.g
        ${XML2FFI_BINARY_DIR}/xml2ffi.java
     DEPENDS
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g
+       ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeOpt.g
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeTemplate.g
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g
        ${XML2FFI_SOURCE_DIR}/src/xml2ffi.java
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeOpt.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeTemplate.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g ${XML2FFI_BINARY_DIR}
