@@ -79,7 +79,7 @@ docstring(str) ::= <<
 >>
 
 doc(docstrings) ::= <<
-<docstrings:docstring()>
+<docstrings:docstring(); separator="\n">
 >>
 
 kwarg(name, exp) ::= <<
