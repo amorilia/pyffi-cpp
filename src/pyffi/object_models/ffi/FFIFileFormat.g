@@ -55,7 +55,7 @@ enumconstant
     :   ^(ENUMCONSTDEF ^(DOC SHORTDOC*) CONSTANTNAME INT);
 
 classdefine
-    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME declarations class_fielddefines)
+    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME ^(BASE TYPENAME?) declarations class_fielddefines)
     ;
 
 typedefine
