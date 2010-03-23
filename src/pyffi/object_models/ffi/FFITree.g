@@ -40,7 +40,7 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME) declarations? class_fielddefines?)
+    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME?) declarations? class_fielddefines?)
     ;
 
 typedefine
