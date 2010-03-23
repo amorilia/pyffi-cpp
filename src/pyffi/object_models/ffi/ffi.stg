@@ -51,9 +51,9 @@ typedefine(doc, type) ::= <<
 
 >>
 
-fielddefine(doc, type, name) ::= <<
+fielddefine(doc, type, name, indices, kwargs) ::= <<
 <doc>
-<type> <name>
+<type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
 
 >>
 
@@ -63,9 +63,9 @@ parameter:
 
 >>
 
-parameterdefine(doc, type, name, kwargs) ::= <<
+parameterdefine(doc, type, name, indices, kwargs) ::= <<
 <doc>
-<type> <name><if(kwargs)><kwargs><endif>
+<type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
 
 >>
 
@@ -92,6 +92,10 @@ kwarg(name, exp) ::= <<
 
 arguments(kwargs) ::= <<
 (<kwargs; separator=", ">)
+>>
+
+indices(expressions) ::= <<
+[<expressions; separator="][">]
 >>
 
 op_logical_or(e1, e2, brackets) ::= <<

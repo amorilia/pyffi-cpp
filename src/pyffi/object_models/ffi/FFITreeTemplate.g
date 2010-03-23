@@ -74,12 +74,12 @@ typedefine
 
 parameterdefine
     :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
-        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, kwargs={$arguments.st})
+        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st})
     ;
 
 fielddefine
     :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
-        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text})
+        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st})
     ;
 
 arguments
@@ -88,7 +88,8 @@ arguments
     ;
     
 indices
-    :   ^(OP_INDEX expression[999]+)
+    :   ^(OP_INDEX (exps+=expression[999])+)
+        -> indices(expressions={$exps})
     ;
 
 class_fielddefines_ifelifelse_fragment
