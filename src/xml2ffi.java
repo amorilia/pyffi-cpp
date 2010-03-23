@@ -39,28 +39,34 @@ public class xml2ffi {
 			System.out.println(input.toString() + " -> " + output.toString());
 
 			// create AST
+			System.out.println("creating abstract syntax tree...");
 			ANTLRFileStream instream = new ANTLRFileStream(input.toString());
 			XMLLexer lexer = new XMLLexer(instream);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			XMLParser parser = new XMLParser(tokens);
-			XMLParser.ffi_return r = parser.ffi();
+			Tree t = (Tree)parser.ffi().tree;
 			// for debugging:
 			//System.out.println(r.tree.toStringTree());
 
-			// optimize AST
-			CommonTreeNodeStream nodes = new CommonTreeNodeStream((Tree)r.tree);
-			nodes.setTokenStream(tokens);
-			FFITreeOpt opt = new FFITreeOpt(nodes);
-			FFITreeOpt.ffi_return r2 = opt.ffi();
+			// optimize AST (multiple passes if needed)
+			FFITreeOpt opt;
+			do {
+				System.out.println("optimization pass...");
+				CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
+				nodes.setTokenStream(tokens);
+				opt = new FFITreeOpt(nodes);
+				t = (Tree)opt.ffi().tree;
+			} while (opt.changed);
 
 			// generate ffi code
-                        nodes = new  CommonTreeNodeStream((Tree)r2.tree);
+			System.out.println("generating ffi file...");
+			CommonTreeNodeStream nodes = new CommonTreeNodeStream(t);
 			nodes.setTokenStream(tokens);
 			FFITreeTemplate gen = new FFITreeTemplate(nodes);
 			gen.setTemplateLib(stg);
-			FFITreeTemplate.ffi_return r3 = gen.ffi();
+			FFITreeTemplate.ffi_return r = gen.ffi();
 			BufferedWriter ffi = new BufferedWriter(new FileWriter(output.toString()));
-			ffi.write(r3.st.toString());
+			ffi.write(r.st.toString());
 			ffi.close();
 		}
 	}
