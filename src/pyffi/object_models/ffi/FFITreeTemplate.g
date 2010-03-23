@@ -73,13 +73,22 @@ typedefine
     ;
 
 parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
-        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, kwargs={$fieldparameters.st})
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
+        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, kwargs={$arguments.st})
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
         -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text})
+    ;
+
+arguments
+    :   ^(OP_CALL (k+=kwarg)+)
+        -> fieldparameters(kwargs={$k})
+    ;
+    
+indices
+    :   ^(OP_INDEX expression[999]+)
     ;
 
 class_fielddefines_ifelifelse_fragment
@@ -103,13 +112,8 @@ class_fielddefine
     ;
 
 kwarg
-    :   ^(FIELDARG VARIABLENAME expression[999])
+    :   ^(KWARG VARIABLENAME expression[999])
         -> kwarg(name={$VARIABLENAME.text}, exp={$expression.st})
-    ;
-
-fieldparameters
-    :   ^(FIELDARGLIST (k+=kwarg)+)
-        -> fieldparameters(kwargs={$k})
     ;
 
 // pass precedence of enclosing expression (to decide on brackets)

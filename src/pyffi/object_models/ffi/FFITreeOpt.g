@@ -61,11 +61,11 @@ typedefine
     ;
 
 parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
     ;
 
 // XXX is there a more efficient way to do this?
@@ -138,11 +138,15 @@ class_fielddefines
     ;
 
 kwarg
-    :   ^(FIELDARG VARIABLENAME expression)
+    :   ^(KWARG VARIABLENAME expression)
     ;
 
-fieldparameters
-    :   ^(FIELDARGLIST kwarg+)
+arguments
+    :   ^(OP_CALL kwarg+)
+    ;
+
+indices
+    :   ^(OP_INDEX expression+)
     ;
 
 expression

@@ -19,8 +19,7 @@ tokens {
 
     DOC;
     FIELDDEF;
-    FIELDARG;
-    FIELDARGLIST;
+    KWARG;
     CLASS='class';
     CLASSDEF;
     BASE;
@@ -37,6 +36,8 @@ tokens {
     ENUMCONSTDEF;
     // OP_MINUS is converted into OP_NEGATE if it corresponds to negation
     OP_NEGATE;
+    OP_INDEX;
+    OP_CALL;
 }
 
 // target specific code
@@ -326,14 +327,24 @@ typedefine
 
 // identical to fielddefine, except for head
 parameterdefine
-    :   longdoc? TYPENAME VARIABLENAME fieldparameters? SHORTDOC? NEWLINE+
-        -> ^(PARAMETERDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldparameters?)
+    :   longdoc? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
+        -> ^(PARAMETERDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments?)
     ;
 
 // identical to parameterdefine, except for head
 fielddefine
-    :   longdoc? TYPENAME VARIABLENAME fieldparameters? SHORTDOC? NEWLINE+
-        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldparameters?)
+    :   longdoc? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
+        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments?)
+    ;
+
+arguments
+    :   LPAREN kwarg (COMMA kwarg)* RPAREN
+        -> ^(OP_CALL kwarg+)
+    ;
+    
+indices
+    :   (LBRACK expression RBRACK)+
+        -> ^(OP_INDEX expression+)
     ;
 
 class_fielddefines_ifelifelse_fragment
@@ -349,12 +360,7 @@ class_fielddefines
 
 kwarg
     :   VARIABLENAME '=' expression
-        -> ^(FIELDARG VARIABLENAME expression)
-    ;
-
-fieldparameters
-    :   '(' kwarg (',' kwarg)* ')'
-        -> ^(FIELDARGLIST kwarg+)
+        -> ^(KWARG VARIABLENAME expression)
     ;
 
 expression
@@ -416,7 +422,7 @@ factor
 	;
 
 power
-	:   atom (options {greedy=true;}:OP_POWER^ factor)?
+	:   atom (trailer)* (options {greedy=true;}:OP_POWER^ factor)?
 	;
 
 atom
@@ -424,7 +430,12 @@ atom
     |   INT
     |   FLOAT
     |   STRING
-    |   LBRACKET! expression RBRACKET!
+    |   LPAREN! expression RPAREN!
+    ;
+
+trailer
+    :   arguments
+    |   indices
     ;
 
 /*------------------------------------------------------------------
@@ -532,11 +543,20 @@ OP_DIVIDE
 OP_MODULO
     :   '%';
 
-LBRACKET
+LPAREN
     :   '(';
 
-RBRACKET
+RPAREN
     :   ')';
+
+LBRACK
+    :   '[';
+
+RBRACK
+    :   ']';
+
+COMMA
+    :   ',';
 
 fragment
 LCLETTER

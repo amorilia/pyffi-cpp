@@ -130,9 +130,9 @@ parameter:
     FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
         -> ^(PARAMETERDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, "ver_" + newVarString($v.text)]
-               ^(FIELDARGLIST
-                  ^(FIELDARG VARIABLENAME[$doc, "game"] STRING[$doc, $doc.text])
-                  ^(FIELDARG VARIABLENAME[$v, "version"] INT)
+               ^(OP_CALL
+                  ^(KWARG VARIABLENAME[$doc, "game"] STRING[$doc, $doc.text])
+                  ^(KWARG VARIABLENAME[$v, "version"] INT)
                )
         )
     ;
