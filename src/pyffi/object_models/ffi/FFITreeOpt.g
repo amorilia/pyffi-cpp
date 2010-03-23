@@ -7,6 +7,7 @@ options {
     output=AST;
     tokenVocab=FFI;
     ASTLabelType=CommonTree;
+    backtrack=true;
 }
 
 /*------------------------------------------------------------------
@@ -14,9 +15,13 @@ options {
  *------------------------------------------------------------------*/
 
 // XXX at the moment, does nothing
-// TODO merge duplicate ifs
+// TODO merge four or more duplicate ifs
 //      combine x <= y and y <= z into x <= y <= z
 //      combine x <= y and y <= x into x == y
+
+@members {
+    TreeWizard wiz = new TreeWizard(adaptor);
+}
 
 ffi
     :   formatdefine declarations?
@@ -59,7 +64,29 @@ fielddefine
     ;
 
 class_fielddefines_ifelifelse_fragment
-    :   ^(IF expression class_fielddefines
+    :   ^(IF e1=expression d1=class_fielddefines)
+        ^(IF e2=expression d2=class_fielddefines)
+        ^(IF e3=expression d3=class_fielddefines)
+        -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) }?
+        ^(IF $e1 $d1 $d2 $d3)
+        -> { wiz.equals($e1.tree, $e2.tree) }?
+        ^(IF $e1 $d1 $d2)
+        ^(IF $e3 $d3)
+        -> { wiz.equals($e2.tree, $e3.tree) }?
+        ^(IF $e1 $d1)
+        ^(IF $e3 $d2 $d3)
+        ->
+        ^(IF $e1 $d1)
+        ^(IF $e2 $d2)
+        ^(IF $e3 $d3)
+    |   ^(IF e1=expression d1=class_fielddefines)
+        ^(IF e2=expression d2=class_fielddefines)
+        -> { wiz.equals($e1.tree, $e2.tree) }?
+        ^(IF $e1 $d1 $d2)
+        ->
+        ^(IF $e1 $d1)
+        ^(IF $e2 $d2)
+    |   ^(IF expression class_fielddefines
             (^(ELIF expression class_fielddefines))*
             (^(ELSE class_fielddefines))?
         )
