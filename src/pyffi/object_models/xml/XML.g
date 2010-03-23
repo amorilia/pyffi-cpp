@@ -200,6 +200,9 @@ bitflagsdefine
         -> ^(ENUMDEF ^(DOC $doc*) $name $type enum_option+)
     ;
 
+// note: for simplicity of implementation, struct_add always emits an
+//       OP_INDEX node, even if there are no arrays the optimizer
+//       removes these nodes later
 struct_add
 @init {
     boolean has_ver1 = false;
@@ -214,6 +217,8 @@ struct_add
         | {has_ver2=true;} ver2=attr_expression_ver2
         | {has_cond=true;} cond=attr_expression_cond
         | {has_vercond=true;} vercond=attr_expression_vercond
+        | arr1=attr_expression_arr1
+        | arr2=attr_expression_arr2
         | attr_expression_default
         | anyattribute
         )*
@@ -232,25 +237,25 @@ struct_add
                             $ver1 $ver2)
                         $cond)
                     $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {has_ver1 && !has_ver2 && has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver1 $cond)
                     $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && has_ver2 && has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver2 $cond)
                     $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && !has_ver2 && has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $cond $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         // !has_cond && has_vercond
         -> {has_ver1 && has_ver2 && !has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
@@ -258,19 +263,19 @@ struct_add
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver1 $ver2)
                     $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {has_ver1 && !has_ver2 && !has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && has_ver2 && !has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $vercond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && !has_ver2 && !has_cond && has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $vercond
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         // has_cond && !has_vercond
         -> {has_ver1 && has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
@@ -278,33 +283,33 @@ struct_add
                     ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"]
                         $ver1 $ver2)
                     $cond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {has_ver1 && !has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $cond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver2 $cond)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && !has_ver2 && has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $cond
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         // !has_cond && !has_vercond
         -> {has_ver1 && has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 ^(OP_LOGICAL_AND[$TAG_START_ADD, "and"] $ver1 $ver2)
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {has_ver1 && !has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver1
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
         -> {!has_ver1 && has_ver2 && !has_cond && !has_vercond}?
            ^(IF[$TAG_START_ADD, "if"]
                 $ver2
-                ^(FIELDDEF ^(DOC $doc*) $type $name))
-        -> ^(FIELDDEF ^(DOC $doc*) $type $name)
+                ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?)))
+        -> ^(FIELDDEF ^(DOC $doc*) $type $name ^(OP_INDEX $arr1? $arr2?))
     ;
 
 attr_variable_name
@@ -361,6 +366,14 @@ attr_expression_vercond
 
 attr_expression_default
     :   NAME_DEFAULT ATTR_EQ ATTR_VALUE_START .* ATTR_VALUE_END
+    ;
+
+attr_expression_arr1
+    :   NAME_ARR1! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
+    ;
+
+attr_expression_arr2
+    :   NAME_ARR2! ATTR_EQ! ATTR_VALUE_START! expression ATTR_VALUE_END!
     ;
 
 expression
@@ -605,6 +618,14 @@ NAME_VERCOND
 
 NAME_DEFAULT
     :   { tagMode && !attrMode }?=> 'default'
+    ;
+
+NAME_ARR1
+    :   { tagMode && !attrMode }?=> 'arr1'
+    ;
+
+NAME_ARR2
+    :   { tagMode && !attrMode }?=> 'arr2'
     ;
 
 NAME

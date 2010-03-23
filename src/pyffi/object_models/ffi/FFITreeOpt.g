@@ -61,11 +61,13 @@ typedefine
     ;
 
 parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
+        -> ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
+        -> ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
     ;
 
 // XXX is there a more efficient way to do this?
