@@ -15,8 +15,9 @@ options {
  *------------------------------------------------------------------*/
 
 // notes:
-// merges five or more duplicate ifs
-// to merge more, simply run the optimizer multiple times (check the parser changed attribute!)
+// only merges five or more duplicate ifs
+// to merge more, simply run the optimizer multiple times (check the
+// parser "again" attribute!)
 
 // todo:
 // combine x <= y and y <= z into x <= y <= z
@@ -24,7 +25,7 @@ options {
 
 @members {
     TreeWizard wiz = new TreeWizard(adaptor);
-    boolean changed = false;
+    boolean again = false;
 }
 
 ffi
@@ -73,7 +74,7 @@ class_fielddefines_ifelifelse_fragment
         ^(IF e2=expression d2=class_fielddefines)
         ^(IF e3=expression d3=class_fielddefines)
         ^(IF e4=expression d4=class_fielddefines)
-        { changed |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree) ||  wiz.equals($e3.tree, $e4.tree); }
+        { again |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree) ||  wiz.equals($e3.tree, $e4.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) &&  wiz.equals($e3.tree, $e4.tree) }?
         ^(IF $e1 $d1 $d2 $d3 $d4)
         -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) }?
@@ -105,7 +106,7 @@ class_fielddefines_ifelifelse_fragment
     |   ^(IF e1=expression d1=class_fielddefines)
         ^(IF e2=expression d2=class_fielddefines)
         ^(IF e3=expression d3=class_fielddefines)
-        { changed |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree); }
+        { again |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) }?
         ^(IF $e1 $d1 $d2 $d3)
         -> { wiz.equals($e1.tree, $e2.tree) }?
@@ -120,7 +121,7 @@ class_fielddefines_ifelifelse_fragment
         ^(IF $e3 $d3)
     |   ^(IF e1=expression d1=class_fielddefines)
         ^(IF e2=expression d2=class_fielddefines)
-        { changed |= wiz.equals($e1.tree, $e2.tree); }
+        { again |= wiz.equals($e1.tree, $e2.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) }?
         ^(IF $e1 $d1 $d2)
         ->

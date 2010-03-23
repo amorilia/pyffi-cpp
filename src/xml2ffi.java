@@ -56,7 +56,7 @@ public class xml2ffi {
 				nodes.setTokenStream(tokens);
 				opt = new FFITreeOpt(nodes);
 				t = (Tree)opt.ffi().tree;
-			} while (opt.changed);
+			} while (opt.again);
 
 			// generate ffi code
 			System.out.println("generating ffi file...");
