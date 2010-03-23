@@ -84,7 +84,7 @@ fielddefine
 
 arguments
     :   ^(OP_CALL (k+=kwarg)+)
-        -> fieldparameters(kwargs={$k})
+        -> arguments(kwargs={$k})
     ;
     
 indices

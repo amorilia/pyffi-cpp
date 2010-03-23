@@ -48,11 +48,11 @@ typedefine
     ;
 
 parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME arguments?)
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldparameters?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME arguments?)
     ;
 
 class_fielddefines_ifelifelse_fragment
@@ -72,11 +72,11 @@ class_fielddefine
     ;
 
 kwarg
-    :   ^(FIELDARG VARIABLENAME expression)
+    :   ^(KWARG VARIABLENAME expression)
     ;
 
-fieldparameters
-    :   ^(FIELDARGLIST kwarg+)
+arguments
+    :   ^(OP_CALL kwarg+)
     ;
 
 expression
