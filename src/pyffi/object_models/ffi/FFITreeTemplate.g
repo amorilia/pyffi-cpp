@@ -126,7 +126,7 @@ expression[int precedence]
         -> op_logical_or(e1={$e1.st}, e2={$e2.st}, brackets={$precedence < 140})
     |   ^(OP_LOGICAL_AND e1=expression[130] e2=expression[130])
         -> op_logical_and(e1={$e1.st}, e2={$e2.st}, brackets={$precedence < 130})
-    |   ^(OP_LOGICAL_NOT expression[120])
+    |   ^(OP_LOGICAL_NOT e1=expression[120])
         -> op_logical_not(e1={$e1.st}, brackets={$precedence < 120})
     |   ^(OP_EQ e1=expression[110] e2=expression[110])
         -> op_eq(e1={$e1.st}, e2={$e2.st}, brackets={$precedence < 110})
