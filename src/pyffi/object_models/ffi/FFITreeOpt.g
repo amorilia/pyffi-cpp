@@ -154,7 +154,11 @@ expression
     |   ^(OP_LOGICAL_AND e1=expression e2=expression)
     |   ^(OP_LOGICAL_NOT expression)
     |   ^(OP_EQ e1=expression e2=expression)
+        -> { $e2.text.equals("0") }? ^(OP_LOGICAL_NOT $e1)
+        -> ^(OP_EQ $e1 $e2)
     |   ^(OP_NEQ e1=expression e2=expression)
+        -> { $e2.text.equals("0") }? $e1
+        -> ^(OP_NEQ $e1 $e2)
     |   ^(OP_GT e1=expression e2=expression)
     |   ^(OP_LT e1=expression e2=expression)
     |   ^(OP_GTEQ e1=expression e2=expression)
