@@ -711,9 +711,6 @@ WS
 
 // any text until the next tag
 SHORTDOC
-@after {
-    setText(org.htmlparser.util.Translate.decode(getText()));
-}
     :   { !tagMode }?=> (~('<'|'\n'))*
     ;
 
