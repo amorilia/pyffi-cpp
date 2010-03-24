@@ -67,6 +67,11 @@ java_compile(xml2ffi
   XMLParser.class
   FFITreeOpt.class
   FFITreeTemplate.class)
+java_compile(ffi
+  FFILexer.class
+  FFIParser.class
+  FFITreeOpt.class
+  FFITreeTemplate.class)
 
 # copy relevant files to binary directory
 add_custom_command(
@@ -77,6 +82,7 @@ add_custom_command(
        ${XML2FFI_BINARY_DIR}/ffi.stg
        ${XML2FFI_BINARY_DIR}/XML.g
        ${XML2FFI_BINARY_DIR}/xml2ffi.java
+       ${XML2FFI_BINARY_DIR}/ffi.java
     DEPENDS
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeOpt.g
@@ -84,19 +90,25 @@ add_custom_command(
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg
        ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g
        ${XML2FFI_SOURCE_DIR}/src/xml2ffi.java
+       ${XML2FFI_SOURCE_DIR}/src/ffi.java
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFI.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeOpt.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFITreeTemplate.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/pyffi/object_models/xml/XML.g ${XML2FFI_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/xml2ffi.java ${XML2FFI_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${XML2FFI_SOURCE_DIR}/src/ffi.java ${XML2FFI_BINARY_DIR}
 )
 
 add_custom_target(translate ALL
     DEPENDS
         xml2ffi.class
+        ffi.class
         ${XML2FFI_BINARY_DIR}/ffi.stg
-    COMMAND ${CMAKE_COMMAND} -E make_directory xml2ffi_test
-    COMMAND ${JAVA_RUNTIME} -cp $ENV{CLASSPATH}:${XML2FFI_BINARY_DIR} xml2ffi ${XML2FFI_SOURCE_DIR}/test/ xml2ffi_test/
+#    COMMAND ${CMAKE_COMMAND} -E make_directory xml2ffi_test
+#    COMMAND ${JAVA_RUNTIME} -cp $ENV{CLASSPATH}:${XML2FFI_BINARY_DIR} xml2ffi ${XML2FFI_SOURCE_DIR}/test/ xml2ffi_test/
     WORKING_DIRECTORY ${XML2FFI_BINARY_DIR}
 )
+
+enable_testing()
+add_subdirectory(test)

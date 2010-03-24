@@ -1,9 +1,4 @@
 # run the tests
-foreach(TEST xml_test)
-    add_executable(${TEST} ${TEST}.cpp)
-    target_link_libraries (${TEST} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pyffi)
-    # the ffi files reside in the source directory
-    # so we run the actual test from that directory
-    # (the default is from the binary directory)
-    add_test(pyffi::object_models::xml::${TEST} ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
+foreach(TEST test_basic test_enum test_full test_header test_minimal test_version)
+    add_test(pyffi::object_models::xml::${TEST} ${CMAKE_COMMAND} -E chdir ${XML2FFI_BINARY_DIR} ${JAVA_RUNTIME} -cp $ENV{CLASSPATH}:${XML2FFI_BINARY_DIR} xml2ffi ${CMAKE_CURRENT_SOURCE_DIR}/${TEST}.xml ${CMAKE_CURRENT_SOURCE_DIR}/${TEST}.ffi)
 endforeach()
