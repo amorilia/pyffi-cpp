@@ -1,8 +1,7 @@
 fileformat TEST
 
-type:
-    UInt
-    Float
+class UInt
+class Float
 
 # The type of animation interpolation (blending) that will be used on the
 # key frames.
@@ -26,8 +25,7 @@ enum KeyType(UInt):
 
 class Key:
 
-    parameter:
-        KeyType interpolation
+    abstract KeyType interpolation
 
     Float time
     UInt value

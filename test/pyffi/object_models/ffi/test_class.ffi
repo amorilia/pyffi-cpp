@@ -1,11 +1,10 @@
 fileformat TEST
 
-type:
-    UInt
-    Int
-    UShort
-    Short
-    String
+class UInt
+class Int
+class UShort
+class Short
+class String
 
 # A test structure.
 class Test:

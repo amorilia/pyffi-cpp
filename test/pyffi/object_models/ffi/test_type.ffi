@@ -1,16 +1,15 @@
 fileformat NIF
 
-type:
-    UInt
-    Int
-    UShort
-    Short
-    Test
-    Offset = UInt
-    UByte
-    StringOffset = UShort
-    Index = UByte
-    LFString
-    ZString
+class UInt
+class Int
+class UShort
+class Short
+class Test
+class Offset(UInt)
+class UByte
+class StringOffset(UShort)
+class Index(UByte)
+class LFString
+class ZString
 
 

@@ -1,12 +1,10 @@
 fileformat TEST
 
-type:
-    UInt
+class UInt
 
-parameter:
-    UInt version
-    UInt user1
-    UInt user2
+UInt version
+UInt user1
+UInt user2
 
 # A test class.
 class TestComparison:

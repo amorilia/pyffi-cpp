@@ -1,14 +1,12 @@
 fileformat TEST
 
-type:
-    UInt
-    Float
-    String
+class UInt
+class Float
+class String
 
 class Key:
-    parameter:
-        UInt interpolation
-        String description
+    abstract UInt interpolation
+    abstract String description
 
     Float time(default=0.0)
     UInt value(default=1)

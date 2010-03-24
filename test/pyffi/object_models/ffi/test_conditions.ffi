@@ -1,14 +1,12 @@
 fileformat TEST
 
-type:
-    UInt
-    Int
-    UShort
-    Short
-    String
+class UInt
+class Int
+class UShort
+class Short
+class String
 
-parameter:
-    UInt version
+abstract UInt version
 
 # A test class.
 class Test:

@@ -1,14 +1,12 @@
 fileformat TEST
 
-type:
-    UInt
+class UInt
 
-parameter:
-    # paramaters declared at global scope are arguments required for parsing
-    # the binary file (typically, version numbers)
-    UInt version
-    UInt user_version
-    UInt user_version_2
+# fields declared at global scope are arguments required for parsing
+# the binary file (typically, version numbers)
+abstract UInt version
+abstract UInt user_version
+abstract UInt user_version_2
 
 class Key:
     type:

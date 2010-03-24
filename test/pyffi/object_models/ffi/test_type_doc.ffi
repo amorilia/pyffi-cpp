@@ -3,20 +3,25 @@
 # That's it!
 fileformat NIF
 
-type:
-    UInt # A 32-bit unsigned integer.
-    Int # A 32-bit signed integer.
-    UShort # A 16-bit unsigned integer.
-    Short # A 16-bit signed integer.
+# A 32-bit unsigned integer.
+class UInt
 
-    # A simple test type.
-    # Has multiple lines commenting it
-    Test
+# A 32-bit signed integer.
+class Int
 
+# A 16-bit unsigned integer.
+class UShort
 
-    # Another test.
-    Test2
+# A 16-bit signed integer.
+class Short
 
-    Offset = UInt
-    ZString
+# A simple test type.
+# Has multiple lines commenting it
+class Test
+
+# Another test.
+class Test2
+
+class Offset(UInt)
+class ZString
 
