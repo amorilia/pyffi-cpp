@@ -28,8 +28,6 @@ tokens {
     FILEFORMAT='fileformat';
     IF='if';
     ABSTRACT='abstract';
-    TYPE='type';
-    TYPEDEF;
     ENUM='enum';
     ENUMDEF;
     ENUMCONSTDEF;
@@ -279,7 +277,7 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | fielddefine | classdefine | enumdefine)+
+    :   (fielddefine | classdefine | enumdefine)+
     ;
 
 // Documentation preceeding a definition, with single newline
@@ -288,13 +286,9 @@ longdoc
     :   (SHORTDOC NEWLINE!)+
     ;
 
-typeblock
-    :   TYPE! blockbegin! typedefine+ blockend!
-    ;
-
 enumdefine
-    :   longdoc? ENUM alias=TYPENAME '(' orig=TYPENAME ')' blockbegin enumconstant+ blockend
-        -> ^(ENUMDEF ^(DOC longdoc?) $alias $orig enumconstant+);
+    :   longdoc? ENUM name=TYPENAME '(' base=TYPENAME ')' blockbegin enumconstant+ blockend
+        -> ^(ENUMDEF ^(DOC longdoc?) $name $base enumconstant+);
 
 enumconstant
     :   longdoc? CONSTANTNAME '=' INT SHORTDOC? NEWLINE+
@@ -311,13 +305,6 @@ blockbegin
 
 blockend
     :   DEDENT
-    ;
-
-typedefine
-    :   longdoc? TYPENAME SHORTDOC? NEWLINE+ // basic type
-        -> ^(TYPEDEF ^(DOC longdoc? SHORTDOC?) TYPENAME)
-    |   longdoc? alias=TYPENAME '=' orig=TYPENAME SHORTDOC? NEWLINE+ // alias
-        -> ^(TYPEDEF ^(DOC longdoc? SHORTDOC?) $alias $orig)
     ;
 
 fielddefine

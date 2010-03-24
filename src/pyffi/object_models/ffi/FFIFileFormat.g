@@ -45,7 +45,7 @@ formatdefine
     ;
 
 declarations
-    :   (typedefine | fielddefine | classdefine | enumdefine)+
+    :   (fielddefine | classdefine | enumdefine)+
     ;
 
 enumdefine
@@ -56,10 +56,6 @@ enumconstant
 
 classdefine
     :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME ^(BASE TYPENAME?) declarations?)
-    ;
-
-typedefine
-    :   ^(TYPEDEF ^(DOC SHORTDOC*) TYPENAME TYPENAME?)
     ;
 
 fielddefine

@@ -27,15 +27,16 @@ enumconstant(doc, name, value) ::= <<
 
 >>
 
-classdefine(doc, type, base, decls, fields) ::= <<
+classdefine(doc, type, base, decls) ::= <<
 <doc>
-class <type><if(base)>(<base>)<endif>:
-<if(!decls)><if(!fields)>
-    pass
-
-<endif><endif>
+class <type><if(base)>(<base>)<endif><if(decls)>:
     <decls>
-    <fields>
+
+<else>
+
+
+
+<endif>
 
 >>
 

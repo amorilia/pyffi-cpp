@@ -136,12 +136,11 @@ static FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
         )
     ;
 
-// matches typedefine in FFIFileFormat
 basicdefine
     :   TAG_START_BASIC (name=attr_type_name|anyattribute)* TAG_CLOSE
         (doc+=SHORTDOC)*
         TAG_END_BASIC SHORTDOC*
-        -> ^(TYPEDEF ^(DOC $doc*) $name)
+        -> ^(CLASSDEF ^(DOC $doc*) $name BASE)
     ;
 
 enumdefine

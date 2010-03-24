@@ -37,9 +37,7 @@ declarations
     ;
 
 declaration
-    :   (options{greedy=true;}: types+=typedefine)+
-        -> typeblock(types={$types})
-    |   fielddefine
+    :   fielddefine
         -> templatehelper(arg={$fielddefine.st})
     |   classdefine
         -> templatehelper(arg={$classdefine.st})
@@ -64,12 +62,6 @@ classdefine
     :   ^(CLASSDEF doc name=TYPENAME ^(BASE (base=TYPENAME)?) declarations?)
         -> {$base.text != null}? classdefine(doc={$doc.st}, type={$name.text}, base={$base.text}, decls={$declarations.st})
         -> classdefine(doc={$doc.st}, type={$name.text}, decls={$declarations.st})
-    ;
-
-typedefine
-    :   ^(TYPEDEF doc type=TYPENAME (orig=TYPENAME)?)
-        -> {$orig.text != null}? aliasdefine(doc={$doc.st}, type={$type.text}, orig={$orig.text})
-        -> typedefine(doc={$doc.st}, type={$type.text})
     ;
 
 fielddefine
