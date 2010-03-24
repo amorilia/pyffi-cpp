@@ -31,12 +31,16 @@ public class ffi {
 			System.out.println("parsing " + input.toString() + "...");
 
 			// create AST
+			Tree t = null;
 			System.out.println("creating abstract syntax tree...");
 			ANTLRFileStream instream = new ANTLRFileStream(input.toString());
 			FFILexer lexer = new FFILexer(instream);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			FFIParser parser = new FFIParser(tokens);
-			Tree t = (Tree)parser.ffi().tree;
+			t = (Tree)parser.ffi().tree;
+			if (parser.getNumberOfSyntaxErrors() > 0) {
+				System.exit(-1);
+			}
 			// for debugging:
 			//System.out.println(r.tree.toStringTree());
 
@@ -48,6 +52,9 @@ public class ffi {
 				nodes.setTokenStream(tokens);
 				opt = new FFITreeOpt(nodes);
 				t = (Tree)opt.ffi().tree;
+				if (opt.getNumberOfSyntaxErrors() > 0) {
+					System.exit(-1);
+				}
 			} while (opt.again);
 
 			// generate ffi code
@@ -57,6 +64,9 @@ public class ffi {
 			FFITreeTemplate gen = new FFITreeTemplate(nodes);
 			gen.setTemplateLib(stg);
 			FFITreeTemplate.ffi_return r = gen.ffi();
+			if (gen.getNumberOfSyntaxErrors() > 0) {
+				System.exit(-1);
+			}
 			//BufferedWriter ffi = new BufferedWriter(new FileWriter(output.toString()));
 			//ffi.write(r.st.toString());
 			//ffi.close();
