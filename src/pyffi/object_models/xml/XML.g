@@ -126,10 +126,9 @@ versiondefine
 
 ->
 
-parameter:
-    FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
+static FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
-        -> ^(PARAMETERDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, "ver_" + newVarString($v.text)]
+        -> ^(FIELDDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, "ver_" + newVarString($v.text)]
                ^(OP_CALL
                   ^(KWARG VARIABLENAME[$doc, "game"] STRING[$doc, $doc.text])
                   ^(KWARG VARIABLENAME[$v, "version"] INT)

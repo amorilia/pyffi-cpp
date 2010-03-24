@@ -27,8 +27,7 @@ tokens {
     ELSE='else';
     FILEFORMAT='fileformat';
     IF='if';
-    PARAMETER='parameter';
-    PARAMETERDEF;
+    ABSTRACT='abstract';
     TYPE='type';
     TYPEDEF;
     ENUM='enum';
@@ -280,7 +279,7 @@ formatdefine
     ;
 
 declarations
-    :   (typeblock | parameterblock | classdefine | enumdefine)+
+    :   (typeblock | fielddefine | classdefine | enumdefine)+
     ;
 
 // Documentation preceeding a definition, with single newline
@@ -293,10 +292,6 @@ typeblock
     :   TYPE! blockbegin! typedefine+ blockend!
     ;
 
-parameterblock
-    :   PARAMETER! blockbegin! parameterdefine+ blockend!
-    ;
-
 enumdefine
     :   longdoc? ENUM alias=TYPENAME '(' orig=TYPENAME ')' blockbegin enumconstant+ blockend
         -> ^(ENUMDEF ^(DOC longdoc?) $alias $orig enumconstant+);
@@ -306,8 +301,8 @@ enumconstant
         -> ^(ENUMCONSTDEF ^(DOC longdoc? SHORTDOC?) CONSTANTNAME INT);
 
 classdefine
-    :   longdoc? CLASS name=TYPENAME ('(' base=TYPENAME ')')? blockbegin declarations? class_fielddefines blockend
-        -> ^(CLASSDEF ^(DOC longdoc?) $name ^(BASE $base?) declarations? class_fielddefines)
+    :   longdoc? CLASS name=TYPENAME ('(' base=TYPENAME ')')? blockbegin declarations? blockend
+        -> ^(CLASSDEF ^(DOC longdoc?) $name ^(BASE $base?) declarations?)
     ;
 
 blockbegin
@@ -325,16 +320,12 @@ typedefine
         -> ^(TYPEDEF ^(DOC longdoc? SHORTDOC?) $alias $orig)
     ;
 
-// identical to fielddefine, except for head
-parameterdefine
-    :   longdoc? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
-        -> ^(PARAMETERDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments?)
-    ;
-
-// identical to parameterdefine, except for head
 fielddefine
     :   longdoc? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
         -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments?)
+    |   IF^ expression blockbegin! fielddefine+ blockend!
+        (ELIF^ expression blockbegin! fielddefine+ blockend!)*
+        (ELSE^ blockbegin! fielddefine+ blockend!)?
     ;
 
 arguments
@@ -345,17 +336,6 @@ arguments
 indices
     :   (LBRACK expression RBRACK)+
         -> ^(OP_INDEX expression+)
-    ;
-
-class_fielddefines_ifelifelse_fragment
-    :
-        IF^ expression blockbegin! class_fielddefines blockend!
-        (ELIF^ expression blockbegin! class_fielddefines blockend!)*
-        (ELSE^ blockbegin! class_fielddefines blockend!)?
-    ;
-
-class_fielddefines
-    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
     ;
 
 kwarg

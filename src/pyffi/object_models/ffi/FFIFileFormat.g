@@ -30,7 +30,7 @@ ffi[FileFormat *ff]
 @init {
     _fileformat = ff;
 }
-    :   formatdefine declarations
+    :   formatdefine declarations?
     ;
 
 formatdefine
@@ -45,7 +45,7 @@ formatdefine
     ;
 
 declarations
-    :   (typedefine | parameterdefine | classdefine | enumdefine)*
+    :   (typedefine | fielddefine | classdefine | enumdefine)+
     ;
 
 enumdefine
@@ -55,30 +55,19 @@ enumconstant
     :   ^(ENUMCONSTDEF ^(DOC SHORTDOC*) CONSTANTNAME INT);
 
 classdefine
-    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME ^(BASE TYPENAME?) declarations class_fielddefines)
+    :   ^(CLASSDEF ^(DOC SHORTDOC*) TYPENAME ^(BASE TYPENAME?) declarations?)
     ;
 
 typedefine
     :   ^(TYPEDEF ^(DOC SHORTDOC*) TYPENAME TYPENAME?)
     ;
 
-parameterdefine
-    :   ^(PARAMETERDEF ^(DOC SHORTDOC*) TYPENAME VARIABLENAME arguments?)
-    ;
-
 fielddefine
     :   ^(FIELDDEF ^(DOC SHORTDOC*) TYPENAME VARIABLENAME arguments?)
-    ;
-
-class_fielddefines_ifelifelse_fragment
-    :   ^(IF expression class_fielddefines
-            (^(ELIF expression class_fielddefines))*
-            (^(ELSE class_fielddefines))?
+    |   ^(IF expression fielddefine+
+            (^(ELIF expression fielddefine+))*
+            (^(ELSE fielddefine+))?
         )
-    ;
-
-class_fielddefines
-    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
     ;
 
 kwarg

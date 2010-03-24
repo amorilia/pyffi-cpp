@@ -57,18 +57,6 @@ fielddefine(doc, type, name, indices, kwargs) ::= <<
 
 >>
 
-parameterblock(parameters) ::= <<
-parameter:
-    <parameters>
-
->>
-
-parameterdefine(doc, type, name, indices, kwargs) ::= <<
-<doc>
-<type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
-
->>
-
 ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
 if <ifexp>:
     <ifdefs><if(elifexp)><elifexp,elifdefs:{exp, defs|

@@ -39,8 +39,8 @@ declarations
 declaration
     :   (options{greedy=true;}: types+=typedefine)+
         -> typeblock(types={$types})
-    |   (options{greedy=true;}: parameters+=parameterdefine)+
-        -> parameterblock(parameters={$parameters})
+    |   fielddefine
+        -> templatehelper(arg={$fielddefine.st})
     |   classdefine
         -> templatehelper(arg={$classdefine.st})
     |   enumdefine
@@ -61,9 +61,9 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc name=TYPENAME ^(BASE (base=TYPENAME)?) declarations? class_fielddefines?)
-        -> {$base.text != null}? classdefine(doc={$doc.st}, type={$name.text}, base={$base.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
-        -> classdefine(doc={$doc.st}, type={$name.text}, decls={$declarations.st}, fields={$class_fielddefines.st})
+    :   ^(CLASSDEF doc name=TYPENAME ^(BASE (base=TYPENAME)?) declarations?)
+        -> {$base.text != null}? classdefine(doc={$doc.st}, type={$name.text}, base={$base.text}, decls={$declarations.st})
+        -> classdefine(doc={$doc.st}, type={$name.text}, decls={$declarations.st})
     ;
 
 typedefine
@@ -72,14 +72,20 @@ typedefine
         -> typedefine(doc={$doc.st}, type={$type.text})
     ;
 
-parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
-        -> parameterdefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st})
-    ;
-
 fielddefine
     :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
         -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st})
+    |   ^(IF ifexp=expression[999] ifdefs=fielddefines
+            (^(ELIF elifexp+=expression[999] elifdefs+=fielddefines))*
+            (^(ELSE elsedefs=fielddefines))?
+        )
+        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp}, elifdefs={$elifdefs}, elsedefs={$elsedefs.st})
+    ;
+
+// for convenience in fielddefine rule
+fielddefines
+    :   (defs+=fielddefine)+
+        -> templatehelper(arg={$defs})
     ;
 
 arguments
@@ -90,26 +96,6 @@ arguments
 indices
     :   ^(OP_INDEX (exps+=expression[999])+)
         -> indices(expressions={$exps})
-    ;
-
-class_fielddefines_ifelifelse_fragment
-    :   ^(IF ifexp=expression[999] ifdefs=class_fielddefines
-            (^(ELIF elifexp+=expression[999] elifdefs+=class_fielddefines))*
-            (^(ELSE elsedefs=class_fielddefines))?
-        )
-        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp}, elifdefs={$elifdefs}, elsedefs={$elsedefs.st})
-    ;
-
-class_fielddefines
-    :   (defs+=class_fielddefine)+
-        -> templatehelper(arg={$defs})
-    ;
-
-class_fielddefine
-    :   class_fielddefines_ifelifelse_fragment
-        -> templatehelper(arg={$class_fielddefines_ifelifelse_fragment.st})
-    |   fielddefine
-        -> templatehelper(arg={$fielddefine.st})
     ;
 
 kwarg

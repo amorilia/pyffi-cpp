@@ -41,7 +41,7 @@ formatdefine
     ;
 
 declarations
-    :   (typedefine | parameterdefine | classdefine | enumdefine)+
+    :   (typedefine | fielddefine | classdefine | enumdefine)+
     ;
 
 enumdefine
@@ -53,29 +53,22 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME?) declarations? class_fielddefines?)
+    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME?) declarations?)
     ;
 
 typedefine
     :   ^(TYPEDEF doc TYPENAME TYPENAME?)
     ;
 
-parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
-        -> ^(PARAMETERDEF doc TYPENAME VARIABLENAME indices? arguments?)
-    ;
-
 fielddefine
     :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
         -> ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
-    ;
-
-// XXX is there a more efficient way to do this?
-class_fielddefines_ifelifelse_fragment
-    :   ^(IF e1=expression d1=class_fielddefines)
-        ^(IF e2=expression d2=class_fielddefines)
-        ^(IF e3=expression d3=class_fielddefines)
-        ^(IF e4=expression d4=class_fielddefines)
+    |
+        // XXX is there a more efficient way to do this?
+        ^(IF e1=expression d1=fielddefines)
+        ^(IF e2=expression d2=fielddefines)
+        ^(IF e3=expression d3=fielddefines)
+        ^(IF e4=expression d4=fielddefines)
         { again |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree) ||  wiz.equals($e3.tree, $e4.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) &&  wiz.equals($e3.tree, $e4.tree) }?
         ^(IF $e1 $d1 $d2 $d3 $d4)
@@ -105,9 +98,9 @@ class_fielddefines_ifelifelse_fragment
         ^(IF $e2 $d2)
         ^(IF $e3 $d3)
         ^(IF $e4 $d4)
-    |   ^(IF e1=expression d1=class_fielddefines)
-        ^(IF e2=expression d2=class_fielddefines)
-        ^(IF e3=expression d3=class_fielddefines)
+    |   ^(IF e1=expression d1=fielddefines)
+        ^(IF e2=expression d2=fielddefines)
+        ^(IF e3=expression d3=fielddefines)
         { again |= wiz.equals($e1.tree, $e2.tree) ||  wiz.equals($e2.tree, $e3.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) &&  wiz.equals($e2.tree, $e3.tree) }?
         ^(IF $e1 $d1 $d2 $d3)
@@ -121,22 +114,23 @@ class_fielddefines_ifelifelse_fragment
         ^(IF $e1 $d1)
         ^(IF $e2 $d2)
         ^(IF $e3 $d3)
-    |   ^(IF e1=expression d1=class_fielddefines)
-        ^(IF e2=expression d2=class_fielddefines)
+    |   ^(IF e1=expression d1=fielddefines)
+        ^(IF e2=expression d2=fielddefines)
         { again |= wiz.equals($e1.tree, $e2.tree); }
         -> { wiz.equals($e1.tree, $e2.tree) }?
         ^(IF $e1 $d1 $d2)
         ->
         ^(IF $e1 $d1)
         ^(IF $e2 $d2)
-    |   ^(IF expression class_fielddefines
-            (^(ELIF expression class_fielddefines))*
-            (^(ELSE class_fielddefines))?
+    |   ^(IF expression fielddefines
+            (^(ELIF expression fielddefines))*
+            (^(ELSE fielddefines))?
         )
     ;
 
-class_fielddefines
-    :   (class_fielddefines_ifelifelse_fragment | fielddefine)+
+// for convenience in the above parser rule
+fielddefines
+    :   fielddefine+
     ;
 
 kwarg

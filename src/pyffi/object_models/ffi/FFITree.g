@@ -28,7 +28,7 @@ formatdefine
     ;
 
 declarations
-    :   (typedefine | parameterdefine | classdefine | enumdefine)+
+    :   (typedefine | fielddefine | classdefine | enumdefine)+
     ;
 
 enumdefine
@@ -40,35 +40,19 @@ enumconstant
     ;
 
 classdefine
-    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME?) declarations? class_fielddefines?)
+    :   ^(CLASSDEF doc TYPENAME ^(BASE TYPENAME?) declarations?)
     ;
 
 typedefine
     :   ^(TYPEDEF doc TYPENAME TYPENAME?)
     ;
 
-parameterdefine
-    :   ^(PARAMETERDEF doc TYPENAME VARIABLENAME arguments?)
-    ;
-
 fielddefine
     :   ^(FIELDDEF doc TYPENAME VARIABLENAME arguments?)
-    ;
-
-class_fielddefines_ifelifelse_fragment
-    :   ^(IF expression class_fielddefines
-            (^(ELIF expression class_fielddefines))*
-            (^(ELSE class_fielddefines))?
+    |   ^(IF expression fielddefine+
+            (^(ELIF expression fielddefine+))*
+            (^(ELSE fielddefine+))?
         )
-    ;
-
-class_fielddefines
-    :   class_fielddefine+
-    ;
-
-class_fielddefine
-    :   class_fielddefines_ifelifelse_fragment
-    |   fielddefine
     ;
 
 kwarg
