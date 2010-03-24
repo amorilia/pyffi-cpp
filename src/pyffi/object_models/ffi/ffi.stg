@@ -4,7 +4,6 @@ templatehelper(arg) ::= "<arg>"
 
 ffi(head, decls) ::= <<
 <head>
-
 <decls>
 >>
 
@@ -47,10 +46,12 @@ fielddefine(doc, type, name, indices, kwargs, abstract) ::= <<
 >>
 
 fieldifelifselse(expr, defs, fieldelifs, fieldelse) ::= <<
+<fieldif(expr=expr,defs=defs)><fieldelifs><fieldelse>
+>>
+
+fieldif(expr, defs) ::= <<
 if <expr>:
     <defs>
-<fieldelifs; separator="\n">
-<fieldelse>
 >>
 
 fieldelif(expr, defs) ::= <<
