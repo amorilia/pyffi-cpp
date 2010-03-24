@@ -295,7 +295,7 @@ enumconstant
         -> ^(ENUMCONSTDEF ^(DOC longdoc? SHORTDOC?) CONSTANTNAME INT);
 
 classdefine
-    :   longdoc? CLASS name=TYPENAME ('(' base=TYPENAME ')')? blockbegin declarations? blockend
+    :   longdoc? CLASS name=TYPENAME ('(' base=TYPENAME ')')? (blockbegin declarations blockend|NEWLINE+)
         -> ^(CLASSDEF ^(DOC longdoc?) $name ^(BASE $base?) declarations?)
     ;
 
@@ -308,8 +308,8 @@ blockend
     ;
 
 fielddefine
-    :   longdoc? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
-        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments?)
+    :   longdoc? ABSTRACT? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
+        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments? ABSTRACT?)
     |   IF^ expression blockbegin! fielddefine+ blockend!
         (ELIF^ expression blockbegin! fielddefine+ blockend!)*
         (ELSE^ blockbegin! fielddefine+ blockend!)?

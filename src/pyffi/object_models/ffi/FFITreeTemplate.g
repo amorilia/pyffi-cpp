@@ -65,8 +65,8 @@ classdefine
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
-        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st})
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments? ABSTRACT?)
+        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st}, abstract={$ABSTRACT.text})
     |   ^(IF ifexp=expression[999] ifdefs=fielddefines
             (^(ELIF elifexp+=expression[999] elifdefs+=fielddefines))*
             (^(ELSE elsedefs=fielddefines))?

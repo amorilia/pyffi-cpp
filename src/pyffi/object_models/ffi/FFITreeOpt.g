@@ -57,8 +57,8 @@ classdefine
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
-        -> ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments? ABSTRACT?)
+        -> ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments? ABSTRACT?)
     |
         // XXX is there a more efficient way to do this?
         ^(IF e1=expression d1=fielddefines)

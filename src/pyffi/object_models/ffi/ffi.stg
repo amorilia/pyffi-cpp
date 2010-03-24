@@ -52,9 +52,9 @@ typedefine(doc, type) ::= <<
 
 >>
 
-fielddefine(doc, type, name, indices, kwargs) ::= <<
+fielddefine(doc, type, name, indices, kwargs, abstract) ::= <<
 <doc>
-<type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
+<if(abstract)>abstract <endif><type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
 
 >>
 
