@@ -16,10 +16,18 @@ class Test:
         UInt num_properties
         if num_objects:
             String object_description
+            UInt test0
+            UInt test1
         elif num_entities:
             String entity_description
+            UInt test2
+        elif version >= 3:
+            UInt another
+            UInt one
         else:
             String dummy_description
+            UInt test3
+            UInt test4
         UInt num_vars
         Short num_indices
     else:

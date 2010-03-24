@@ -67,14 +67,21 @@ classdefine
 fielddefine
     :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldindices? fieldarguments? ABSTRACT?)
         -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$fieldindices.st}, kwargs={$fieldarguments.st}, abstract={$ABSTRACT.text})
-    |   ^(IF ifexp=expression[999] ifdefs=fielddefines
-            (^(ELIF elifexp+=expression[999] elifdefs+=fielddefines))*
-            (^(ELSE elsedefs=fielddefines))?
-        )
-        -> ifelifelse(ifexp={$ifexp.st}, ifdefs={$ifdefs.st}, elifexp={$elifexp}, elifdefs={$elifdefs}, elsedefs={$elsedefs.st})
+    |   ^(IF expression[999] fielddefines (fieldelifs+=fieldelif)* fieldelse?)
+        -> fieldifelifselse(expr={$expression.st}, defs={$fielddefines.st}, fieldelifs={$fieldelifs}, fieldelse={$fieldelse.st})
     ;
 
-// for convenience in fielddefine rule
+fieldelif
+    :   ^(ELIF expression[999] fielddefines)
+        -> fieldelif(expr={$expression.st}, defs={$fielddefines.st})
+    ;
+
+fieldelse
+    :   ^(ELSE fielddefines)
+        -> fieldelse(defs={$fielddefines.st})
+    ;
+
+// for convenience
 fielddefines
     :   (defs+=fielddefine)+
         -> templatehelper(arg={$defs})

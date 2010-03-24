@@ -310,14 +310,15 @@ blockend
 fielddefine
     :   longdoc? ABSTRACT? TYPENAME VARIABLENAME fieldindices? fieldarguments? SHORTDOC? NEWLINE+
         -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldindices? fieldarguments? ABSTRACT?)
-    |   (IF ifexp=expression blockbegin ifdefs=fielddefines blockend
-            (ELIF elifexp=expression blockbegin elifdefs=fielddefines blockend)*
-            (ELSE blockbegin elsedefs=fielddefines blockend)?)
-        ->
-        ^(IF $ifexp $ifdefs
-            (^(ELIF $elifexp $elifdefs))*
-            (^(ELSE $elsedefs))?
-        )
+    |   IF^ expression blockbegin! fielddefines blockend! fieldelif* fieldelse?
+    ;
+
+fieldelif
+    :   ELIF^ expression blockbegin! fielddefines blockend!
+    ;
+
+fieldelse
+    :   ELSE^ blockbegin! fielddefines blockend!
     ;
 
 fielddefines

@@ -40,31 +40,27 @@ class <type><if(base)>(<base>)<endif><if(decls)>:
 
 >>
 
-typeblock(types) ::= <<
-type:
-    <types>
-
->>
-
-typedefine(doc, type) ::= <<
-<doc>
-<type>
-
->>
-
 fielddefine(doc, type, name, indices, kwargs, abstract) ::= <<
 <doc>
 <if(abstract)>abstract <endif><type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
 
 >>
 
-ifelifelse(ifexp, ifdefs, elifexp, elifdefs, elsedefs) ::= <<
-if <ifexp>:
-    <ifdefs><if(elifexp)><elifexp,elifdefs:{exp, defs|
-elif <exp>:
+fieldifelifselse(expr, defs, fieldelifs, fieldelse) ::= <<
+if <expr>:
     <defs>
-}><endif><if(elsedefs)>else:
-    <elsedefs><endif>
+<fieldelifs; separator="\n">
+<fieldelse>
+>>
+
+fieldelif(expr, defs) ::= <<
+elif <expr>:
+    <defs>
+>>
+
+fieldelse(defs) ::= <<
+else:
+    <defs>
 >>
 
 docstring(str) ::= <<
