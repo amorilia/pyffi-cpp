@@ -79,12 +79,12 @@ kwarg(name, exp) ::= <<
 <name>=<exp>
 >>
 
-arguments(kwargs) ::= <<
+fieldarguments(kwargs) ::= <<
 (<kwargs; separator=", ">)
 >>
 
-indices(expressions) ::= <<
-[<expressions; separator="][">]
+fieldindices(indices) ::= <<
+[<indices; separator="][">]
 >>
 
 op_logical_or(e1, e2, brackets) ::= <<
@@ -253,6 +253,14 @@ op_power(e1, e2, brackets) ::= <<
 <else>
 <e1> ** <e2>
 <endif>
+>>
+
+op_call(e1, kwargs) ::= <<
+<e1>(<kwargs; separator=", ">)
+>>
+
+op_index(e1, indices) ::= <<
+<e1>[<indices; separator="][">]
 >>
 
 string(text) ::= "\"<text>\""

@@ -65,8 +65,8 @@ classdefine
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments? ABSTRACT?)
-        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$indices.st}, kwargs={$arguments.st}, abstract={$ABSTRACT.text})
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME fieldindices? fieldarguments? ABSTRACT?)
+        -> fielddefine(doc={$doc.st}, type={$TYPENAME.text}, name={$VARIABLENAME.text}, indices={$fieldindices.st}, kwargs={$fieldarguments.st}, abstract={$ABSTRACT.text})
     |   ^(IF ifexp=expression[999] ifdefs=fielddefines
             (^(ELIF elifexp+=expression[999] elifdefs+=fielddefines))*
             (^(ELSE elsedefs=fielddefines))?
@@ -80,14 +80,14 @@ fielddefines
         -> templatehelper(arg={$defs})
     ;
 
-arguments
+fieldarguments
     :   ^(OP_CALL (k+=kwarg)+)
-        -> arguments(kwargs={$k})
+        -> fieldarguments(kwargs={$k})
     ;
     
-indices
-    :   ^(OP_INDEX (exps+=expression[999])+)
-        -> indices(expressions={$exps})
+fieldindices
+    :   ^(OP_INDEX (indices+=expression[999])+)
+        -> fieldindices(indices={$indices})
     ;
 
 kwarg
@@ -147,4 +147,8 @@ expression[int precedence]
         -> op_modulo(e1={$e1.st}, e2={$e2.st}, brackets={$precedence < 60})
     |   ^(OP_POWER e1=expression[40] e2=expression[40])
         -> op_power(e1={$e1.st}, e2={$e2.st}, brackets={$precedence < 40})
+    |   ^(OP_CALL e1=expression[999] (k+=kwarg)+)
+        -> op_call(e1={$e1.st}, kwargs={$k})
+    |   ^(OP_INDEX e1=expression[999] (indices+=expression[999])+)
+        -> op_index(e1={$e1.st}, indices={$indices})
     ;

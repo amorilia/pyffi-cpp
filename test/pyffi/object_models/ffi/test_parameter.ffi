@@ -9,12 +9,10 @@ abstract UInt user_version
 abstract UInt user_version_2
 
 class Key:
-    type:
-        # also test embedded type declarations
-        Float
+    # also test embedded type declarations
+    class Float
 
-    parameter:
-        UInt interpolation
+    abstract UInt interpolation
 
     Float time
     UInt value

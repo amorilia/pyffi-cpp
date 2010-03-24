@@ -33,8 +33,8 @@ tokens {
     ENUMCONSTDEF;
     // OP_MINUS is converted into OP_NEGATE if it corresponds to negation
     OP_NEGATE;
-    OP_INDEX;
-    OP_CALL;
+    OP_INDEX='[';
+    OP_CALL='(';
 }
 
 // target specific code
@@ -308,8 +308,8 @@ blockend
     ;
 
 fielddefine
-    :   longdoc? ABSTRACT? TYPENAME VARIABLENAME indices? arguments? SHORTDOC? NEWLINE+
-        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME indices? arguments? ABSTRACT?)
+    :   longdoc? ABSTRACT? TYPENAME VARIABLENAME fieldindices? fieldarguments? SHORTDOC? NEWLINE+
+        -> ^(FIELDDEF ^(DOC longdoc? SHORTDOC?) TYPENAME VARIABLENAME fieldindices? fieldarguments? ABSTRACT?)
     |   (IF ifexp=expression blockbegin ifdefs=fielddefines blockend
             (ELIF elifexp=expression blockbegin elifdefs=fielddefines blockend)*
             (ELSE blockbegin elsedefs=fielddefines blockend)?)
@@ -322,16 +322,6 @@ fielddefine
 
 fielddefines
     :   fielddefine+
-    ;
-
-arguments
-    :   LPAREN kwarg (COMMA kwarg)* RPAREN
-        -> ^(OP_CALL kwarg+)
-    ;
-    
-indices
-    :   (LBRACK expression RBRACK)+
-        -> ^(OP_INDEX expression+)
     ;
 
 kwarg
@@ -398,20 +388,31 @@ factor
 	;
 
 power
-	:   atom (trailer)* (options {greedy=true;}:OP_POWER^ factor)?
-	;
+    :   arguments (options {greedy=true;}:OP_POWER^ factor)?
+    ;
+
+arguments
+    :   indices (OP_CALL^ kwarg (COMMA! kwarg)* OP_CALL_END!)?
+    ;
+    
+indices
+    :   atom (OP_INDEX^ expression OP_INDEX_END! (OP_INDEX! expression OP_INDEX_END!)*)?
+    ;
+
+fieldarguments
+    :   OP_CALL^ kwarg (COMMA! kwarg)* OP_CALL_END!
+    ;
+    
+fieldindices
+    :   OP_INDEX^ expression OP_INDEX_END! (OP_INDEX! expression OP_INDEX_END!)*
+    ;
 
 atom
     :   VARIABLENAME
     |   INT
     |   FLOAT
     |   STRING
-    |   LPAREN! expression RPAREN!
-    ;
-
-trailer
-    :   arguments
-    |   indices
+    |   OP_CALL! expression OP_CALL_END!
     ;
 
 /*------------------------------------------------------------------
@@ -519,16 +520,10 @@ OP_DIVIDE
 OP_MODULO
     :   '%';
 
-LPAREN
-    :   '(';
-
-RPAREN
+OP_CALL_END
     :   ')';
 
-LBRACK
-    :   '[';
-
-RBRACK
+OP_INDEX_END
     :   ']';
 
 COMMA
