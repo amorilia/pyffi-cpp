@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(PYFFI Java CPP)
+project(PYFFI)
 
 find_package(Java REQUIRED)
 
