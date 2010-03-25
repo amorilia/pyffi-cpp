@@ -1,4 +1,9 @@
 # run the tests
-foreach(TEST test_array test_class test_conditions test_enum test_expression test_kwargs test_multi_name test_name test_parameter test_type_doc test_type)
-    add_test(pyffi::object_models::ffi::${TEST} ${CMAKE_COMMAND} -E chdir ${PYFFI_BINARY_DIR} ${JAVA_RUNTIME} -cp $ENV{CLASSPATH}:${PYFFI_BINARY_DIR} ffi ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/ffi.stg ${CMAKE_CURRENT_SOURCE_DIR}/${TEST}.ffi)
+foreach(TEST ffi_test file_format_name_test)
+    add_executable(${TEST} ${TEST}.cpp)
+    target_link_libraries (${TEST} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} pyffi)
+    # the ffi files reside in the source directory
+    # so we run the actual test from that directory
+    # (the default is from the binary directory)
+    add_test(pyffi::object_models::ffi::${TEST} ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
 endforeach()
