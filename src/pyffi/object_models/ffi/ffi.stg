@@ -1,0 +1,263 @@
+group ffi;
+
+templatehelper(arg) ::= "<arg>"
+
+ffi(head, decls) ::= <<
+<head>
+<decls>
+>>
+
+formatdefine(doc, names) ::= <<
+<doc>
+fileformat <names; separator=", ">
+
+>>
+
+enumdefine(doc, name, type, constants) ::= <<
+<doc>
+enum <name>(<type>):
+    <constants>
+
+>>
+
+enumconstant(doc, name, value) ::= <<
+<doc>
+<name> = <value>
+
+>>
+
+classdefine(doc, type, base, decls) ::= <<
+<doc>
+class <type><if(base)>(<base>)<endif><if(decls)>:
+    <decls>
+
+<else>
+
+
+
+<endif>
+
+>>
+
+fielddefine(doc, type, name, indices, kwargs, abstract) ::= <<
+<doc>
+<if(abstract)>abstract <endif><type> <name><if(indices)><indices><endif><if(kwargs)><kwargs><endif>
+
+>>
+
+fieldifelifselse(expr, defs, fieldelifs, fieldelse) ::= <<
+<fieldif(expr=expr,defs=defs)><fieldelifs><fieldelse>
+>>
+
+fieldif(expr, defs) ::= <<
+if <expr>:
+    <defs>
+>>
+
+fieldelif(expr, defs) ::= <<
+elif <expr>:
+    <defs>
+>>
+
+fieldelse(defs) ::= <<
+else:
+    <defs>
+>>
+
+docstring(str) ::= <<
+# <str>
+>>
+
+doc(docstrings) ::= <<
+<docstrings:docstring(); separator="\n">
+>>
+
+kwarg(name, exp) ::= <<
+<name>=<exp>
+>>
+
+fieldarguments(kwargs) ::= <<
+(<kwargs; separator=", ">)
+>>
+
+fieldindices(indices) ::= <<
+[<indices; separator="][">]
+>>
+
+op_logical_or(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> or <e2>)
+<else>
+<e1> or <e2>
+<endif>
+>>
+
+op_logical_and(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> and <e2>)
+<else>
+<e1> and <e2>
+<endif>
+>>
+
+op_logical_not(e1, brackets) ::= <<
+<if(brackets)>
+(not <e1>)
+<else>
+not <e1>
+<endif>
+>>
+
+op_eq(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> == <e2>)
+<else>
+<e1> == <e2>
+<endif>
+>>
+
+op_neq(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> != <e2>)
+<else>
+<e1> != <e2>
+<endif>
+>>
+
+op_gt(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \> <e2>)
+<else>
+<e1> \> <e2>
+<endif>
+>>
+
+op_lt(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \< <e2>)
+<else>
+<e1> \< <e2>
+<endif>
+>>
+
+op_gteq(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \>= <e2>)
+<else>
+<e1> \>= <e2>
+<endif>
+>>
+
+op_lteq(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \<= <e2>)
+<else>
+<e1> \<= <e2>
+<endif>
+>>
+
+op_bitwise_or(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> | <e2>)
+<else>
+<e1> | <e2>
+<endif>
+>>
+
+op_bitwise_and(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> & <e2>)
+<else>
+<e1> & <e2>
+<endif>
+>>
+
+op_leftshift(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \<\< <e2>)
+<else>
+<e1> \<\< <e2>
+<endif>
+>>
+
+op_rightshift(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> \>\> <e2>)
+<else>
+<e1> \>\> <e2>
+<endif>
+>>
+
+op_plus(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> + <e2>)
+<else>
+<e1> + <e2>
+<endif>
+>>
+
+op_minus(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> - <e2>)
+<else>
+<e1> - <e2>
+<endif>
+>>
+
+op_negate(e1, brackets) ::= <<
+<if(brackets)>
+(-<e1>)
+<else>
+-<e1>
+<endif>
+>>
+
+op_bitwise_not(e1, brackets) ::= <<
+<if(brackets)>
+(~<e1>)
+<else>
+~<e1>
+<endif>
+>>
+
+op_multiply(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> * <e2>)
+<else>
+<e1> * <e2>
+<endif>
+>>
+
+op_divide(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> / <e2>)
+<else>
+<e1> / <e2>
+<endif>
+>>
+
+op_modulo(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> % <e2>)
+<else>
+<e1> % <e2>
+<endif>
+>>
+
+op_power(e1, e2, brackets) ::= <<
+<if(brackets)>
+(<e1> ** <e2>)
+<else>
+<e1> ** <e2>
+<endif>
+>>
+
+op_call(e1, kwargs) ::= <<
+<e1>(<kwargs; separator=", ">)
+>>
+
+op_index(e1, indices) ::= <<
+<e1>[<indices; separator="][">]
+>>
+
+string(text) ::= "\"<text>\""

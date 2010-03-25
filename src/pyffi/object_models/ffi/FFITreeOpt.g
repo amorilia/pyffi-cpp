@@ -57,8 +57,8 @@ classdefine
     ;
 
 fielddefine
-    :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|indices)? arguments?)
-        -> ^(FIELDDEF doc TYPENAME VARIABLENAME indices? arguments?)
+    :   ^(FIELDDEF doc TYPENAME VARIABLENAME (OP_INDEX|fieldindices)? fieldarguments? ABSTRACT?)
+        -> ^(FIELDDEF doc TYPENAME VARIABLENAME fieldindices? fieldarguments? ABSTRACT?)
     |
         // XXX is there a more efficient way to do this?
         ^(IF e1=expression d1=fielddefines)
@@ -133,11 +133,11 @@ kwarg
     :   ^(KWARG VARIABLENAME expression)
     ;
 
-arguments
+fieldarguments
     :   ^(OP_CALL kwarg+)
     ;
 
-indices
+fieldindices
     :   ^(OP_INDEX expression+)
     ;
 
@@ -171,4 +171,6 @@ expression
     |   ^(OP_DIVIDE e1=expression e2=expression)
     |   ^(OP_MODULO e1=expression e2=expression)
     |   ^(OP_POWER e1=expression e2=expression)
+    |   ^(OP_CALL expression kwarg+)
+    |   ^(OP_INDEX expression expression+)
     ;

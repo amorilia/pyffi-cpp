@@ -1,0 +1,32 @@
+fileformat TEST
+
+class UInt
+
+class Triangle:
+    abstract UInt winding
+
+    if winding:
+        UInt t1
+        UInt t2
+        UInt t3
+    else:
+        UInt t3
+        UInt t2
+        UInt t1
+
+class Meshes:
+    abstract UInt winding
+    UInt num_vertices
+    UInt num_meshes
+    Triangle vertices[num_meshes][num_vertices](winding=winding)
+
+class MeshesData:
+    abstract UInt winding[num_vertices]
+    abstract UInt num_vertices
+    UInt num_meshes
+    Triangle vertices[num_meshes][num_vertices](winding=winding[num_vertices])
+
+class Meshes:
+    UInt winding[num_vertices]
+    UInt num_vertices
+    MeshesData meshes(winding=winding, num_vertices=num_vertices)
