@@ -4,9 +4,10 @@
 tree grammar FFITreeOpt;
 
 options {
+    language=C;
     output=AST;
     tokenVocab=FFI;
-    ASTLabelType=CommonTree;
+    ASTLabelType=pANTLR3_BASE_TREE;
     backtrack=true;
 }
 

@@ -10,3 +10,5 @@ add_custom_command(
     COMMAND
         ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py .
 )
+
+add_subdirectory(object_models)

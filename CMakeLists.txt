@@ -38,6 +38,8 @@ macro(antlr_lexpar grammar) # extratokensdir extratokensfile
         # change extension of files to force cmake to use C++ compiler
         COMMAND ${CMAKE_COMMAND} -E copy ${grammar}Lexer.c ${grammar}Lexer.cpp
         COMMAND ${CMAKE_COMMAND} -E copy ${grammar}Parser.c ${grammar}Parser.cpp
+        COMMAND ${CMAKE_COMMAND} -E remove ${grammar}Lexer.c
+        COMMAND ${CMAKE_COMMAND} -E remove ${grammar}Parser.c
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Generating antlr3 lexer and parser from ${grammar}.g"
     )
@@ -62,6 +64,7 @@ macro(antlr_tree grammar)
         COMMAND ${JAVA_RUNTIME} org.antlr.Tool ${grammar}.g
         # change extension of files to force cmake to use C++ compiler
         COMMAND ${CMAKE_COMMAND} -E copy ${grammar}.c ${grammar}.cpp
+        COMMAND ${CMAKE_COMMAND} -E remove ${grammar}.c
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Generating antlr3 tree walker from ${grammar}.g"
     )
@@ -73,6 +76,8 @@ add_subdirectory(src)
 # out on its own because targets live in different folders)
 
 add_dependencies(ANTLR_XML ANLTR_FFI)
+add_dependencies(ANTLR_FFITreeOpt ANTLR_FFI)
+add_dependencies(ANTLR_FFIFileFormat ANTLR_FFI)
 
 # build external dependencies
 add_subdirectory(extern)
@@ -81,7 +86,8 @@ add_subdirectory(extern)
 include_directories(${PYFFI_SOURCE_DIR}/include)
 
 # include lexer and parser headers
-include_directories(${PYFFI_BINARY_DIR})
+include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi)
+include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml)
 
 # include antlr3 headers
 include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
@@ -90,12 +96,20 @@ include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 add_library(pyffi
     src/pyffi/object_models/ffi/file_format.cpp
     src/pyffi/object_models/xml/file_format.cpp
-    src/pyffi/object_models/ffi/FFILexer.cpp
-    src/pyffi/object_models/ffi/FFIParser.cpp
-    src/pyffi/object_models/ffi/XMLLexer.cpp
-    src/pyffi/object_models/ffi/XMLParser.cpp
-    src/pyffi/object_models/ffi/FFIFileFormat.cpp)
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFILexer.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIParser.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XMLLexer.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XMLParser.cpp)
+set_source_files_properties(
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFILexer.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIParser.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi/FFIFileFormat.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XMLLexer.cpp
+    ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml/XMLParser.cpp
+    PROPERTIES GENERATED 1)
 target_link_libraries(pyffi antlr3c)
+add_dependencies(pyffi ANTLR_XML ANTLR_FFI ANTLR_FFITreeOpt ANTLR_FFIFileFormat)
 
 # build the tests
 enable_testing()
