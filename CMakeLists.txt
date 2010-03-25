@@ -70,6 +70,16 @@ macro(antlr_tree grammar)
     )
 endmacro(antlr_tree)
 
+# include pyffi headers
+include_directories(${PYFFI_SOURCE_DIR}/include)
+
+# include lexer and parser headers
+include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi)
+include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml)
+
+# include antlr3 headers
+include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
+
 add_subdirectory(src)
 
 # ensure dependencies are resolved correctly (cmake can't figure this
@@ -81,16 +91,6 @@ add_dependencies(ANTLR_FFIFileFormat ANTLR_FFI)
 
 # build external dependencies
 add_subdirectory(extern)
-
-# include pyffi headers
-include_directories(${PYFFI_SOURCE_DIR}/include)
-
-# include lexer and parser headers
-include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi)
-include_directories(${PYFFI_SOURCE_DIR}/src/pyffi/object_models/xml)
-
-# include antlr3 headers
-include_directories(${ANTLR3C_SOURCE_DIR}/include ${ANTLR3C_BINARY_DIR})
 
 # build the actual library
 add_library(pyffi
