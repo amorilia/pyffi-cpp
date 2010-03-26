@@ -308,7 +308,7 @@ attr_variable_name
 
 attr_type_inherit
     :   NAME_INHERIT ATTR_EQ ATTR_VALUE_START t=NAME ATTR_VALUE_END
-        -> TYPENAME[$t, $t.text]
+        -> TYPENAME[$t, ($t.text)->chars]
     ;
 
 attr_type_name
