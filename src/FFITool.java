@@ -28,7 +28,7 @@ public class FFITool {
             System.exit(-1);
         }
         // parse the AST
-	parse_tree(tree, tokens, stg);
+        parse_tree(tree, tokens, stg);
     }
 
     public void parse_tree(Tree tree, CommonTokenStream tokens, StringTemplateGroup stg) throws Exception {

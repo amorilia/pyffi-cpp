@@ -16,6 +16,6 @@ public class XMLTool extends FFITool {
             System.exit(-1);
         }
         // parse the AST
-	parse_tree(tree, tokens, stg);
+        parse_tree(tree, tokens, stg);
     }
 }

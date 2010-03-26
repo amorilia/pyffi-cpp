@@ -5,7 +5,7 @@ import java.io.*;
 
 public class ffi2ffi {
     public static void main(String args[]) throws Exception {
-	FFITool tool = new FFITool();
+        FFITool tool = new FFITool();
         tool.cli("ffi2ffi", args);
     }
 }
