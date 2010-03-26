@@ -79,5 +79,20 @@ add_dependencies(JAVA_xml2ffi JAVA_XMLTool)
 add_custom_target(tools ALL)
 add_dependencies(tools JAVA_xml2ffi JAVA_ffi2ffi)
 
+add_custom_target(pyffi ALL
+    DEPENDS
+        ${PYFFI_BINARY_DIR}/pyffi.jar
+)
+add_custom_command(
+    OUTPUT pyffi.jar
+    DEPENDS
+        ${PYFFI_BINARY_DIR}/ffi2ffi.class
+        ${PYFFI_BINARY_DIR}/xml2ffi.class
+    COMMAND ${JAVA_ARCHIVE} cf pyffi.jar *.class -C ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi ffi.stg
+    WORKING_DIRECTORY ${PYFFI_BINARY_DIR}
+    COMMENT "Creating pyffi.jar"
+)
+add_dependencies(pyffi tools)
+
 enable_testing()
 add_subdirectory(test)
