@@ -58,7 +58,7 @@ namespace object_models
 class Struct
 {
 public:
-	//! Create structure from a metaclass description.
+	//! Create structure from a meta struct description.
 	Struct(PMetaStruct meta_struct)
 		: meta_struct(meta_struct) {
 		BOOST_FOREACH(const MetaAttribute & meta_attribute, meta_struct->meta_attributes) {
@@ -70,12 +70,12 @@ public:
 	Struct(const Struct & struc)
 		: meta_struct(struc.meta_struct), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
-	template<typename ValueType> ValueType & get_attr(const std::string & name) {
+	template<typename ValueType> ValueType & get(const std::string & name) {
 		std::size_t index;
 
 		// search name in meta struct index
 		try {
-			index = meta_struct->index_map.get(name);
+			index = meta_struct->meta_attributes_index_map.get(name);
 		} catch (const key_error &) {
 			// not found, so throw an exception
 			throw name_error("Struct has no attribute \"" + name + "\".");
@@ -83,10 +83,10 @@ public:
 
 		// return attribute as requested type
 		try {
-			return objects[index->second].get<ValueType>();
+			return objects[index].get<ValueType>();
 		} catch (const type_error &) {
 			// could not get attribute in requested type, so throw exception
-			throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(typeid(objects[index->second]).name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
+			throw type_error("Type mismatch on attribute \"" + name + "\" (required " + std::string(typeid(objects[index]).name()) + " but got " + std::string(typeid(ValueType).name()) + ").");
 		};
 
 	};

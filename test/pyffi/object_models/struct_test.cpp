@@ -39,61 +39,50 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include "pyffi/object_models/meta_struct.hpp"
+#include "pyffi/object_models/struct.hpp"
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
 using namespace pyffi::object_models;
 
-BOOST_AUTO_TEST_SUITE(meta_struct_test_suite)
+BOOST_AUTO_TEST_SUITE(struct_test_suite)
 
-BOOST_AUTO_TEST_CASE(create_test)
+BOOST_AUTO_TEST_CASE(constructor_test)
 {
-	// we basically test the following declarations:
-	// class TestClass1
-	// class TestClass2(TestClass1):
-	//     class TestClass3
-	//     class TestClass4(TestClass3)
-	//     class TestClass5(TestClass1)
-	PMetaStruct ms0;
-	PMetaStruct ms1;
-	PMetaStruct ms2;
-	PMetaStruct ms3;
-	PMetaStruct ms4;
-	PMetaStruct ms5;
-
-	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
-	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = MetaStruct::create(ms2, "TestClass3"));
-	BOOST_CHECK_NO_THROW(ms4 = MetaStruct::create(ms2, "TestClass4", ms3));
-	BOOST_CHECK_NO_THROW(ms5 = MetaStruct::create(ms2, "TestClass5", ms1));
-
-	// check that class cannot be added again
-	BOOST_CHECK_THROW(MetaStruct::create(ms0, "TestClass1"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms0, "TestClass2"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass3"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass4"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass5"), value_error);
-}
-
-BOOST_AUTO_TEST_CASE(add_test)
-{
-	PMetaStruct ms = MetaStruct::create();
+	PMetaStruct ms0 = MetaStruct::create();
 	PMetaAttribute ma1(new MetaAttribute(5));
 	PMetaAttribute ma2(new MetaAttribute('y'));
 	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
 
 	// add arguments of various types
-	BOOST_CHECK_NO_THROW(ms->add("arg1", ma1));
-	BOOST_CHECK_NO_THROW(ms->add("arg2", ma2));
-	BOOST_CHECK_NO_THROW(ms->add("arg3", ma3));
+	BOOST_CHECK_NO_THROW(ms0->add("arg1", ma1));
+	BOOST_CHECK_NO_THROW(ms0->add("arg2", ma2));
+	BOOST_CHECK_NO_THROW(ms0->add("arg3", ma3));
 
-	// check that argument cannot be added again
-	PMetaAttribute ma4(new MetaAttribute(999));
-	BOOST_CHECK_THROW(ms->add("arg1", ma4), value_error);
-	BOOST_CHECK_THROW(ms->add("arg2", ma4), value_error);
-	BOOST_CHECK_THROW(ms->add("arg3", ma4), value_error);
+	// create structure
+	BOOST_CHECK_NO_THROW(Struct s(ms0));
+}
+
+BOOST_AUTO_TEST_CASE(get_test)
+{
+	PMetaStruct ms0 = MetaStruct::create();
+	PMetaAttribute ma1(new MetaAttribute(5));
+	PMetaAttribute ma2(new MetaAttribute('y'));
+	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
+
+	// add arguments of various types
+	BOOST_CHECK_NO_THROW(ms0->add("arg1", ma1));
+	BOOST_CHECK_NO_THROW(ms0->add("arg2", ma2));
+	BOOST_CHECK_NO_THROW(ms0->add("arg3", ma3));
+
+	// create structure
+	boost::shared_ptr<Struct> s;
+	BOOST_CHECK_NO_THROW(s.reset(new Struct(ms0)));
+
+	// check arguments
+	BOOST_CHECK_EQUAL(s->get<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(s->get<char>("arg2"), 'y');
+	BOOST_CHECK_EQUAL(s->get<std::string>("arg3"), std::string("Hello world!"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

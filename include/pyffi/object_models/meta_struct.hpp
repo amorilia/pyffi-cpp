@@ -39,6 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define PYFFI_OM_METASTRUCT_HPP_INCLUDED
 
 #include <vector>
+#include <boost/weak_ptr.hpp>
 
 
 #include "pyffi/object_models/map.hpp"
@@ -50,34 +51,72 @@ namespace pyffi
 namespace object_models
 {
 
-//! Stores all information attached to a structure.
+// forward declaration
+class MetaStruct;
+
+//! Shared pointer to meta struct.
+typedef boost::shared_ptr<MetaStruct> PMetaStruct;
+
+//! Stores all information attached to a structure. This corresponds
+//! essentially to the class declaration.
 class MetaStruct
 {
+private:
+	//! Private constructor to prevent it from being used. MetaStructs
+	//! should be instantiated using one of the create static methods.
+	MetaStruct() {};
 public:
-	//! Size.
-	typedef std::vector<MetaAttribute>::size_type size_type;
-	//! Add an attribute to the structure.
+	//! Create top level structure declaration.
+	static PMetaStruct create() {
+		return PMetaStruct(new MetaStruct);
+	};
+	//! Create a structure declaration and add it to a parent.
+	static PMetaStruct create(PMetaStruct parent, const std::string & name) {
+		PMetaStruct child = create();
+		child->parent = parent;
+		parent->meta_structs_map.add(name, child);
+		return child;
+	};
+	//! Create a structure declaration with base class and add it to a parent.
+	static PMetaStruct create(PMetaStruct parent, const std::string & name, PMetaStruct base) {
+		PMetaStruct child = create(parent, name);
+		child->base = base;
+		return child;
+	};
+	//! Add an attribute declaration.
 	void add(const std::string & name, PMetaAttribute & p_meta_attribute) {
 		// and store this index, using the name as key
-		index_map.add(name, meta_attributes.size());
+		meta_attributes_index_map.add(name, meta_attributes.size());
 		// store attribute
 		meta_attributes.push_back(p_meta_attribute);
 	};
-	size_type index(const std::string & name) {
-		return index_map.get(name);
+	//! Get a structure declaration.
+	PMetaStruct get(const std::string & name) {
+		try {
+			return meta_structs_map.get(name);
+		} catch (const key_error &) {
+			if (PMetaStruct p = parent.lock()) {
+				return p->get(name);
+			} else {
+				throw name_error("MetaStruct has no attribute \"" + name + "\".");
+			}
+		};
 	};
 private:
+	//! Structure in which this structure is defined.
+	boost::weak_ptr<MetaStruct> parent;
+	//! Base from which the structure is derived.
+	PMetaStruct base;
 	//! Maps string name to their index as they have been added.
-	Map<size_type> index_map;
+	Map<std::size_t> meta_attributes_index_map;
 	//! List of attribute information as they have been added.
 	std::vector<PMetaAttribute> meta_attributes;
+	//! Map string name to meta struct children.
+	Map<PMetaStruct> meta_structs_map;
 
 	// allow Struct access to the internals
 	friend class Struct;
 };
-
-//! Shared pointer to meta struct.
-typedef boost::shared_ptr<MetaStruct> PMetaStruct;
 
 }; // namespace object_models
 
