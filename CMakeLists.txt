@@ -86,6 +86,12 @@ add_custom_target(pyffi ALL
 add_custom_command(
     OUTPUT pyffi.jar
     DEPENDS
+        ${PYFFI_BINARY_DIR}/FFILexer.class
+        ${PYFFI_BINARY_DIR}/FFIParser.class
+        ${PYFFI_BINARY_DIR}/XMLLexer.class
+        ${PYFFI_BINARY_DIR}/XMLParser.class
+        ${PYFFI_BINARY_DIR}/FFITool.class
+        ${PYFFI_BINARY_DIR}/XMLTool.class
         ${PYFFI_BINARY_DIR}/ffi2ffi.class
         ${PYFFI_BINARY_DIR}/xml2ffi.class
     COMMAND ${JAVA_ARCHIVE} cf pyffi.jar *.class -C ${PYFFI_SOURCE_DIR}/src/pyffi/object_models/ffi ffi.stg
