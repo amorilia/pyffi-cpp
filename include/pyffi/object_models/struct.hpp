@@ -61,9 +61,9 @@ public:
 	//! Create structure from a meta struct description.
 	Struct(PMetaStruct meta_struct)
 		: meta_struct(meta_struct) {
-		BOOST_FOREACH(const MetaAttribute & meta_attribute, meta_struct->meta_attributes) {
+		BOOST_FOREACH(PMetaAttribute meta_attribute, meta_struct->meta_attributes) {
 			// push back a copy of the default value
-			objects.push_back(Object(meta_attribute.default_value));
+			objects.push_back(Object(meta_attribute->default_value));
 		};
 	}
 	//! Copy constructor.
