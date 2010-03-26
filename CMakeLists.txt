@@ -70,6 +70,9 @@ macro(antlr_tree grammar)
     )
 endmacro(antlr_tree)
 
+# build external dependencies
+add_subdirectory(extern)
+
 # include pyffi headers
 include_directories(${PYFFI_SOURCE_DIR}/include)
 
@@ -88,9 +91,6 @@ add_subdirectory(src)
 add_dependencies(ANTLR_XML ANLTR_FFI)
 add_dependencies(ANTLR_FFITreeOpt ANTLR_FFI)
 add_dependencies(ANTLR_FFIFileFormat ANTLR_FFI)
-
-# build external dependencies
-add_subdirectory(extern)
 
 # build the actual library
 add_library(pyffi
