@@ -71,12 +71,13 @@ add_subdirectory(src)
 # out on its own because targets live in different folders)
 
 add_dependencies(ANTLR_XML ANLTR_FFI)
-add_dependencies(JAVA_ffi JAVA_FFIParser JAVA_FFILexer JAVA_FFITreeOpt JAVA_FFITreeTemplate)
-add_dependencies(JAVA_xml2ffi JAVA_XMLParser JAVA_XMLLexer JAVA_FFITreeOpt JAVA_FFITreeTemplate)
+add_dependencies(JAVA_FFITool JAVA_FFIParser JAVA_FFILexer JAVA_FFITreeOpt JAVA_FFITreeTemplate)
+add_dependencies(JAVA_XMLTool JAVA_FFITool JAVA_XMLParser JAVA_XMLLexer)
+add_dependencies(JAVA_ffi2ffi JAVA_FFITool)
+add_dependencies(JAVA_xml2ffi JAVA_XMLTool)
 
 add_custom_target(tools ALL)
-add_dependencies(tools JAVA_xml2ffi JAVA_ffi)
+add_dependencies(tools JAVA_xml2ffi JAVA_ffi2ffi)
 
 enable_testing()
 add_subdirectory(test)
-
