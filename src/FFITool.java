@@ -5,21 +5,33 @@ import java.io.*;
 
 public class FFITool {
     public void cli(String progname, String args[]) throws Exception {
-        // check number of arguments
-        if (args.length != 2) {
-            System.out.println("       java " + progname + " path/to/template.stg path/to/input");
+        InputStreamReader stgfile = null;
+        String filename = null;
+        // check arguments
+        if (args.length == 2) {
+            stgfile = new FileReader(args[0]);
+            filename = args[1];
+        } else if (args.length == 1) {
+            InputStream stgres = this.getClass().getResourceAsStream("ffi.stg");
+            if (stgres == null) {
+                throw new FileNotFoundException("ffi.stg (No such resource file.)");
+            }
+            stgfile = new InputStreamReader(stgres);
+            filename = args[0];
+        } else {
+            System.err.println("Usage:");
+            System.err.println("   java " + progname
+                               + " [path/to/template.stg] path/to/input");
             System.exit(0);
         }
-        FileReader stgfile = new FileReader(args[0]);
-        StringTemplateGroup ffistg = new StringTemplateGroup(stgfile);
-        stgfile.close();
-        parse_file(new File(args[1]), ffistg);
+        StringTemplateGroup stg = new StringTemplateGroup(stgfile);
+        parse_file(filename, stg);
     }
 
-    public void parse_file(File input, StringTemplateGroup stg) throws Exception {
+    public void parse_file(String filename, StringTemplateGroup stg) throws Exception {
         // create AST
         System.err.println("creating abstract syntax tree...");
-        ANTLRFileStream instream = new ANTLRFileStream(input.toString());
+        ANTLRFileStream instream = new ANTLRFileStream(filename);
         FFILexer lexer = new FFILexer(instream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         FFIParser parser = new FFIParser(tokens);
