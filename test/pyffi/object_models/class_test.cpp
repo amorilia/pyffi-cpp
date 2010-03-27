@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(create_test)
 	PClass ms4;
 	PClass ms5;
 
-	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms0 = Class::scope());
 	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
 	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
 	BOOST_CHECK_NO_THROW(ms3 = ms2->class_("TestClass3"));
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(create_test)
 
 BOOST_AUTO_TEST_CASE(def_test)
 {
-	PClass ms = Class::create();
+	PClass ms = Class::scope();
 
 	// define attributes of various types
 	BOOST_CHECK_NO_THROW(ms->def("arg1", 5));
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	PClass ms1;
 	PClass ms2;
 
-	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms0 = Class::scope());
 	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
 	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(issubclass_test)
 	PClass ms3;
 	PClass ms4;
 
-	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms0 = Class::scope());
 	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
 	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
 	BOOST_CHECK_NO_THROW(ms3 = ms2->class_("TestClass3", ms1));

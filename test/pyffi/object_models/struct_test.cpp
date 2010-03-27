@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_SUITE(struct_test_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
-	PClass ms0 = Class::create();
+	PClass ms0 = Class::scope();
 
 	// add arguments of various types
 	BOOST_CHECK_NO_THROW(ms0->def("arg1", 5));
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(constructor_test)
 
 BOOST_AUTO_TEST_CASE(attr_test)
 {
-	PClass ms0 = Class::create();
+	PClass ms0 = Class::scope();
 
 	// add arguments of various types
 	BOOST_CHECK_NO_THROW(ms0->def("arg1", 5));

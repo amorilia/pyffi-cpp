@@ -68,12 +68,12 @@ private:
 	Class() {};
 public:
 	//! Create top level namespace to contain declarations.
-	static PClass create() {
+	static PClass scope() {
 		return PClass(new Class);
 	};
 	//! Create a nested class.
 	PClass class_(const std::string & name) {
-		PClass child = create();
+		PClass child = scope();
 		child->parent = shared_from_this();
 		class_map.add(name, child);
 		return child;
