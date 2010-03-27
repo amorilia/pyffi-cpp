@@ -106,17 +106,17 @@ public:
 	bool issubclass(PMetaStruct meta_struct) {
 		if (meta_struct.get() == this) {
 			return true;
-		} else if (!base) {
-			return false;
+		} else if(PMetaStruct b = base.lock()) {
+			return b->issubclass(meta_struct);
 		} else {
-			return base->issubclass(meta_struct);
+			return false;
 		};
 	};
 private:
 	//! Structure in which this structure is defined.
 	boost::weak_ptr<MetaStruct> parent;
 	//! Base from which the structure is derived.
-	PMetaStruct base;
+	boost::weak_ptr<MetaStruct> base;
 	//! Maps string name to their index as they have been added.
 	Map<std::size_t> meta_attributes_index_map;
 	//! List of attribute information as they have been added.
