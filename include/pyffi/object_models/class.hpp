@@ -71,14 +71,14 @@ public:
 	static PClass create() {
 		return PClass(new Class);
 	};
-	//! Create a child class declaration.
+	//! Create a nested class.
 	PClass class_(const std::string & name) {
 		PClass child = create();
 		child->parent = shared_from_this();
 		class_map.add(name, child);
 		return child;
 	};
-	//! Create a child class declaration with base class.
+	//! Create a nested class with given base class.
 	PClass class_(const std::string & name, PClass base) {
 		PClass child = class_(name);
 		child->base = base;
@@ -92,13 +92,13 @@ public:
 		// store attribute
 		attrs.push_back(Object(default_value));
 	};
-	//! Get a class declaration.
-	PClass get(const std::string & name) {
+	//! Get a nested class declaration.
+	PClass attr(const std::string & name) {
 		try {
 			return class_map.get(name);
 		} catch (const key_error &) {
 			if (PClass p = parent.lock()) {
-				return p->get(name);
+				return p->attr(name);
 			} else {
 				throw name_error("Class \"" + name + "\" not found.");
 			}
@@ -115,15 +115,15 @@ public:
 		};
 	};
 private:
-	//! Class in which this class is defined.
+	//! Class in which this class is nested.
 	boost::weak_ptr<Class> parent;
 	//! Base class from which the class is derived.
 	boost::weak_ptr<Class> base;
-	//! Maps string name to their index as they have been added.
+	//! Maps names to attribute index.
 	Map<std::size_t> attrs_index_map;
-	//! List of attributes as they have been added.
+	//! List of attributes.
 	std::vector<Object> attrs;
-	//! Map string name to class children.
+	//! Map names to nested classes.
 	Map<PClass> class_map;
 
 	// allow Struct access to the internals

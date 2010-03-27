@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(constructor_test)
 	BOOST_CHECK_NO_THROW(Struct s(ms0));
 }
 
-BOOST_AUTO_TEST_CASE(get_test)
+BOOST_AUTO_TEST_CASE(attr_test)
 {
 	PClass ms0 = Class::create();
 
@@ -74,9 +74,9 @@ BOOST_AUTO_TEST_CASE(get_test)
 	BOOST_CHECK_NO_THROW(s.reset(new Struct(ms0)));
 
 	// check arguments
-	BOOST_CHECK_EQUAL(s->get<int>("arg1"), 5);
-	BOOST_CHECK_EQUAL(s->get<char>("arg2"), 'y');
-	BOOST_CHECK_EQUAL(s->get<std::string>("arg3"), std::string("Hello world!"));
+	BOOST_CHECK_EQUAL(s->attr<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(s->attr<char>("arg2"), 'y');
+	BOOST_CHECK_EQUAL(s->attr<std::string>("arg3"), std::string("Hello world!"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

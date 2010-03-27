@@ -70,7 +70,7 @@ public:
 	Struct(const Struct & struc)
 		: class_(struc.class_), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
-	template<typename ValueType> ValueType & get(const std::string & name) {
+	template<typename ValueType> ValueType & attr(const std::string & name) {
 		std::size_t index;
 
 		// search name in meta struct index

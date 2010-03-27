@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(def_test)
 	BOOST_CHECK_THROW(ms->def("arg3", 0), value_error);
 }
 
-BOOST_AUTO_TEST_CASE(get_test)
+BOOST_AUTO_TEST_CASE(attr_test)
 {
 	PClass ms0;
 	PClass ms1;
@@ -103,11 +103,11 @@ BOOST_AUTO_TEST_CASE(get_test)
 	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
 
 	// check if we get back the right classes
-	BOOST_CHECK_EQUAL(ms0->get("TestClass1"), ms1);
-	BOOST_CHECK_EQUAL(ms0->get("TestClass2"), ms2);
+	BOOST_CHECK_EQUAL(ms0->attr("TestClass1"), ms1);
+	BOOST_CHECK_EQUAL(ms0->attr("TestClass2"), ms2);
 
 	// check that we cannot get something that hasn't been added yet
-	BOOST_CHECK_THROW(ms0->get("TestClass3"), name_error);
+	BOOST_CHECK_THROW(ms0->attr("TestClass3"), name_error);
 }
 
 BOOST_AUTO_TEST_CASE(issubclass_test)
