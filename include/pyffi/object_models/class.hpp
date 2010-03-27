@@ -40,6 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <vector>
 #include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 
 #include "pyffi/object_models/map.hpp"
@@ -59,27 +60,27 @@ typedef boost::shared_ptr<Class> PClass;
 
 //! Stores all information attached to a structure. This corresponds
 //! essentially to the class declaration.
-class Class
+class Class : public boost::enable_shared_from_this<Class>
 {
 private:
-	//! Private constructor to prevent it from being used. Classs
-	//! should be instantiated using one of the create static methods.
+	//! Private constructor to prevent it from being used. Classes
+	//! should be instantiated using the create and class_ methods.
 	Class() {};
 public:
-	//! Create top level structure declaration.
+	//! Create top level namespace to contain declarations.
 	static PClass create() {
 		return PClass(new Class);
 	};
-	//! Create a structure declaration and add it to a parent.
-	static PClass create(PClass parent, const std::string & name) {
+	//! Create a child class declaration.
+	PClass class_(const std::string & name) {
 		PClass child = create();
-		child->parent = parent;
-		parent->classes_map.add(name, child);
+		child->parent = shared_from_this();
+		classes_map.add(name, child);
 		return child;
 	};
-	//! Create a structure declaration with base class and add it to a parent.
-	static PClass create(PClass parent, const std::string & name, PClass base) {
-		PClass child = create(parent, name);
+	//! Create a child class declaration with base class.
+	PClass class_(const std::string & name, PClass base) {
+		PClass child = class_(name);
 		child->base = base;
 		return child;
 	};

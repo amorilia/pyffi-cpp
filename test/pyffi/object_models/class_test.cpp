@@ -63,18 +63,18 @@ BOOST_AUTO_TEST_CASE(create_test)
 	PClass ms5;
 
 	BOOST_CHECK_NO_THROW(ms0 = Class::create());
-	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = Class::create(ms2, "TestClass3"));
-	BOOST_CHECK_NO_THROW(ms4 = Class::create(ms2, "TestClass4", ms3));
-	BOOST_CHECK_NO_THROW(ms5 = Class::create(ms2, "TestClass5", ms1));
+	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms3 = ms2->class_("TestClass3"));
+	BOOST_CHECK_NO_THROW(ms4 = ms2->class_("TestClass4", ms3));
+	BOOST_CHECK_NO_THROW(ms5 = ms2->class_("TestClass5", ms1));
 
 	// check that class cannot be added again
-	BOOST_CHECK_THROW(Class::create(ms0, "TestClass1"), value_error);
-	BOOST_CHECK_THROW(Class::create(ms0, "TestClass2"), value_error);
-	BOOST_CHECK_THROW(Class::create(ms2, "TestClass3"), value_error);
-	BOOST_CHECK_THROW(Class::create(ms2, "TestClass4"), value_error);
-	BOOST_CHECK_THROW(Class::create(ms2, "TestClass5"), value_error);
+	BOOST_CHECK_THROW(ms0->class_("TestClass1"), value_error);
+	BOOST_CHECK_THROW(ms0->class_("TestClass2"), value_error);
+	BOOST_CHECK_THROW(ms2->class_("TestClass3"), value_error);
+	BOOST_CHECK_THROW(ms2->class_("TestClass4"), value_error);
+	BOOST_CHECK_THROW(ms2->class_("TestClass5"), value_error);
 }
 
 BOOST_AUTO_TEST_CASE(add_test)
@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE(get_test)
 	PClass ms2;
 
 	BOOST_CHECK_NO_THROW(ms0 = Class::create());
-	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
 
 	// check if we get back the right classes
 	BOOST_CHECK_EQUAL(ms0->get("TestClass1"), ms1);
@@ -128,10 +128,10 @@ BOOST_AUTO_TEST_CASE(issubclass_test)
 	PClass ms4;
 
 	BOOST_CHECK_NO_THROW(ms0 = Class::create());
-	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = Class::create(ms2, "TestClass3", ms1));
-	BOOST_CHECK_NO_THROW(ms4 = Class::create(ms0, "TestClass4", ms3));
+	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms3 = ms2->class_("TestClass3", ms1));
+	BOOST_CHECK_NO_THROW(ms4 = ms0->class_("TestClass4", ms3));
 
 	// check subclass relationship
 	BOOST_CHECK_EQUAL(ms0->issubclass(ms1), false);
