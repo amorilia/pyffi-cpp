@@ -77,23 +77,19 @@ BOOST_AUTO_TEST_CASE(create_test)
 	BOOST_CHECK_THROW(ms2->class_("TestClass5"), value_error);
 }
 
-BOOST_AUTO_TEST_CASE(add_test)
+BOOST_AUTO_TEST_CASE(def_test)
 {
 	PClass ms = Class::create();
-	PMetaAttribute ma1(new MetaAttribute(5));
-	PMetaAttribute ma2(new MetaAttribute('y'));
-	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
 
-	// add arguments of various types
-	BOOST_CHECK_NO_THROW(ms->add("arg1", ma1));
-	BOOST_CHECK_NO_THROW(ms->add("arg2", ma2));
-	BOOST_CHECK_NO_THROW(ms->add("arg3", ma3));
+	// define attributes of various types
+	BOOST_CHECK_NO_THROW(ms->def("arg1", 5));
+	BOOST_CHECK_NO_THROW(ms->def("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(ms->def("arg3", std::string("Hello world!")));
 
-	// check that argument cannot be added again
-	PMetaAttribute ma4(new MetaAttribute(999));
-	BOOST_CHECK_THROW(ms->add("arg1", ma4), value_error);
-	BOOST_CHECK_THROW(ms->add("arg2", ma4), value_error);
-	BOOST_CHECK_THROW(ms->add("arg3", ma4), value_error);
+	// check that attributes cannot be added again
+	BOOST_CHECK_THROW(ms->def("arg1", 0), value_error);
+	BOOST_CHECK_THROW(ms->def("arg2", 0), value_error);
+	BOOST_CHECK_THROW(ms->def("arg3", 0), value_error);
 }
 
 BOOST_AUTO_TEST_CASE(get_test)

@@ -61,9 +61,9 @@ public:
 	//! Create structure from a meta struct description.
 	Struct(PClass class_)
 		: class_(class_) {
-		BOOST_FOREACH(PMetaAttribute meta_attribute, class_->meta_attributes) {
+		BOOST_FOREACH(Object attr, class_->attrs) {
 			// push back a copy of the default value
-			objects.push_back(Object(meta_attribute->default_value));
+			objects.push_back(attr);
 		};
 	}
 	//! Copy constructor.
@@ -75,7 +75,7 @@ public:
 
 		// search name in meta struct index
 		try {
-			index = class_->meta_attributes_index_map.get(name);
+			index = class_->attrs_index_map.get(name);
 		} catch (const key_error &) {
 			// not found, so throw an exception
 			throw name_error("Struct has no attribute \"" + name + "\".");

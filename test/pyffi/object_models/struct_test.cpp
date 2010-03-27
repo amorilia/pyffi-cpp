@@ -50,14 +50,11 @@ BOOST_AUTO_TEST_SUITE(struct_test_suite)
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
 	PClass ms0 = Class::create();
-	PMetaAttribute ma1(new MetaAttribute(5));
-	PMetaAttribute ma2(new MetaAttribute('y'));
-	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
 
 	// add arguments of various types
-	BOOST_CHECK_NO_THROW(ms0->add("arg1", ma1));
-	BOOST_CHECK_NO_THROW(ms0->add("arg2", ma2));
-	BOOST_CHECK_NO_THROW(ms0->add("arg3", ma3));
+	BOOST_CHECK_NO_THROW(ms0->def("arg1", 5));
+	BOOST_CHECK_NO_THROW(ms0->def("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(ms0->def("arg3", std::string("Hello world!")));
 
 	// create structure
 	BOOST_CHECK_NO_THROW(Struct s(ms0));
@@ -66,14 +63,11 @@ BOOST_AUTO_TEST_CASE(constructor_test)
 BOOST_AUTO_TEST_CASE(get_test)
 {
 	PClass ms0 = Class::create();
-	PMetaAttribute ma1(new MetaAttribute(5));
-	PMetaAttribute ma2(new MetaAttribute('y'));
-	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
 
 	// add arguments of various types
-	BOOST_CHECK_NO_THROW(ms0->add("arg1", ma1));
-	BOOST_CHECK_NO_THROW(ms0->add("arg2", ma2));
-	BOOST_CHECK_NO_THROW(ms0->add("arg3", ma3));
+	BOOST_CHECK_NO_THROW(ms0->def("arg1", 5));
+	BOOST_CHECK_NO_THROW(ms0->def("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(ms0->def("arg3", std::string("Hello world!")));
 
 	// create structure
 	boost::shared_ptr<Struct> s;

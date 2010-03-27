@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "pyffi/object_models/map.hpp"
-#include "pyffi/object_models/meta_attribute.hpp"
+#include "pyffi/object_models/object.hpp"
 
 namespace pyffi
 {
@@ -75,7 +75,7 @@ public:
 	PClass class_(const std::string & name) {
 		PClass child = create();
 		child->parent = shared_from_this();
-		classes_map.add(name, child);
+		class_map.add(name, child);
 		return child;
 	};
 	//! Create a child class declaration with base class.
@@ -84,22 +84,23 @@ public:
 		child->base = base;
 		return child;
 	};
-	//! Add an attribute declaration.
-	void add(const std::string & name, PMetaAttribute & p_meta_attribute) {
-		// and store this index, using the name as key
-		meta_attributes_index_map.add(name, meta_attributes.size());
+	//! Create a class attribute.
+	template<typename ValueType>
+	void def(const std::string & name, const ValueType & default_value) {
+		// store index, using the name as key
+		attrs_index_map.add(name, attrs.size());
 		// store attribute
-		meta_attributes.push_back(p_meta_attribute);
+		attrs.push_back(Object(default_value));
 	};
-	//! Get a structure declaration.
+	//! Get a class declaration.
 	PClass get(const std::string & name) {
 		try {
-			return classes_map.get(name);
+			return class_map.get(name);
 		} catch (const key_error &) {
 			if (PClass p = parent.lock()) {
 				return p->get(name);
 			} else {
-				throw name_error("Class has no attribute \"" + name + "\".");
+				throw name_error("Class \"" + name + "\" not found.");
 			}
 		};
 	};
@@ -114,16 +115,16 @@ public:
 		};
 	};
 private:
-	//! Structure in which this structure is defined.
+	//! Class in which this class is defined.
 	boost::weak_ptr<Class> parent;
-	//! Base from which the structure is derived.
+	//! Base class from which the class is derived.
 	boost::weak_ptr<Class> base;
 	//! Maps string name to their index as they have been added.
-	Map<std::size_t> meta_attributes_index_map;
-	//! List of attribute information as they have been added.
-	std::vector<PMetaAttribute> meta_attributes;
-	//! Map string name to meta struct children.
-	Map<PClass> classes_map;
+	Map<std::size_t> attrs_index_map;
+	//! List of attributes as they have been added.
+	std::vector<Object> attrs;
+	//! Map string name to class children.
+	Map<PClass> class_map;
 
 	// allow Struct access to the internals
 	friend class Struct;
