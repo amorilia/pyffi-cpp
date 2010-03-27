@@ -96,4 +96,22 @@ BOOST_AUTO_TEST_CASE(add_test)
 	BOOST_CHECK_THROW(ms->add("arg3", ma4), value_error);
 }
 
+BOOST_AUTO_TEST_CASE(get_test)
+{
+	PMetaStruct ms0;
+	PMetaStruct ms1;
+	PMetaStruct ms2;
+
+	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
+	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
+
+	// check if we get back the right classes
+	BOOST_CHECK_EQUAL(ms0->get("TestClass1"), ms1);
+	BOOST_CHECK_EQUAL(ms0->get("TestClass2"), ms2);
+
+	// check that we cannot get something that hasn't been added yet
+	BOOST_CHECK_THROW(ms0->get("TestClass3"), name_error);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
