@@ -39,13 +39,13 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include "pyffi/object_models/meta_struct.hpp"
+#include "pyffi/object_models/class.hpp"
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
 using namespace pyffi::object_models;
 
-BOOST_AUTO_TEST_SUITE(meta_struct_test_suite)
+BOOST_AUTO_TEST_SUITE(class_test_suite)
 
 BOOST_AUTO_TEST_CASE(create_test)
 {
@@ -55,31 +55,31 @@ BOOST_AUTO_TEST_CASE(create_test)
 	//     class TestClass3
 	//     class TestClass4(TestClass3)
 	//     class TestClass5(TestClass1)
-	PMetaStruct ms0;
-	PMetaStruct ms1;
-	PMetaStruct ms2;
-	PMetaStruct ms3;
-	PMetaStruct ms4;
-	PMetaStruct ms5;
+	PClass ms0;
+	PClass ms1;
+	PClass ms2;
+	PClass ms3;
+	PClass ms4;
+	PClass ms5;
 
-	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
-	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = MetaStruct::create(ms2, "TestClass3"));
-	BOOST_CHECK_NO_THROW(ms4 = MetaStruct::create(ms2, "TestClass4", ms3));
-	BOOST_CHECK_NO_THROW(ms5 = MetaStruct::create(ms2, "TestClass5", ms1));
+	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms3 = Class::create(ms2, "TestClass3"));
+	BOOST_CHECK_NO_THROW(ms4 = Class::create(ms2, "TestClass4", ms3));
+	BOOST_CHECK_NO_THROW(ms5 = Class::create(ms2, "TestClass5", ms1));
 
 	// check that class cannot be added again
-	BOOST_CHECK_THROW(MetaStruct::create(ms0, "TestClass1"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms0, "TestClass2"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass3"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass4"), value_error);
-	BOOST_CHECK_THROW(MetaStruct::create(ms2, "TestClass5"), value_error);
+	BOOST_CHECK_THROW(Class::create(ms0, "TestClass1"), value_error);
+	BOOST_CHECK_THROW(Class::create(ms0, "TestClass2"), value_error);
+	BOOST_CHECK_THROW(Class::create(ms2, "TestClass3"), value_error);
+	BOOST_CHECK_THROW(Class::create(ms2, "TestClass4"), value_error);
+	BOOST_CHECK_THROW(Class::create(ms2, "TestClass5"), value_error);
 }
 
 BOOST_AUTO_TEST_CASE(add_test)
 {
-	PMetaStruct ms = MetaStruct::create();
+	PClass ms = Class::create();
 	PMetaAttribute ma1(new MetaAttribute(5));
 	PMetaAttribute ma2(new MetaAttribute('y'));
 	PMetaAttribute ma3(new MetaAttribute(std::string("Hello world!")));
@@ -98,13 +98,13 @@ BOOST_AUTO_TEST_CASE(add_test)
 
 BOOST_AUTO_TEST_CASE(get_test)
 {
-	PMetaStruct ms0;
-	PMetaStruct ms1;
-	PMetaStruct ms2;
+	PClass ms0;
+	PClass ms1;
+	PClass ms2;
 
-	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
-	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
 
 	// check if we get back the right classes
 	BOOST_CHECK_EQUAL(ms0->get("TestClass1"), ms1);
@@ -121,17 +121,17 @@ BOOST_AUTO_TEST_CASE(issubclass_test)
 	// class TestClass2(TestClass1)
 	//     class TestClass3(TestClass1)
 	// class TestClass4(TestClass3)
-	PMetaStruct ms0;
-	PMetaStruct ms1;
-	PMetaStruct ms2;
-	PMetaStruct ms3;
-	PMetaStruct ms4;
+	PClass ms0;
+	PClass ms1;
+	PClass ms2;
+	PClass ms3;
+	PClass ms4;
 
-	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
-	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = MetaStruct::create(ms2, "TestClass3", ms1));
-	BOOST_CHECK_NO_THROW(ms4 = MetaStruct::create(ms0, "TestClass4", ms3));
+	BOOST_CHECK_NO_THROW(ms0 = Class::create());
+	BOOST_CHECK_NO_THROW(ms1 = Class::create(ms0, "TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = Class::create(ms0, "TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms3 = Class::create(ms2, "TestClass3", ms1));
+	BOOST_CHECK_NO_THROW(ms4 = Class::create(ms0, "TestClass4", ms3));
 
 	// check subclass relationship
 	BOOST_CHECK_EQUAL(ms0->issubclass(ms1), false);

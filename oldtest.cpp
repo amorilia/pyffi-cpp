@@ -46,11 +46,11 @@ void init_testformat(Format & testformat)
 {
 	// testformat is initialized here explicitly
 	// this could be done from an xml file
-	PMetaStruct ObjClass = testformat.add_struct("ObjClass");
+	PClass ObjClass = testformat.add_struct("ObjClass");
 	ObjClass->add_attr("a number", 5);
 	ObjClass->add_attr("a string attr", std::string("hello world"));
 
-	PMetaStruct ObjClass2 = testformat.add_struct("ObjClass2");
+	PClass ObjClass2 = testformat.add_struct("ObjClass2");
 	ObjClass2->add_attr<double>("x", 0.0);
 	ObjClass2->add_attr<float>("y", 0.0);
 	ObjClass2->add_attr("z", Struct(testformat.get_struct("ObjClass")));

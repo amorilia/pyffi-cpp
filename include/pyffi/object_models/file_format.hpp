@@ -43,7 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/exceptions.hpp"
 #include "pyffi/object_models/object_map.hpp"
 /* TODO
-#include "pyffi/object_models/meta_struct.hpp"
+#include "pyffi/object_models/class.hpp"
 #include "pyffi/object_models/struct.hpp"
 */
 
@@ -62,15 +62,15 @@ public:
 	FileFormat() : extensions() {};
 	/* TODO
 		//! Add a structure declaration.
-		PMetaStruct struct_(const std::string & name) {
+		PClass struct_(const std::string & name) {
 			// create and store the meta struct
-			PMetaStruct meta_struct(new MetaStruct);
-			ObjectMap::add(meta_struct);
-			return meta_struct;
+			PClass class_(new Class);
+			ObjectMap::add(class_);
+			return class_;
 		};
 		//! Instantiate a structure.
 		Struct instantiate(const std::string & name) {
-			return Struct(ObjectMap::get<PMetaStruct>(name));
+			return Struct(ObjectMap::get<PClass>(name));
 		};
 	*/
 }; // class FileFormat

@@ -43,7 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/foreach.hpp>
 
 #include "object.hpp"
-#include "meta_struct.hpp"
+#include "class.hpp"
 
 namespace pyffi
 {
@@ -53,29 +53,29 @@ namespace object_models
 
 /*!
  * A structure instance. This class serves to create an instance of a
- * MetaStruct.
+ * Class.
  */
 class Struct
 {
 public:
 	//! Create structure from a meta struct description.
-	Struct(PMetaStruct meta_struct)
-		: meta_struct(meta_struct) {
-		BOOST_FOREACH(PMetaAttribute meta_attribute, meta_struct->meta_attributes) {
+	Struct(PClass class_)
+		: class_(class_) {
+		BOOST_FOREACH(PMetaAttribute meta_attribute, class_->meta_attributes) {
 			// push back a copy of the default value
 			objects.push_back(Object(meta_attribute->default_value));
 		};
 	}
 	//! Copy constructor.
 	Struct(const Struct & struc)
-		: meta_struct(struc.meta_struct), objects(struc.objects) {};
+		: class_(struc.class_), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & get(const std::string & name) {
 		std::size_t index;
 
 		// search name in meta struct index
 		try {
-			index = meta_struct->meta_attributes_index_map.get(name);
+			index = class_->meta_attributes_index_map.get(name);
 		} catch (const key_error &) {
 			// not found, so throw an exception
 			throw name_error("Struct has no attribute \"" + name + "\".");
@@ -91,8 +91,8 @@ public:
 
 	};
 private:
-	//! Metaclass information (list of attribute types, default values, ...).
-	PMetaStruct meta_struct;
+	//! Class information (list of attribute types, default values, ...).
+	PClass class_;
 	//! List of attribute values.
 	std::vector<Object> objects;
 }; // class Struct

@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_METASTRUCT_HPP_INCLUDED
-#define PYFFI_OM_METASTRUCT_HPP_INCLUDED
+#ifndef PYFFI_OM_CLASS_HPP_INCLUDED
+#define PYFFI_OM_CLASS_HPP_INCLUDED
 
 #include <vector>
 #include <boost/weak_ptr.hpp>
@@ -52,34 +52,34 @@ namespace object_models
 {
 
 // forward declaration
-class MetaStruct;
+class Class;
 
 //! Shared pointer to meta struct.
-typedef boost::shared_ptr<MetaStruct> PMetaStruct;
+typedef boost::shared_ptr<Class> PClass;
 
 //! Stores all information attached to a structure. This corresponds
 //! essentially to the class declaration.
-class MetaStruct
+class Class
 {
 private:
-	//! Private constructor to prevent it from being used. MetaStructs
+	//! Private constructor to prevent it from being used. Classs
 	//! should be instantiated using one of the create static methods.
-	MetaStruct() {};
+	Class() {};
 public:
 	//! Create top level structure declaration.
-	static PMetaStruct create() {
-		return PMetaStruct(new MetaStruct);
+	static PClass create() {
+		return PClass(new Class);
 	};
 	//! Create a structure declaration and add it to a parent.
-	static PMetaStruct create(PMetaStruct parent, const std::string & name) {
-		PMetaStruct child = create();
+	static PClass create(PClass parent, const std::string & name) {
+		PClass child = create();
 		child->parent = parent;
-		parent->meta_structs_map.add(name, child);
+		parent->classes_map.add(name, child);
 		return child;
 	};
 	//! Create a structure declaration with base class and add it to a parent.
-	static PMetaStruct create(PMetaStruct parent, const std::string & name, PMetaStruct base) {
-		PMetaStruct child = create(parent, name);
+	static PClass create(PClass parent, const std::string & name, PClass base) {
+		PClass child = create(parent, name);
 		child->base = base;
 		return child;
 	};
@@ -91,38 +91,38 @@ public:
 		meta_attributes.push_back(p_meta_attribute);
 	};
 	//! Get a structure declaration.
-	PMetaStruct get(const std::string & name) {
+	PClass get(const std::string & name) {
 		try {
-			return meta_structs_map.get(name);
+			return classes_map.get(name);
 		} catch (const key_error &) {
-			if (PMetaStruct p = parent.lock()) {
+			if (PClass p = parent.lock()) {
 				return p->get(name);
 			} else {
-				throw name_error("MetaStruct has no attribute \"" + name + "\".");
+				throw name_error("Class has no attribute \"" + name + "\".");
 			}
 		};
 	};
 	//! Check subclass relationship.
-	bool issubclass(PMetaStruct meta_struct) {
-		if (meta_struct.get() == this) {
+	bool issubclass(PClass class_) {
+		if (class_.get() == this) {
 			return true;
-		} else if(PMetaStruct b = base.lock()) {
-			return b->issubclass(meta_struct);
+		} else if(PClass b = base.lock()) {
+			return b->issubclass(class_);
 		} else {
 			return false;
 		};
 	};
 private:
 	//! Structure in which this structure is defined.
-	boost::weak_ptr<MetaStruct> parent;
+	boost::weak_ptr<Class> parent;
 	//! Base from which the structure is derived.
-	boost::weak_ptr<MetaStruct> base;
+	boost::weak_ptr<Class> base;
 	//! Maps string name to their index as they have been added.
 	Map<std::size_t> meta_attributes_index_map;
 	//! List of attribute information as they have been added.
 	std::vector<PMetaAttribute> meta_attributes;
 	//! Map string name to meta struct children.
-	Map<PMetaStruct> meta_structs_map;
+	Map<PClass> classes_map;
 
 	// allow Struct access to the internals
 	friend class Struct;
