@@ -102,6 +102,16 @@ public:
 			}
 		};
 	};
+	//! Check subclass relationship.
+	bool issubclass(PMetaStruct meta_struct) {
+		if (meta_struct.get() == this) {
+			return true;
+		} else if (!base) {
+			return false;
+		} else {
+			return base->issubclass(meta_struct);
+		};
+	};
 private:
 	//! Structure in which this structure is defined.
 	boost::weak_ptr<MetaStruct> parent;

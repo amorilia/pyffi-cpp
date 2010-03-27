@@ -114,4 +114,46 @@ BOOST_AUTO_TEST_CASE(get_test)
 	BOOST_CHECK_THROW(ms0->get("TestClass3"), name_error);
 }
 
+BOOST_AUTO_TEST_CASE(issubclass_test)
+{
+	// we basically test the following declarations:
+	// class TestClass1:
+	// class TestClass2(TestClass1)
+	//     class TestClass3(TestClass1)
+	// class TestClass4(TestClass3)
+	PMetaStruct ms0;
+	PMetaStruct ms1;
+	PMetaStruct ms2;
+	PMetaStruct ms3;
+	PMetaStruct ms4;
+
+	BOOST_CHECK_NO_THROW(ms0 = MetaStruct::create());
+	BOOST_CHECK_NO_THROW(ms1 = MetaStruct::create(ms0, "TestClass1"));
+	BOOST_CHECK_NO_THROW(ms2 = MetaStruct::create(ms0, "TestClass2", ms1));
+	BOOST_CHECK_NO_THROW(ms3 = MetaStruct::create(ms2, "TestClass3", ms1));
+	BOOST_CHECK_NO_THROW(ms4 = MetaStruct::create(ms0, "TestClass4", ms3));
+
+	// check subclass relationship
+	BOOST_CHECK_EQUAL(ms0->issubclass(ms1), false);
+	BOOST_CHECK_EQUAL(ms0->issubclass(ms2), false);
+	BOOST_CHECK_EQUAL(ms0->issubclass(ms3), false);
+	BOOST_CHECK_EQUAL(ms0->issubclass(ms4), false);
+	BOOST_CHECK_EQUAL(ms1->issubclass(ms0), false);
+	BOOST_CHECK_EQUAL(ms1->issubclass(ms2), false);
+	BOOST_CHECK_EQUAL(ms1->issubclass(ms3), false);
+	BOOST_CHECK_EQUAL(ms1->issubclass(ms4), false);
+	BOOST_CHECK_EQUAL(ms2->issubclass(ms0), false);
+	BOOST_CHECK_EQUAL(ms2->issubclass(ms1), true);
+	BOOST_CHECK_EQUAL(ms2->issubclass(ms3), false);
+	BOOST_CHECK_EQUAL(ms2->issubclass(ms4), false);
+	BOOST_CHECK_EQUAL(ms3->issubclass(ms0), false);
+	BOOST_CHECK_EQUAL(ms3->issubclass(ms1), true);
+	BOOST_CHECK_EQUAL(ms3->issubclass(ms2), false);
+	BOOST_CHECK_EQUAL(ms3->issubclass(ms4), false);
+	BOOST_CHECK_EQUAL(ms4->issubclass(ms0), false);
+	BOOST_CHECK_EQUAL(ms4->issubclass(ms1), true);
+	BOOST_CHECK_EQUAL(ms4->issubclass(ms2), false);
+	BOOST_CHECK_EQUAL(ms4->issubclass(ms3), true);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
