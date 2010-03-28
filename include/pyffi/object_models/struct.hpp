@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PYFFI_OM_STRUCT_HPP_INCLUDED
-#define PYFFI_OM_STRUCT_HPP_INCLUDED
+#ifndef PYFFI_OM_INSTANCE_HPP_INCLUDED
+#define PYFFI_OM_INSTANCE_HPP_INCLUDED
 
 #include <typeinfo>
 #include <vector>
@@ -55,11 +55,11 @@ namespace object_models
  * A structure instance. This class serves to create an instance of a
  * Class.
  */
-class Struct
+class Instance
 {
 public:
 	//! Create structure from a meta struct description.
-	Struct(PClass class_)
+	Instance(PClass class_)
 		: class_(class_) {
 		BOOST_FOREACH(Object attr, class_->attrs) {
 			// push back a copy of the default value
@@ -67,7 +67,7 @@ public:
 		};
 	}
 	//! Copy constructor.
-	Struct(const Struct & struc)
+	Instance(const Instance & struc)
 		: class_(struc.class_), objects(struc.objects) {};
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & attr(const std::string & name) {
@@ -78,7 +78,7 @@ public:
 			index = class_->attrs_index_map.get(name);
 		} catch (const key_error &) {
 			// not found, so throw an exception
-			throw name_error("Struct has no attribute \"" + name + "\".");
+			throw name_error("Instance has no attribute \"" + name + "\".");
 		};
 
 		// return attribute as requested type
@@ -95,10 +95,10 @@ private:
 	PClass class_;
 	//! List of attribute values.
 	std::vector<Object> objects;
-}; // class Struct
+}; // class Instance
 
 }; // namespace object_models
 
 }; // namespace pyffi
 
-#endif // __STRUCT_HPP
+#endif // PYFFI_OM_INSTANCE_HPP_INCLUDED

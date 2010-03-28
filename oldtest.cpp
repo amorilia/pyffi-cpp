@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 
 #include "pyffi/object_models/format.hpp"
-#include "pyffi/object_models/struct.hpp"
+#include "pyffi/object_models/instance.hpp"
 
 using namespace pyffi;
 
@@ -53,7 +53,7 @@ void init_testformat(Format & testformat)
 	PClass ObjClass2 = testformat.add_struct("ObjClass2");
 	ObjClass2->add_attr<double>("x", 0.0);
 	ObjClass2->add_attr<float>("y", 0.0);
-	ObjClass2->add_attr("z", Struct(testformat.get_struct("ObjClass")));
+	ObjClass2->add_attr("z", Instance(testformat.get_struct("ObjClass")));
 }
 
 int main()
@@ -65,8 +65,8 @@ int main()
 
 	// now we create a few structures which have been defined in testformat
 
-	Struct obj(testformat.get_struct("ObjClass"));
-	Struct obj2(testformat.get_struct("ObjClass2"));
+	Instance obj(testformat.get_struct("ObjClass"));
+	Instance obj2(testformat.get_struct("ObjClass2"));
 
 	// check default values
 	std::cout << obj.get_attr<int>("a number") << std::endl;
@@ -78,7 +78,7 @@ int main()
 
 	std::cout << obj.get_attr<int>("a number") << std::endl;
 	std::cout << obj.get_attr<std::string>("a string attr") << std::endl;
-	std::cout << obj2.get_attr<Struct>("z").get_attr<std::string>("a string attr") << std::endl;
+	std::cout << obj2.get_attr<Instance>("z").get_attr<std::string>("a string attr") << std::endl;
 
 	// non-existing class
 	testformat.get_struct("ClassWhichDoesNotExist"); // exception

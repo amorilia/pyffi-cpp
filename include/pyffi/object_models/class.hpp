@@ -126,12 +126,12 @@ private:
 	//! Map names to nested classes.
 	Map<PClass> class_map;
 
-	// allow Struct access to the internals
-	friend class Struct;
+	// allow Instance access to the internals
+	friend class Instance;
 };
 
 }; // namespace object_models
 
 }; // namespace pyffi
 
-#endif
+#endif // PYFFI_OM_CLASS_HPP_INCLUDED
