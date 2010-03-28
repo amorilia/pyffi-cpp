@@ -122,4 +122,29 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	BOOST_CHECK_EQUAL(i3->attr<std::string>("arg3"), "yes");
 }
 
+BOOST_AUTO_TEST_CASE(inheritance_test)
+{
+	// set up a simple class hierarchy
+	PClass class0 = Class::class_();
+	PClass base = class0->class_("Base");
+	PClass derived = class0->class_("Derived", base);
+	base->def("arg1", 5);
+	base->def("arg2", 6);
+	base->def("arg3", 9);
+	derived->def("arg4", '2');
+	derived->def("arg5", '1');
+	derived->def("arg6", '0');
+
+	// instantiate derived class
+	PInstance i = derived();
+
+	// add attributes of various types
+	BOOST_CHECK_EQUAL(i->attr<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(i->attr<int>("arg2"), 6);
+	BOOST_CHECK_EQUAL(i->attr<int>("arg3"), 9);
+	BOOST_CHECK_EQUAL(i->attr<char>("arg4"), '2');
+	BOOST_CHECK_EQUAL(i->attr<char>("arg5"), '1');
+	BOOST_CHECK_EQUAL(i->attr<char>("arg6"), '0');
+}
+
 BOOST_AUTO_TEST_SUITE_END()

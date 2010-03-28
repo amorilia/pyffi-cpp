@@ -138,9 +138,23 @@ public:
 		};
 		//! Instantiate class.
 		PInstance operator()() {
-			return PInstance(new Instance(shared_from_this()));
+			PInstance inst(new Instance());
+			// set class
+			inst->class_ = shared_from_this();
+			// set attributes
+			insert_attrs(inst->attrs);
+			// return result
+			return inst;
 		};
 	private:
+		//! Extend given vector with a copy of all default attributes.
+		void insert_attrs(std::vector<Object> & inst_attrs) {
+			if(PClass b = base.lock()) {
+				b->insert_attrs(inst_attrs);
+			};
+			inst_attrs.insert(inst_attrs.end(), attrs.begin(), attrs.end());
+		};
+
 		//! Class in which this class is nested.
 		boost::weak_ptr<Class> parent;
 		//! Base class from which the class is derived.
@@ -186,10 +200,8 @@ public:
 	};
 
 private:
-	//! Create instance of a class. This is private, use
-	//! PClass::operator() to instantiate.
-	Instance(PClass class_)
-		: class_(class_), attrs(class_->attrs) {};
+	//! This is private, use PClass::operator() to instantiate.
+	Instance() {};
 	//! Class information (list of attribute types, default values, ...).
 	boost::weak_ptr<Class> class_;
 	//! List of attribute values.
