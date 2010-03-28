@@ -52,12 +52,10 @@ namespace pyffi
 namespace object_models
 {
 
+//! Contains an instance of a class.
 class Instance
 {
 public:
-	// forward declaration
-	class Class;
-
 	//! Stores all information attached to a structure. This corresponds
 	//! essentially to the class declaration.
 	class Class : public boost::enable_shared_from_this<Class>
@@ -104,8 +102,23 @@ public:
 			// store attribute
 			attrs.push_back(Object(default_value));
 		};
+		//! Get reference to a class attribute.
+		template<typename ValueType>
+		ValueType & attr(const std::string & name) {
+			std::size_t index;
+			try {
+				index = attrs_index_map.get(name);
+			} catch (const key_error &) {
+				throw name_error("Attribute \"" + name + "\" not found.");
+			};
+			return attrs[index].get<ValueType>();
+		};
+		// XXX for weird reasons I can't define the next
+		// XXX method via template specialization
+		//template<>
+		//PClass & attr<PClass>(const std::string & name) {
 		//! Get a nested class declaration.
-		PClass attr(const std::string & name) {
+		PClass & attr(const std::string & name) {
 			try {
 				return class_map.get(name);
 			} catch (const key_error &) {

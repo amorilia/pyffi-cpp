@@ -94,13 +94,11 @@ BOOST_AUTO_TEST_CASE(def_test)
 
 BOOST_AUTO_TEST_CASE(attr_test)
 {
-	PClass ms0;
-	PClass ms1;
-	PClass ms2;
-
-	BOOST_CHECK_NO_THROW(ms0 = Class::scope());
-	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
+	PClass ms0 = Class::scope();
+	PClass ms1 = ms0->class_("TestClass1");
+	PClass ms2 = ms0->class_("TestClass2", ms1);
+	ms1->def("arg1", 5);
+	ms2->def("arg2", 'y');
 
 	// check if we get back the right classes
 	BOOST_CHECK_EQUAL(ms0->attr("TestClass1"), ms1);
@@ -108,6 +106,14 @@ BOOST_AUTO_TEST_CASE(attr_test)
 
 	// check that we cannot get something that hasn't been added yet
 	BOOST_CHECK_THROW(ms0->attr("TestClass3"), name_error);
+
+	// check if we get back the right values
+	BOOST_CHECK_EQUAL(ms1->attr<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(ms2->attr<char>("arg2"), 'y');
+
+	// check that we cannot get attributes that don't exist yet
+	BOOST_CHECK_THROW(ms1->attr<int>("arg3"), name_error);
+	BOOST_CHECK_THROW(ms2->attr<int>("arg3"), name_error);
 }
 
 BOOST_AUTO_TEST_CASE(issubclass_test)
@@ -117,17 +123,11 @@ BOOST_AUTO_TEST_CASE(issubclass_test)
 	// class TestClass2(TestClass1)
 	//     class TestClass3(TestClass1)
 	// class TestClass4(TestClass3)
-	PClass ms0;
-	PClass ms1;
-	PClass ms2;
-	PClass ms3;
-	PClass ms4;
-
-	BOOST_CHECK_NO_THROW(ms0 = Class::scope());
-	BOOST_CHECK_NO_THROW(ms1 = ms0->class_("TestClass1"));
-	BOOST_CHECK_NO_THROW(ms2 = ms0->class_("TestClass2", ms1));
-	BOOST_CHECK_NO_THROW(ms3 = ms2->class_("TestClass3", ms1));
-	BOOST_CHECK_NO_THROW(ms4 = ms0->class_("TestClass4", ms3));
+	PClass ms0 = Class::scope();
+	PClass ms1 = ms0->class_("TestClass1");
+	PClass ms2 = ms0->class_("TestClass2", ms1);
+	PClass ms3 = ms2->class_("TestClass3", ms1);
+	PClass ms4 = ms0->class_("TestClass4", ms3);
 
 	// check subclass relationship
 	BOOST_CHECK_EQUAL(ms0->issubclass(ms1), false);
