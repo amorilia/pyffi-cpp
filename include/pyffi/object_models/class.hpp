@@ -176,19 +176,32 @@ public:
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & attr(const std::string & name) {
 		std::size_t index;
-		if (PClass c = class_.lock()) {
-			// search name in class attribute index map
+		bool found = false;
+		boost::weak_ptr<Class> wcls = class_;
+		// search name in class and base classes
+		while (PClass cls = wcls.lock()) {
 			try {
-				index = c->attrs_index_map.get(name);
+				// search name in class attribute index map
+				index = cls->attrs_index_map.get(name);
 			} catch (const key_error &) {
-				// not found, so throw an exception
-				throw name_error("Instance has no attribute \"" + name + "\".");
+				// not found, so look in base class
+				wcls = cls->base;
+				continue;
 			};
-		} else {
-			throw runtime_error("Instance has no class, and can therefore not be instantiated.");
+			// found!
+			wcls = cls->base;
+			found = true;
+			break;
 		};
-
-
+		if (!found) {
+			// not found, so throw an exception
+			throw name_error("Instance has no attribute \"" + name + "\".");
+		};
+		// calculate absolute index into the instance attribute list
+		while (PClass cls = wcls.lock()) {
+			index += cls->attrs.size();
+			wcls = cls->base;
+		};
 		// return attribute as requested type
 		try {
 			return attrs[index].get<ValueType>();
