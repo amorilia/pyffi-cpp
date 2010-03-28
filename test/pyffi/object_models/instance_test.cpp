@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include "pyffi/object_models/instance.hpp"
+#include "pyffi/object_models/class.hpp"
 #include "pyffi/exceptions.hpp"
 
 using namespace pyffi;
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(constructor_test)
 	BOOST_CHECK_NO_THROW(ms0->def("arg3", std::string("Hello world!")));
 
 	// create structure
-	BOOST_CHECK_NO_THROW(Instance s(ms0));
+	BOOST_CHECK_NO_THROW(ms0());
 }
 
 BOOST_AUTO_TEST_CASE(attr_test)
@@ -70,13 +70,12 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	BOOST_CHECK_NO_THROW(ms0->def("arg3", std::string("Hello world!")));
 
 	// create structure
-	boost::shared_ptr<Instance> s;
-	BOOST_CHECK_NO_THROW(s.reset(new Instance(ms0)));
+	Instance s = ms0();
 
 	// check arguments
-	BOOST_CHECK_EQUAL(s->attr<int>("arg1"), 5);
-	BOOST_CHECK_EQUAL(s->attr<char>("arg2"), 'y');
-	BOOST_CHECK_EQUAL(s->attr<std::string>("arg3"), std::string("Hello world!"));
+	BOOST_CHECK_EQUAL(s.attr<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(s.attr<char>("arg2"), 'y');
+	BOOST_CHECK_EQUAL(s.attr<std::string>("arg3"), std::string("Hello world!"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
