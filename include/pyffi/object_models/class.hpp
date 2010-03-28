@@ -103,6 +103,7 @@ public:
 			attrs.push_back(Object(default_value));
 		};
 		//! Get reference to a class attribute.
+		//! Implementation note: specialized for ValueType = PClass.
 		template<typename ValueType>
 		ValueType & attr(const std::string & name) {
 			std::size_t index;
@@ -113,22 +114,15 @@ public:
 			};
 			return attrs[index].get<ValueType>();
 		};
-		// XXX for weird reasons I can't define the next
-		// XXX method via template specialization
+
+		// cannot define template here: the standard says that the
+		// specialization must be defined in the namespace in which
+		// the class is defined, so the specialization is further
+		// below
+
 		//template<>
-		//PClass & attr<PClass>(const std::string & name) {
-		//! Get a nested class declaration.
-		PClass & attr(const std::string & name) {
-			try {
-				return class_map.get(name);
-			} catch (const key_error &) {
-				if (PClass p = parent.lock()) {
-					return p->attr(name);
-				} else {
-					throw name_error("Class \"" + name + "\" not found.");
-				}
-			};
-		};
+		//PClass & attr<PClass>(const std::string & name) { ... };
+
 		//! Check subclass relationship.
 		bool issubclass(PClass class_) {
 			if (class_.get() == this) {
@@ -205,6 +199,21 @@ typedef Instance::Class Class;
 
 //! For convenience.
 typedef Instance::PClass PClass;
+
+//! Get a nested class declaration.
+template<>
+PClass & Instance::Class::attr<PClass>(const std::string & name)
+{
+	try {
+		return class_map.get(name);
+	} catch (const key_error &) {
+		if (PClass p = parent.lock()) {
+			return p->attr<PClass>(name);
+		} else {
+			throw name_error("Class \"" + name + "\" not found.");
+		}
+	};
+};
 
 }; // namespace object_models
 

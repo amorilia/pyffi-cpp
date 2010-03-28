@@ -101,11 +101,11 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	ms2->def("arg2", 'y');
 
 	// check if we get back the right classes
-	BOOST_CHECK_EQUAL(ms0->attr("TestClass1"), ms1);
-	BOOST_CHECK_EQUAL(ms0->attr("TestClass2"), ms2);
+	BOOST_CHECK_EQUAL(ms0->attr<PClass>("TestClass1"), ms1);
+	BOOST_CHECK_EQUAL(ms0->attr<PClass>("TestClass2"), ms2);
 
 	// check that we cannot get something that hasn't been added yet
-	BOOST_CHECK_THROW(ms0->attr("TestClass3"), name_error);
+	BOOST_CHECK_THROW(ms0->attr<PClass>("TestClass3"), name_error);
 
 	// check if we get back the right values
 	BOOST_CHECK_EQUAL(ms1->attr<int>("arg1"), 5);
