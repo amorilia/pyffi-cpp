@@ -56,6 +56,8 @@ namespace object_models
 class Instance
 {
 public:
+	typedef boost::shared_ptr<Instance> PInstance;
+
 	//! Stores all information attached to a structure. This corresponds
 	//! essentially to the class declaration.
 	class Class : public boost::enable_shared_from_this<Class>
@@ -65,14 +67,14 @@ public:
 		//! should be created using the scope and class_ methods.
 		Class() {};
 	public:
-		//! Callable shared pointer to class.
+		//! Callable shared pointer to class for instantiation.
 		class PClass : public boost::shared_ptr<Class>
 		{
 		public:
 			PClass() : boost::shared_ptr<Class>() {};
 			PClass(Class *ptr) : boost::shared_ptr<Class>(ptr) {};
 			PClass(const boost::shared_ptr<Class> & ptr) : boost::shared_ptr<Class>(ptr) {};
-			Instance operator ()() {
+			PInstance operator ()() {
 				return (**this)();
 			};
 		};
@@ -134,8 +136,8 @@ public:
 			};
 		};
 		//! Instantiate class.
-		Instance operator()() {
-			return Instance(shared_from_this());
+		PInstance operator()() {
+			return PInstance(new Instance(shared_from_this()));
 		};
 	private:
 		//! Class in which this class is nested.
@@ -193,6 +195,9 @@ private:
 	//! List of attribute values.
 	std::vector<Object> attrs;
 }; // class Instance
+
+//! For convenience.
+typedef Instance::PInstance PInstance;
 
 //! For convenience.
 typedef Instance::Class Class;
