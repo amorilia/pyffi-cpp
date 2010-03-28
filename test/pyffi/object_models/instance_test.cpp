@@ -49,29 +49,29 @@ BOOST_AUTO_TEST_SUITE(instance_test_suite)
 
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
-	PClass scope = Class::scope();
+	PClass class0 = Class::class_();
 
 	// add arguments of various types
-	BOOST_CHECK_NO_THROW(scope->def("arg1", 5));
-	BOOST_CHECK_NO_THROW(scope->def("arg2", 'y'));
-	BOOST_CHECK_NO_THROW(scope->def("arg3", std::string("Hello world!")));
+	BOOST_CHECK_NO_THROW(class0->def("arg1", 5));
+	BOOST_CHECK_NO_THROW(class0->def("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(class0->def("arg3", std::string("Hello world!")));
 
 	// instantiate
-	BOOST_CHECK_NO_THROW(scope());
+	BOOST_CHECK_NO_THROW(class0());
 }
 
 BOOST_AUTO_TEST_CASE(attr_test)
 {
-	PClass scope = Class::scope();
+	PClass class0 = Class::class_();
 
 	// add attributes of various types
-	BOOST_CHECK_NO_THROW(scope->def("arg1", 5));
-	BOOST_CHECK_NO_THROW(scope->def("arg2", 'y'));
-	BOOST_CHECK_NO_THROW(scope->def("arg3", std::string("Hello world!")));
+	BOOST_CHECK_NO_THROW(class0->def("arg1", 5));
+	BOOST_CHECK_NO_THROW(class0->def("arg2", 'y'));
+	BOOST_CHECK_NO_THROW(class0->def("arg3", std::string("Hello world!")));
 
 	// instantiate
-	PInstance i1 = scope();
-	PInstance i2 = scope();
+	PInstance i1 = class0();
+	PInstance i2 = class0();
 
 	// check attributes
 	BOOST_CHECK_EQUAL(i1->attr<int>("arg1"), 5);
@@ -98,14 +98,14 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	BOOST_CHECK_EQUAL(i2->attr<std::string>("arg3"), "doh");
 
 	// check that class attributes are still the same
-	BOOST_CHECK_EQUAL(scope->attr<int>("arg1"), 5);
-	BOOST_CHECK_EQUAL(scope->attr<char>("arg2"), 'y');
-	BOOST_CHECK_EQUAL(scope->attr<std::string>("arg3"), "Hello world!");
+	BOOST_CHECK_EQUAL(class0->attr<int>("arg1"), 5);
+	BOOST_CHECK_EQUAL(class0->attr<char>("arg2"), 'y');
+	BOOST_CHECK_EQUAL(class0->attr<std::string>("arg3"), "Hello world!");
 
 	// change some class attributes
-	scope->attr<int>("arg1") = 100;
-	scope->attr<char>("arg2") = 'z';
-	scope->attr<std::string>("arg3") = "yes";
+	class0->attr<int>("arg1") = 100;
+	class0->attr<char>("arg2") = 'z';
+	class0->attr<std::string>("arg3") = "yes";
 
 	// check that the attributes have not changed
 	BOOST_CHECK_EQUAL(i1->attr<int>("arg1"), 3);
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	BOOST_CHECK_EQUAL(i2->attr<std::string>("arg3"), "doh");
 
 	// instantiate and check attributes
-	PInstance i3 = scope();
+	PInstance i3 = class0();
 	BOOST_CHECK_EQUAL(i3->attr<int>("arg1"), 100);
 	BOOST_CHECK_EQUAL(i3->attr<char>("arg2"), 'z');
 	BOOST_CHECK_EQUAL(i3->attr<std::string>("arg3"), "yes");

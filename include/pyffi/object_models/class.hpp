@@ -58,13 +58,15 @@ class Instance
 public:
 	typedef boost::shared_ptr<Instance> PInstance;
 
-	//! Stores all information attached to a structure. This corresponds
-	//! essentially to the class declaration.
+	//! A class for dynamic class declarations. Stores attribute
+	//! names, default attribute values, base class, and parent
+	//! class (for nesting).
 	class Class : public boost::enable_shared_from_this<Class>
 	{
 	private:
-		//! Private constructor to prevent it from being used. Classes
-		//! should be created using the scope and class_ methods.
+		//! Private constructor to prevent it from being
+		//! used. Classes should be created using the class_
+		//! methods.
 		Class() {};
 	public:
 		//! Callable shared pointer to class for instantiation.
@@ -78,14 +80,13 @@ public:
 				return (**this)();
 			};
 		};
-
-		//! Create top level namespace to contain declarations.
-		static PClass scope() {
+		//! Create top level class to contain other declarations.
+		static PClass class_() {
 			return PClass(new Class);
 		};
 		//! Create a nested class.
 		PClass class_(const std::string & name) {
-			PClass child = scope();
+			PClass child = class_();
 			child->parent = shared_from_this();
 			class_map.add(name, child);
 			return child;
@@ -185,9 +186,8 @@ public:
 	};
 
 private:
-
-	//! Create instance of a class. This is private, use the
-	//! Instance::Class::operator() to instantiate.
+	//! Create instance of a class. This is private, use
+	//! PClass::operator() to instantiate.
 	Instance(PClass class_)
 		: class_(class_), attrs(class_->attrs) {};
 	//! Class information (list of attribute types, default values, ...).
