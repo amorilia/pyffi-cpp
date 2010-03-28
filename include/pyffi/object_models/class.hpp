@@ -63,11 +63,6 @@ public:
 	//! class (for nesting).
 	class Class : public boost::enable_shared_from_this<Class>
 	{
-	private:
-		//! Private constructor to prevent it from being
-		//! used. Classes should be created using the class_
-		//! methods.
-		Class() {};
 	public:
 		//! Callable shared pointer to class for instantiation.
 		class PClass : public boost::shared_ptr<Class>
@@ -147,6 +142,11 @@ public:
 			return inst;
 		};
 	private:
+		//! Private constructor to prevent it from being
+		//! used. Classes should be created using the class_
+		//! methods.
+		Class() {};
+
 		//! Extend given vector with a copy of all default attributes.
 		void insert_attrs(std::vector<Object> & inst_attrs) {
 			if(PClass b = base.lock()) {
