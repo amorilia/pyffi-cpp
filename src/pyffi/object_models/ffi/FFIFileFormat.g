@@ -24,10 +24,8 @@ options {
     };
 }
 
-// XXX doc* is a temporary hack to deal with the version definitions
-// XXX from the XML
 ffi[PClass class_]
-    :   formatdefine[class_] doc* declarations[class_]?
+    :   formatdefine[class_] declarations[class_]?
     ;
 
 doc
