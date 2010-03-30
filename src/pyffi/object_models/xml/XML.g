@@ -84,6 +84,7 @@ class FileVersion:
     Int64 user1
     Int64 user2
 */
+/* XXX deactivated for now
            ^(CLASSDEF
                ^(DOC SHORTDOC[$t, "Describes the file version."])
                TYPENAME[$t, "FileVersion"]
@@ -93,6 +94,7 @@ class FileVersion:
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user1"])
                ^(FIELDDEF DOC TYPENAME[$t, "Int64"] VARIABLENAME[$t, "user2"])
            )
+*/
            declarations?
     ;
 
@@ -119,12 +121,15 @@ versiondefine
 
 static FileVersion ver_1_2_3(game="Game Name", version="1.2.3")
 */
+/* XXX deactivated for now
         -> ^(FIELDDEF DOC TYPENAME[$v, "FileVersion"] VARIABLENAME[$v, (std::string("ver_") + newVarString($v.text)).c_str()]
                ^(OP_CALL
                   ^(KWARG VARIABLENAME[$doc, "game"] STRING[$doc, ($doc.text)->chars])
                   ^(KWARG VARIABLENAME[$v, "version"] INT)
                )
         )
+*/
+        -> $doc
     ;
 
 basicdefine
