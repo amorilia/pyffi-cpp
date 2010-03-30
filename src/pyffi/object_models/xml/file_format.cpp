@@ -123,7 +123,7 @@ FileFormat::FileFormat(const std::string & filename)
 		input->close(input);
 		throw runtime_error("Could not create walker for '" + filename + "' (insufficient memory?).");
 	};
-	walker->ffi(walker, this);
+	walker->ffi(walker, class_);
 
 	// release memory
 	if (walker) walker->free(walker);

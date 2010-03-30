@@ -230,9 +230,11 @@ typedef Instance::Class Class;
 //! For convenience.
 typedef Instance::PClass PClass;
 
+// XXX must declare template specialization as inline, to avoid linker
+// XXX errors with GCC
 //! Get a nested class declaration.
 template<>
-PClass & Instance::Class::attr<PClass>(const std::string & name)
+inline PClass & Instance::Class::attr<PClass>(const std::string & name)
 {
 	try {
 		return class_map.get(name);

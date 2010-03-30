@@ -48,26 +48,22 @@ BOOST_AUTO_TEST_SUITE(file_format_name_test_suite)
 BOOST_AUTO_TEST_CASE(name_test)
 {
 	FileFormat ff("test_name.ffi");
-	BOOST_CHECK_EQUAL(ff.extensions.size(), 1);
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "AFORMATNAMETEST123");
+	std::vector<std::string> ext(ff.class_->attr<std::vector<std::string> >("extensions"));
+	BOOST_CHECK_EQUAL(ext.size(), 1);
+	BOOST_CHECK_EQUAL(ext.front(), "AFORMATNAMETEST123");
 }
 
 BOOST_AUTO_TEST_CASE(multi_name_test)
 {
 	FileFormat ff("test_multi_name.ffi");
-	BOOST_CHECK_EQUAL(ff.extensions.size(), 6);
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "AFORMATNAMETEST123");
-	ff.extensions.pop_front();
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "AND");
-	ff.extensions.pop_front();
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "A");
-	ff.extensions.pop_front();
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "FEW");
-	ff.extensions.pop_front();
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "OTHER");
-	ff.extensions.pop_front();
-	BOOST_CHECK_EQUAL(ff.extensions.front(), "ONES");
-	ff.extensions.pop_front();
+	std::vector<std::string> ext = ff.class_->attr<std::vector<std::string> >("extensions");
+	BOOST_CHECK_EQUAL(ext.size(), 6);
+	BOOST_CHECK_EQUAL(ext[0], "AFORMATNAMETEST123");
+	BOOST_CHECK_EQUAL(ext[1], "AND");
+	BOOST_CHECK_EQUAL(ext[2], "A");
+	BOOST_CHECK_EQUAL(ext[3], "FEW");
+	BOOST_CHECK_EQUAL(ext[4], "OTHER");
+	BOOST_CHECK_EQUAL(ext[5], "ONES");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

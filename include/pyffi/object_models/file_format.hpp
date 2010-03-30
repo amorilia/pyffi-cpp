@@ -41,11 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <list>
 
 #include "pyffi/exceptions.hpp"
-#include "pyffi/object_models/object_map.hpp"
-/* TODO
 #include "pyffi/object_models/class.hpp"
-#include "pyffi/object_models/instance.hpp"
-*/
 
 namespace pyffi
 {
@@ -54,25 +50,11 @@ namespace object_models
 {
 
 //! Stores all information attached to a format.
-class FileFormat : private ObjectMap
+class FileFormat
 {
 public:
-	//! The file extensions of the format (nif, cgf, tga, dds, ...)
-	std::list<std::string> extensions;
-	FileFormat() : extensions() {};
-	/* TODO
-		//! Add a structure declaration.
-		PClass instance_(const std::string & name) {
-			// create and store the meta struct
-			PClass class_(new Class);
-			ObjectMap::add(class_);
-			return class_;
-		};
-		//! Instantiate a structure.
-		Instance instantiate(const std::string & name) {
-			return Instance(ObjectMap::get<PClass>(name));
-		};
-	*/
+	FileFormat() : class_(Class::class_()) {};
+	PClass class_;
 }; // class FileFormat
 
 }; // namespace object_models

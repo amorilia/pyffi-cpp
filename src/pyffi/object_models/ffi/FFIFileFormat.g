@@ -13,8 +13,8 @@ options {
  *------------------------------------------------------------------*/
 
 @includes {
-    #include "pyffi/object_models/ffi/file_format.hpp"
-    using namespace pyffi::object_models::ffi;
+    #include "pyffi/object_models/class.hpp"
+    using namespace pyffi::object_models;
 }
 
 @members {
@@ -23,12 +23,12 @@ options {
         return std::string((const char *)s->chars); 
     };
 
-    FileFormat *_fileformat;
+    PClass class_;
 }
 
-ffi[FileFormat *ff]
+ffi[PClass c]
 @init {
-    _fileformat = ff;
+    class_ = c;
 }
     :   formatdefine declarations?
     ;
@@ -39,9 +39,12 @@ doc
 
 formatdefine
     :   ^(FILEFORMAT doc
+            {
+                class_->def("extensions", std::vector<std::string>());
+            }
             (n=CONSTANTNAME
                 {
-                    _fileformat->extensions.push_back(get_string($n.text));
+                    class_->attr<std::vector<std::string> >("extensions").push_back(get_string($n.text));
                 }
             )*
         )
