@@ -152,4 +152,26 @@ BOOST_AUTO_TEST_CASE(issubclass_test)
 	BOOST_CHECK_EQUAL(class4->issubclass(class3), true);
 }
 
+BOOST_AUTO_TEST_CASE(attr_parent_test)
+{
+	// we basically test the following declarations:
+	// class TestClass1
+	// class TestClass2(TestClass1):
+	//     class TestClass3
+	//     class TestClass4(TestClass3)
+	//     class TestClass5(TestClass1)
+	PClass class0 = Class::class_();
+	PClass class1 = class0->class_("TestClass1");
+	PClass class2 = class0->class_("TestClass2", class1);
+	PClass class3 = class2->class_("TestClass3");
+	PClass class4 = class2->class_("TestClass4", class3);
+	PClass class5 = class2->class_("TestClass5", class1);
+
+	// check that all classes can be accessed from TestClass5
+	BOOST_CHECK_EQUAL(class1, class5->attr<PClass>("TestClass1"));
+	BOOST_CHECK_EQUAL(class2, class5->attr<PClass>("TestClass2"));
+	BOOST_CHECK_EQUAL(class3, class5->attr<PClass>("TestClass3"));
+	BOOST_CHECK_EQUAL(class4, class5->attr<PClass>("TestClass4"));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
