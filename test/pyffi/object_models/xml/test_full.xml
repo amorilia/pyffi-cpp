@@ -52,6 +52,9 @@
         An unsigned 8-bit integer.
     </basic>
 
+    <basic name="char" count="0">
+    </basic>
+
     <basic name="uint" count="1" niflibtype="unsigned int" nifskopetype="uint">
         An unsigned 32-bit integer.
     </basic>
@@ -66,6 +69,21 @@
 
     <basic name="short" count="1" niflibtype="short" nifskopetype="short">
         A signed 16-bit integer.
+    </basic>
+
+    <basic name="float">
+    </basic>
+
+    <basic name="StringIndex">
+    </basic>
+
+    <basic name="Ref">
+    </basic>
+
+    <basic name="Ptr">
+    </basic>
+
+    <basic name="Flags">
     </basic>
 
     <!--Enumerations
@@ -133,16 +151,6 @@
         <add name="m33" type="float" default="1.0">Member 3,3 (bottom left)</add>
     </compound>
 
-
-    <compound name="Key" niflibtype="Key" istemplate="1">
-        A generic key with support for interpolation. Type 1 is normal linear interpolation, type 2 has forward and backward tangents, and type 3 has tension, bias and continuity arguments. Note that color4 and byte always seem to be of type 1.
-        <add name="Time" type="float">Time of the key.</add>
-        <add name="Value" type="TEMPLATE">The key value.</add>
-        <add name="Forward" type="TEMPLATE" cond="ARG == 2">Key forward tangent.</add>
-        <add name="Backward" type="TEMPLATE" cond="ARG == 2">The key backward tangent.</add>
-        <add name="TBC" type="TBC" cond="ARG == 3">The key&#039;s TBC.</add>
-    </compound>
-
     <!-- NIF Objects
          These are the main units of data that NIF files are arranged in.
          They are like C classes and can contain many pieces of data.
@@ -190,8 +198,6 @@
         <add name="Properties" type="Ref" template="NiProperty" arr1="Num Properties">List of node properties.</add>
         <add name="Unknown 1" type="uint" arr1="4" ver2="2.3">Always 2,0,2,0.</add>
         <add name="Unknown 2" type="byte" ver2="2.3">0 or 1.</add>
-        <add name="Has Bounding Box" type="bool" ver1="3.0" ver2="4.2.2.0">Do we have a bounding box?</add>
-        <add name="Bounding Box" type="BoundingBox" cond="Has Bounding Box != 0" ver1="3.0" ver2="4.2.2.0">The bounding box.</add>
         <add name="Collision Object" type="Ref" template="NiCollisionObject" ver1="10.0.1.0">Refers to NiCollisionObject, which is usually a bounding box or other simple collision shape.  In Oblivion this links the Havok objects.</add>
     </niobject>
 
@@ -207,9 +213,6 @@
     <niobject name="NiLight" abstract="1" inherit="NiDynamicEffect">
         Light source.
         <add name="Dimmer" type="float">Dimmer.</add>
-        <add name="Ambient Color" type="Color3">Ambient color.</add>
-        <add name="Diffuse Color" type="Color3">Diffuse color.</add>
-        <add name="Specular Color" type="Color3">Specular color.</add>
     </niobject>
 
     <niobject name="NiProperty" abstract="1" inherit="NiObjectNET">
