@@ -40,9 +40,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/test/unit_test.hpp>
 
 #include "pyffi/exceptions.hpp"
+#include "pyffi/object_models/class.hpp"
 #include "pyffi/object_models/xml/file_format.hpp"
 
-using namespace pyffi::object_models::xml;
+typedef pyffi::object_models::PClass PClass;
+typedef pyffi::object_models::xml::FileFormat FileFormat;
 
 BOOST_AUTO_TEST_SUITE(xml_test_suite)
 
@@ -83,7 +85,14 @@ BOOST_AUTO_TEST_CASE(enum_test)
 
 BOOST_AUTO_TEST_CASE(full_test)
 {
-	FileFormat("test_full.xml");
+	FileFormat ff("test_full.xml");
+	PClass NiObject = ff.class_->attr<PClass>("NiObject");
+	PClass NiExtraData = ff.class_->attr<PClass>("NiExtraData");
+	PClass NiObjectNET = ff.class_->attr<PClass>("NiObjectNET");
+	PClass NiAVObject = ff.class_->attr<PClass>("NiAVObject");
+	BOOST_CHECK_EQUAL(NiExtraData->issubclass(NiObject), true);
+	BOOST_CHECK_EQUAL(NiAVObject->issubclass(NiObject), true);
+	BOOST_CHECK_EQUAL(NiExtraData->issubclass(NiAVObject), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
