@@ -97,7 +97,7 @@ public:
 		return child;
 	};
 
-	//! Get a nested class declaration.
+	//! Get a nested class declaration. Returns the created class.
 	PClass & get_class(const std::string & name) {
 		try {
 			return class_map.get(name);
@@ -110,8 +110,9 @@ public:
 		};
 	};
 
-	//! Create a class attribute.
-	void def(const std::string & name, PClass class_) {
+	//! Create an attribute definition. Returns a shared pointer
+	//! to itself, so the defs can be chained.
+	PClass def(const std::string & name, PClass class_) {
 		// create attribute
 		Attribute attr(name, class_, attr_set.size());
 		// store attribute
@@ -120,16 +121,17 @@ public:
 		if (!result.second) {
 			throw value_error("Attribute \"" + name + "\" already defined.");
 		};
+		return shared_from_this();
 	};
 
-	//! Get index of an attribute.
-	std::size_t index(const std::string & name) {
-		AttributeSetByName & attr_set_by_name = attr_set.get<by_name>();
-		AttributeSetByName::iterator it = attr_set_by_name.find(name);
-		if (it == attr_set_by_name.end()) {
-			throw name_error("Attribute \"" + name + "\" not found.");
-		};
-		return it->index;
+	//! Get the class of an attribute definition.
+	PClass get_def_class(const std::string & name) {
+		return get_def(name)->class_;
+	};
+
+	//! Get the index of an attribute definition.
+	std::size_t get_def_index(const std::string & name) {
+		return get_def(name)->index;
 	};
 
 	//! Check subclass relationship.
@@ -191,17 +193,31 @@ private:
 	typedef AttributeSet::index<by_index>::type AttributeSetByIndex;
 	typedef AttributeSet::index<by_name>::type AttributeSetByName;
 
+
 	//! Class in which this class is nested.
 	boost::weak_ptr<Class> parent;
+
 	//! Base class from which the class is derived.
 	boost::weak_ptr<Class> base;
+
 	//! Default value when instantiating the class (for primitive
 	//! types, or to customize instantiation).
 	PObject value;
 	//! Attributes (name, class, and index).
 	AttributeSet attr_set;
+
 	//! Map names to nested classes.
 	Map<PClass> class_map;
+
+	//! A helper function for accessing attribute definitions.
+	AttributeSetByName::iterator get_def(const std::string & name) {
+		AttributeSetByName & attr_set_by_name = attr_set.get<by_name>();
+		AttributeSetByName::iterator it = attr_set_by_name.find(name);
+		if (it == attr_set_by_name.end()) {
+			throw name_error("Attribute \"" + name + "\" not found.");
+		};
+		return it;
+	};
 }; // class Class
 
 //! For convenience.

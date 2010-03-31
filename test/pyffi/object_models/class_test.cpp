@@ -103,6 +103,24 @@ BOOST_AUTO_TEST_CASE(def_test)
 	BOOST_CHECK_THROW(class0->def("arg3", String), value_error);
 }
 
+BOOST_AUTO_TEST_CASE(get_def_class_test)
+{
+	PClass class0 = Class::class_();
+	PClass Int = class0->class_("Int", 5);
+	PClass Char = class0->class_("Char", 'y');
+	PClass String = class0->class_("String", std::string("Hello world!"));
+	class0
+	->def("arg1", Int)
+	->def("arg2", Char)
+	->def("arg3", String);
+
+	BOOST_CHECK_EQUAL(class0->get_def_class("arg1"), Int);
+	BOOST_CHECK_EQUAL(class0->get_def_class("arg2"), Char);
+	BOOST_CHECK_EQUAL(class0->get_def_class("arg3"), String);
+
+	BOOST_CHECK_THROW(class0->get_def_class("arg99"), name_error);
+}
+
 BOOST_AUTO_TEST_CASE(get_class_test)
 {
 	PClass class0 = Class::class_();
@@ -129,7 +147,7 @@ BOOST_AUTO_TEST_CASE(get_class_test)
 	BOOST_CHECK_THROW(class0->get_class("TestClass3"), name_error);
 }
 
-BOOST_AUTO_TEST_CASE(index_test)
+BOOST_AUTO_TEST_CASE(get_def_index_test)
 {
 	PClass class0 = Class::class_();
 	PClass Int = class0->class_("Int", 5);
@@ -142,16 +160,16 @@ BOOST_AUTO_TEST_CASE(index_test)
 	class2->def("arg4", Int);
 
 	// check if we get back the right indices
-	BOOST_CHECK_EQUAL(class1->index("arg1"), 0);
-	BOOST_CHECK_EQUAL(class1->index("arg2"), 1);
-	BOOST_CHECK_EQUAL(class2->index("arg3"), 2);
-	BOOST_CHECK_EQUAL(class2->index("arg4"), 3);
+	BOOST_CHECK_EQUAL(class1->get_def_index("arg1"), 0);
+	BOOST_CHECK_EQUAL(class1->get_def_index("arg2"), 1);
+	BOOST_CHECK_EQUAL(class2->get_def_index("arg3"), 2);
+	BOOST_CHECK_EQUAL(class2->get_def_index("arg4"), 3);
 
 	// check that we cannot get attributes that don't exist
-	BOOST_CHECK_THROW(class1->index("arg3"), name_error);
-	BOOST_CHECK_THROW(class1->index("arg4"), name_error);
-	BOOST_CHECK_THROW(class1->index("arg99"), name_error);
-	BOOST_CHECK_THROW(class2->index("arg99"), name_error);
+	BOOST_CHECK_THROW(class1->get_def_index("arg3"), name_error);
+	BOOST_CHECK_THROW(class1->get_def_index("arg4"), name_error);
+	BOOST_CHECK_THROW(class1->get_def_index("arg99"), name_error);
+	BOOST_CHECK_THROW(class2->get_def_index("arg99"), name_error);
 }
 
 BOOST_AUTO_TEST_CASE(is_subclass_test)

@@ -63,7 +63,7 @@ public:
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & attr(const std::string & name) {
 		if (PClass cls = class_.lock()) {
-		  return get<std::vector<Object> >()[cls->index(name)].get<ValueType>();
+			return get<std::vector<Object> >()[cls->get_def_index(name)].get<ValueType>();
 		} else {
 			throw runtime_error("Instance has no class.");
 		};
