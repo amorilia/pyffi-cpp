@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(def_test)
 	BOOST_CHECK_THROW(class0->def("arg3", String), value_error);
 }
 
-BOOST_AUTO_TEST_CASE(index_test)
+BOOST_AUTO_TEST_CASE(get_class_test)
 {
 	PClass class0 = Class::class_();
 	PClass Int = class0->class_("Int", 5);
@@ -119,8 +119,27 @@ BOOST_AUTO_TEST_CASE(index_test)
 	BOOST_CHECK_EQUAL(class0->get_class("TestClass1"), class1);
 	BOOST_CHECK_EQUAL(class0->get_class("TestClass2"), class2);
 
+	// check that we don't get an argument through get_class
+	BOOST_CHECK_THROW(class1->get_class("arg1"), name_error);
+	BOOST_CHECK_THROW(class1->get_class("arg2"), name_error);
+	BOOST_CHECK_THROW(class2->get_class("arg3"), name_error);
+	BOOST_CHECK_THROW(class2->get_class("arg4"), name_error);
+
 	// check that we cannot get something that hasn't been added yet
 	BOOST_CHECK_THROW(class0->get_class("TestClass3"), name_error);
+}
+
+BOOST_AUTO_TEST_CASE(index_test)
+{
+	PClass class0 = Class::class_();
+	PClass Int = class0->class_("Int", 5);
+	PClass Char = class0->class_("Char", 'y');
+	PClass class1 = class0->class_("TestClass1");
+	class1->def("arg1", Int);
+	class1->def("arg2", Int);
+	PClass class2 = class0->class_("TestClass2", class1);
+	class2->def("arg3", Char);
+	class2->def("arg4", Int);
 
 	// check if we get back the right indices
 	BOOST_CHECK_EQUAL(class1->index("arg1"), 0);
@@ -128,7 +147,9 @@ BOOST_AUTO_TEST_CASE(index_test)
 	BOOST_CHECK_EQUAL(class2->index("arg3"), 2);
 	BOOST_CHECK_EQUAL(class2->index("arg4"), 3);
 
-	// check that we cannot get attributes that don't exist yet
+	// check that we cannot get attributes that don't exist
+	BOOST_CHECK_THROW(class1->index("arg3"), name_error);
+	BOOST_CHECK_THROW(class1->index("arg4"), name_error);
 	BOOST_CHECK_THROW(class1->index("arg99"), name_error);
 	BOOST_CHECK_THROW(class2->index("arg99"), name_error);
 }
@@ -169,7 +190,7 @@ BOOST_AUTO_TEST_CASE(is_subclass_test)
 	BOOST_CHECK_EQUAL(class4->is_subclass(class3), true);
 }
 
-BOOST_AUTO_TEST_CASE(attr_parent_test)
+BOOST_AUTO_TEST_CASE(get_class_nested_test)
 {
 	// we basically test the following declarations:
 	// class TestClass1
