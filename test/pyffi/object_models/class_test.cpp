@@ -230,4 +230,23 @@ BOOST_AUTO_TEST_CASE(get_class_nested_test)
 	BOOST_CHECK_EQUAL(class4, class5->get_class("TestClass4"));
 }
 
+BOOST_AUTO_TEST_CASE(instance_test)
+{
+	PClass ns = Class::class_();
+	PClass Int = ns->class_("Int", 5);
+	PClass Char = ns->class_("Char", 'y');
+	PClass Class1 = ns->class_("TestClass1");
+	Class1->def("arg1", Int);
+	Class1->def("arg2", Int);
+	PClass Class2 = ns->class_("TestClass2", Class1);
+	Class2->def("arg3", Char);
+	Class2->def("arg4", Int);
+
+	// check that creating instances works
+	BOOST_CHECK_NO_THROW(Int->instance());
+	BOOST_CHECK_NO_THROW(Char->instance());
+	BOOST_CHECK_NO_THROW(Class1->instance());
+	BOOST_CHECK_NO_THROW(Class2->instance());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
