@@ -98,6 +98,14 @@ public:
 		m_value = value;
 		return *this;
 	};
+	//! Convenience get function for composite objects.
+	template<typename ValueType> ValueType & get(std::size_t i1) {
+		return get<std::vector<Object> >()[i1].get<ValueType>();
+	};
+	//! Convenience size function for composite objects.
+	std::size_t size() {
+		return get<std::vector<Object> >().size();
+	};
 protected:
 	boost::any m_value;
 }; // class Object

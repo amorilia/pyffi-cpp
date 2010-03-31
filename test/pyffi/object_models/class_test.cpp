@@ -247,6 +247,44 @@ BOOST_AUTO_TEST_CASE(instance_test)
 	BOOST_CHECK_NO_THROW(Char->instance());
 	BOOST_CHECK_NO_THROW(Class1->instance());
 	BOOST_CHECK_NO_THROW(Class2->instance());
+
+	// created some instances
+	Object i1(Int->instance());
+	Object i2(Char->instance());
+	Object i3(Class1->instance());
+	Object i4(Class2->instance());
+
+	// check values of the instances
+	BOOST_CHECK_EQUAL(i1.get<int>(), 5);
+	BOOST_CHECK_EQUAL(i2.get<char>(), 'y');
+	BOOST_CHECK_EQUAL(i3.size(), 2);
+	BOOST_CHECK_EQUAL(i3.get<int>(0), 5);
+	BOOST_CHECK_EQUAL(i3.get<int>(1), 5);
+	BOOST_CHECK_EQUAL(i4.size(), 4);
+	BOOST_CHECK_EQUAL(i4.get<int>(0), 5);
+	BOOST_CHECK_EQUAL(i4.get<int>(1), 5);
+	BOOST_CHECK_EQUAL(i4.get<char>(2), 'y');
+	BOOST_CHECK_EQUAL(i4.get<int>(3), 5);
+
+	// change some values
+	i1.get<int>() = 6;
+	i2.get<char>() = 'z';
+	i3.get<int>(0) = 7;
+	i3.get<int>(1) = 8;
+	i4.get<int>(0) = 9;
+	i4.get<int>(1) = 12;
+	i4.get<char>(2) = 'c';
+	i4.get<int>(3) = 19;
+
+	// check changed values
+	BOOST_CHECK_EQUAL(i1.get<int>(), 6);
+	BOOST_CHECK_EQUAL(i2.get<char>(), 'z');
+	BOOST_CHECK_EQUAL(i3.get<int>(0), 7);
+	BOOST_CHECK_EQUAL(i3.get<int>(1), 8);
+	BOOST_CHECK_EQUAL(i4.get<int>(0), 9);
+	BOOST_CHECK_EQUAL(i4.get<int>(1), 12);
+	BOOST_CHECK_EQUAL(i4.get<char>(2), 'c');
+	BOOST_CHECK_EQUAL(i4.get<int>(3), 19);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
