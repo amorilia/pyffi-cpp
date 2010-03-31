@@ -37,14 +37,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <string>
 
-#include "antlr3.h"
+#include "pyffi/object_models/ffi/file_format.hpp"
+#include "pyffi/exceptions.hpp"
 
+#include "antlr3.h"
 #include "FFILexer.h"
 #include "FFIParser.h"
 #include "FFIFileFormat.h"
-
-#include "pyffi/object_models/ffi/file_format.hpp"
-#include "pyffi/exceptions.hpp"
 
 namespace pyffi
 {

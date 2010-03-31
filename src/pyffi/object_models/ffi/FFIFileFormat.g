@@ -35,11 +35,17 @@ doc
 formatdefine[PClass class_]
     :   ^(FILEFORMAT doc
             {
-                class_->def("extensions", std::vector<std::string>());
+                /*
+                class_->def(
+                    "extensions",
+                    class_->class_("_Extensions", std::vector<std::string>()));
+                */
             }
             (n=CONSTANTNAME
                 {
-                    class_->attr<std::vector<std::string> >("extensions").push_back(get_string($n.text));
+                    /*
+                    class_->get_attr("extensions")->value->get<std::vector<std::string> >().push_back(get_string($n.text));
+                    */
                 }
             )*
         )
@@ -61,7 +67,7 @@ enumdefine[PClass class_]
                 printf("*** BASE CLASS ***\n"); // XXX debug
                 printf((const char *)($base.text)->chars); // XXX debug
                 printf("\n"); // XXX debug
-                base_class = class_->attr<PClass>(get_string($base.text));
+                base_class = class_->get_class(get_string($base.text));
                 printf("*** MAIN CLASS ***\n"); // XXX debug
                 printf((const char *)($name.text)->chars); // XXX debug
                 printf("\n"); // XXX debug
@@ -100,7 +106,7 @@ classdefine[PClass class_]
                         printf("*** BASE CLASS ***\n"); // XXX debug
                         printf((const char *)($base.text)->chars); // XXX debug
                         printf("\n"); // XXX debug
-                        base_class = class_->attr<PClass>(get_string($base.text));
+                        base_class = class_->get_class(get_string($base.text));
                     }
                 )?
             )
@@ -131,7 +137,7 @@ fielddefine[PClass class_]
             printf("*** ATTRIBUTE TYPE ***\n"); // XXX debug
             printf((const char *)($TYPENAME.text)->chars); // XXX debug
             printf("\n"); // XXX debug
-            type_class = class_->attr<PClass>(get_string($TYPENAME.text));
+            type_class = class_->get_class(get_string($TYPENAME.text));
             try {
                 printf("*** ATTRIBUTE NAME ***\n"); // XXX debug
                 printf((const char *)($VARIABLENAME.text)->chars); // XXX debug
@@ -141,7 +147,7 @@ fielddefine[PClass class_]
                 class_->def(get_string($VARIABLENAME.text), type_class);
             } catch (const pyffi::runtime_error &) {
                 printf("*** (ATTRIBUTE WAS ALREADY ADDED) ***\n"); // XXX debug
-                if (type_class != class_->attr<PClass>(get_string($TYPENAME.text))) {
+                if (type_class != class_->get_class(get_string($TYPENAME.text))) {
                     throw pyffi::runtime_error("Duplicate attributes must have the same type.");
                 };
 				; // nothing - the key was already added, but we allow this

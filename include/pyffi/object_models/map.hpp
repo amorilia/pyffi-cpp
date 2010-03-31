@@ -40,12 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <utility> // pair
 
-// unordered_map introduced in boost 1.36.0
-#if BOOST_VERSION >= 13600
 #include <boost/unordered_map.hpp>
-#else
-#include <map>
-#endif
 
 #include "pyffi/exceptions.hpp"
 
@@ -55,30 +50,8 @@ namespace pyffi
 namespace object_models
 {
 
-// unordered_map introduced in boost 1.36.0
-#if BOOST_VERSION >= 13600
-// special very fast name hash function (assuming names start with different
-// letters in most occasions)
-struct name_hash : std::unary_function<std::string, std::size_t> {
-	std::size_t operator()(std::string const & name) const {
-		std::size_t seed = 0;
-		try {
-			boost::hash_combine(seed, name.at(0));
-			//boost::hash_combine(seed, name.at(1));
-		} catch (const & std::out_of_range) {
-			// pass the exception
-		};
-		return seed;
-	}
-};
-
 template <typename T>
-class Map : private boost::unordered_map<std::string, T, name_hash>
-#else
-template <typename T>
-class Map : private std::map<std::string, T>
-#endif
-
+class Map : private boost::unordered_map<std::string, T>
 {
 public:
 	//! Register a new name, and a default value for it.

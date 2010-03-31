@@ -35,64 +35,46 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#ifndef PYFFI_OM_INSTANCE_HPP_INCLUDED
+#define PYFFI_OM_INSTANCE_HPP_INCLUDED
 
-#include "pyffi/exceptions.hpp"
+#include <vector>
+#include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
+
+#include "pyffi/object_models/object.hpp"
 #include "pyffi/object_models/class.hpp"
-#include "pyffi/object_models/xml/file_format.hpp"
 
-typedef pyffi::object_models::PClass PClass;
-typedef pyffi::object_models::xml::FileFormat FileFormat;
-
-BOOST_AUTO_TEST_SUITE(xml_test_suite)
-
-BOOST_AUTO_TEST_CASE(non_existing_file_test)
+namespace pyffi
 {
-	BOOST_CHECK_THROW(FileFormat("non_existing_file.xml"), pyffi::io_error);
-}
 
-BOOST_AUTO_TEST_CASE(invalid_test)
+namespace object_models
 {
-	BOOST_CHECK_THROW(FileFormat("test_invalid.xml"), pyffi::syntax_error);
-}
 
-BOOST_AUTO_TEST_CASE(minimal_test)
+//! Contains an instance of a class.
+class Instance : public Object
 {
-	FileFormat("test_minimal.xml");
-}
+public:
+	//! Instantiate a class.
+	Instance(PClass class_) : Object(class_->instance()), class_(class_) {
 
-BOOST_AUTO_TEST_CASE(header_test)
-{
-	FileFormat("test_header.xml");
-}
+	};
 
-BOOST_AUTO_TEST_CASE(version_test)
-{
-	FileFormat("test_version.xml");
-}
+	//! Get reference to the value of an attribute.
+	template<typename ValueType> ValueType & attr(const std::string & name) {
+		if (PClass cls = class_.lock()) {
+		  return get<std::vector<Object> >()[cls->index(name)].get<ValueType>();
+		} else {
+			throw runtime_error("Instance has no class.");
+		};
+	};
+private:
+	//! Class information (list of attribute types, default values, ...).
+	boost::weak_ptr<Class> class_;
+}; // class Instance
 
-BOOST_AUTO_TEST_CASE(basic_test)
-{
-	FileFormat("test_basic.xml");
-}
+}; // namespace object_models
 
-BOOST_AUTO_TEST_CASE(enum_test)
-{
-	FileFormat("test_enum.xml");
-}
+}; // namespace pyffi
 
-BOOST_AUTO_TEST_CASE(full_test)
-{
-	FileFormat ff("test_full.xml");
-	PClass NiObject = ff.class_->get_class("NiObject");
-	PClass NiExtraData = ff.class_->get_class("NiExtraData");
-	PClass NiObjectNET = ff.class_->get_class("NiObjectNET");
-	PClass NiAVObject = ff.class_->get_class("NiAVObject");
-	BOOST_CHECK_EQUAL(NiExtraData->is_subclass(NiObject), true);
-	BOOST_CHECK_EQUAL(NiAVObject->is_subclass(NiObject), true);
-	BOOST_CHECK_EQUAL(NiExtraData->is_subclass(NiAVObject), false);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
+#endif // PYFFI_OM_INSTANCE_HPP_INCLUDED
