@@ -106,10 +106,10 @@ BOOST_AUTO_TEST_CASE(assign_by_value_test)
 
 BOOST_AUTO_TEST_CASE(assign_by_object_test)
 {
-  Object obj(50);
+	Object obj(50);
 
 	// check assigning different value
-  obj = Object(100);
+	obj = Object(100);
 	BOOST_CHECK_EQUAL(get<int>(obj), 100);
 
 	// change type on assignment
@@ -126,6 +126,18 @@ BOOST_AUTO_TEST_CASE(assign_by_object_test)
 	obj = 102;
 	obj = Object(obj);
 	BOOST_CHECK_EQUAL(get<int>(obj), 102);
+}
+
+BOOST_AUTO_TEST_CASE(type_name_test)
+{
+	Object obj(100);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_name(), obj), "Int32");
+	std::vector<Object> vec;
+	vec.push_back(obj);
+	vec.push_back(std::vector<Object>(3, Object('x')));
+	vec.push_back(Object(1.0f));
+	Object vecobj(vec);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_name(), vecobj), "( Int32 ( Char Char Char ) Float )");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

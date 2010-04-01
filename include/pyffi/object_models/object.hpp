@@ -39,8 +39,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #define PYFFI_OM_OBJECT_HPP_INCLUDED
 
 #include <boost/cstdint.hpp>
-#include <boost/variant.hpp>
+#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/variant.hpp>
 #include <vector>
 
 #include "pyffi/exceptions.hpp"
@@ -56,6 +57,58 @@ namespace object_models
  * has this type.
  */
 typedef boost::make_recursive_variant<boost::int8_t, boost::uint8_t, boost::int16_t, boost::uint16_t, boost::int32_t, boost::uint32_t, boost::int64_t, boost::uint64_t, float, double, char, std::string, std::vector<boost::recursive_variant_> >::type Object;
+
+//! A visitor for getting the type name.
+class object_type_name
+	: public boost::static_visitor<std::string>
+{
+public:
+	std::string operator()(const boost::int8_t & value) const {
+		return "Int8";
+	};
+	std::string operator()(const boost::uint8_t & value) const {
+		return "UInt8";
+	};
+	std::string operator()(const boost::int16_t & value) const {
+		return "Int16";
+	};
+	std::string operator()(const boost::uint16_t & value) const {
+		return "UInt16";
+	};
+	std::string operator()(const boost::int32_t & value) const {
+		return "Int32";
+	};
+	std::string operator()(const boost::uint32_t & value) const {
+		return "UInt32";
+	};
+	std::string operator()(const boost::int64_t & value) const {
+		return "Int64";
+	};
+	std::string operator()(const boost::uint64_t & value) const {
+		return "UInt64";
+	};
+	std::string operator()(const float & value) const {
+		return "Float";
+	};
+	std::string operator()(const double & value) const {
+		return "Double";
+	};
+	std::string operator()(const char & value) const {
+		return "Char";
+	};
+	std::string operator()(const std::string & value) const {
+		return "String";
+	};
+	std::string operator()(const std::vector<Object> & value) const {
+		std::string result = "( ";
+		BOOST_FOREACH(const Object & obj, value) {
+			result += boost::apply_visitor(object_type_name(), obj);
+			result += " ";
+		};
+		result += ")";
+		return result;
+	};
+};
 
 }; // namespace object_models
 
