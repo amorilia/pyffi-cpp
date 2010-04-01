@@ -55,15 +55,15 @@ namespace object_models
 class Instance : public Object
 {
 public:
+	//! Default constructor (XXX required, not sure why compiler insists).
+	Instance() : Object(), class_() {};
 	//! Instantiate a class.
-	Instance(PClass class_) : Object(class_->instance()), class_(class_) {
-
-	};
+	Instance(PClass class_) : Object(class_->instance()), class_(class_) {};
 
 	//! Get reference to the value of an attribute.
 	template<typename ValueType> ValueType & attr(const std::string & name) {
 		if (PClass cls = class_.lock()) {
-			return get<std::vector<Object> >()[cls->get_def_index(name)].get<ValueType>();
+			return boost::get<ValueType>(boost::get<std::vector<Object> >(*this)[cls->get_def(name).second]);
 		} else {
 			throw runtime_error("Instance has no class.");
 		};

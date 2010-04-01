@@ -50,30 +50,32 @@ BOOST_AUTO_TEST_SUITE(instance_test_suite)
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
 	PClass class_ = Class::class_();
-	PClass Int = class_->class_("Int", 5);
-	PClass Char = class_->class_("Char", 'y');
-	PClass String = class_->class_("String", std::string("Hello world!"));
-
-	// add arguments of various types
-	BOOST_CHECK_NO_THROW(class_->def("arg1", Int));
-	BOOST_CHECK_NO_THROW(class_->def("arg2", Char));
-	BOOST_CHECK_NO_THROW(class_->def("arg3", String));
+	PClass Int = class_->class_("Int");
+	Int->primitive(5);
+	PClass Char = class_->class_("Char");
+	Int->primitive('y');
+	PClass String = class_->class_("String");
+	Int->primitive("Hello world!");
+	class_->def("arg1", Int);
+	class_->def("arg2", Char);
+	class_->def("arg3", String);
 
 	// instantiate
-	BOOST_CHECK_NO_THROW(class_->instance());
+	BOOST_CHECK_NO_THROW(Instance(class_));
 }
 
 BOOST_AUTO_TEST_CASE(attr_test)
 {
 	PClass class_ = Class::class_();
-	PClass Int = class_->class_("Int", 5);
-	PClass Char = class_->class_("Char", 'y');
-	PClass String = class_->class_("String", std::string("Hello world!"));
-
-	// add attributes of various types
-	BOOST_CHECK_NO_THROW(class_->def("arg1", Int));
-	BOOST_CHECK_NO_THROW(class_->def("arg2", Char));
-	BOOST_CHECK_NO_THROW(class_->def("arg3", String));
+	PClass Int = class_->class_("Int");
+	Int->primitive(5);
+	PClass Char = class_->class_("Char");
+	Char->primitive('y');
+	PClass String = class_->class_("String");
+	String->primitive("Hello world!");
+	class_->def("arg1", Int);
+	class_->def("arg2", Char);
+	class_->def("arg3", String);
 
 	// instantiate
 	Instance i1(class_);
@@ -102,45 +104,37 @@ BOOST_AUTO_TEST_CASE(attr_test)
 	BOOST_CHECK_EQUAL(i2.attr<int>("arg1"), 9);
 	BOOST_CHECK_EQUAL(i2.attr<char>("arg2"), 'g');
 	BOOST_CHECK_EQUAL(i2.attr<std::string>("arg3"), "doh");
-	/*
-	// check that class attributes are still the same
-	BOOST_CHECK_EQUAL(class_->attr<int>("arg1"), 5);
-	BOOST_CHECK_EQUAL(class_->attr<char>("arg2"), 'y');
-	BOOST_CHECK_EQUAL(class_->attr<std::string>("arg3"), "Hello world!");
 
-	// change some class attributes
-	class_->attr<int>("arg1") = 100;
-	class_->attr<char>("arg2") = 'z';
-	class_->attr<std::string>("arg3") = "yes";
-
-	// check that the attributes have not changed
-	BOOST_CHECK_EQUAL(i1->attr<int>("arg1"), 3);
-	BOOST_CHECK_EQUAL(i1->attr<char>("arg2"), 'b');
-	BOOST_CHECK_EQUAL(i1->attr<std::string>("arg3"), "yay");
-	BOOST_CHECK_EQUAL(i2->attr<int>("arg1"), 9);
-	BOOST_CHECK_EQUAL(i2->attr<char>("arg2"), 'g');
-	BOOST_CHECK_EQUAL(i2->attr<std::string>("arg3"), "doh");
-
-	// instantiate and check attributes
-	Instance i3(class_);
-	BOOST_CHECK_EQUAL(i3.attr<int>("arg1"), 100);
-	BOOST_CHECK_EQUAL(i3.attr<char>("arg2"), 'z');
-	BOOST_CHECK_EQUAL(i3.attr<std::string>("arg3"), "yes");
-	*/
+	// check that default values are still the same
+	BOOST_CHECK_EQUAL(boost::get<int>(Instance(Int)), 5);
+	BOOST_CHECK_EQUAL(boost::get<char>(Instance(Char)), 'y');
+	BOOST_CHECK_EQUAL(boost::get<std::string>(Instance(String)), "Hello world!");
 }
 
 BOOST_AUTO_TEST_CASE(inheritance_test)
 {
 	// set up a simple class hierarchy
 	PClass ns = Class::class_();
+	PClass Int5 = ns->class_("Int5");
+	Int5->primitive(5);
+	PClass Int6 = ns->class_("Int6");
+	Int6->primitive(6);
+	PClass Int9 = ns->class_("Int9");
+	Int9->primitive(9);
+	PClass Char0 = ns->class_("Char0");
+	Char0->primitive('0');
+	PClass Char1 = ns->class_("Char1");
+	Char1->primitive('1');
+	PClass Char2 = ns->class_("Char2");
+	Char2->primitive('2');
 	PClass base = ns->class_("Base");
-	base->def("arg1", ns->class_("Int5", 5));
-	base->def("arg2", ns->class_("Int6", 6));
-	base->def("arg3", ns->class_("Int9", 9));
+	base->def("arg1", Int5);
+	base->def("arg2", Int6);
+	base->def("arg3", Int9);
 	PClass derived = ns->class_("Derived", base);
-	derived->def("arg4", ns->class_("Char2", '2'));
-	derived->def("arg5", ns->class_("Char1", '1'));
-	derived->def("arg6", ns->class_("Char0", '0'));
+	derived->def("arg4", Char2);
+	derived->def("arg5", Char1);
+	derived->def("arg6", Char0);
 
 	// instantiate derived class
 	Instance i(derived);
