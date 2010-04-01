@@ -128,16 +128,28 @@ BOOST_AUTO_TEST_CASE(assign_by_object_test)
 	BOOST_CHECK_EQUAL(get<int>(obj), 102);
 }
 
-BOOST_AUTO_TEST_CASE(type_name_test)
+BOOST_AUTO_TEST_CASE(type_string_test)
 {
 	Object obj(100);
-	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_name(), obj), "Int32");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_string(), obj), "Int32");
 	std::vector<Object> vec;
 	vec.push_back(obj);
 	vec.push_back(std::vector<Object>(3, Object('x')));
 	vec.push_back(Object(1.0f));
 	Object vecobj(vec);
-	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_name(), vecobj), "( Int32 ( Char Char Char ) Float )");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_type_string(), vecobj), "( Int32 ( Char Char Char ) Float )");
+}
+
+BOOST_AUTO_TEST_CASE(value_string_test)
+{
+	Object obj(100);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), obj), "100");
+	std::vector<Object> vec;
+	vec.push_back(obj);
+	vec.push_back(std::vector<Object>(3, Object('x')));
+	vec.push_back(Object(1.1f));
+	Object vecobj(vec);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), vecobj), "( 100 ( x x x ) 1.1 )");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -42,6 +42,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "pyffi/exceptions.hpp"
@@ -58,8 +61,8 @@ namespace object_models
  */
 typedef boost::make_recursive_variant<boost::int8_t, boost::uint8_t, boost::int16_t, boost::uint16_t, boost::int32_t, boost::uint32_t, boost::int64_t, boost::uint64_t, float, double, char, std::string, std::vector<boost::recursive_variant_> >::type Object;
 
-//! A visitor for getting the type name.
-class object_type_name
+//! A visitor for getting the type as string.
+class object_type_string
 	: public boost::static_visitor<std::string>
 {
 public:
@@ -102,7 +105,30 @@ public:
 	std::string operator()(const std::vector<Object> & value) const {
 		std::string result = "( ";
 		BOOST_FOREACH(const Object & obj, value) {
-			result += boost::apply_visitor(object_type_name(), obj);
+			result += boost::apply_visitor(object_type_string(), obj);
+			result += " ";
+		};
+		result += ")";
+		return result;
+	};
+};
+
+//! A visitor for getting the value as string.
+class object_value_string
+	: public boost::static_visitor<std::string>
+{
+public:
+	template <typename T>
+	std::string operator()(const T & value) const {
+		std::ostringstream o;
+		if (!(o << value))
+			throw runtime_error("object_value_string failed");
+		return o.str();
+	};
+	std::string operator()(const std::vector<Object> & value) const {
+		std::string result = "( ";
+		BOOST_FOREACH(const Object & obj, value) {
+			result += boost::apply_visitor(object_value_string(), obj);
 			result += " ";
 		};
 		result += ")";
