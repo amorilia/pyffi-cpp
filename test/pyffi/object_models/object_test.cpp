@@ -42,6 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/object.hpp"
 #include "pyffi/exceptions.hpp"
 
+using namespace boost;
 using namespace pyffi;
 using namespace pyffi::object_models;
 
@@ -50,40 +51,40 @@ BOOST_AUTO_TEST_SUITE(object_test_suite)
 BOOST_AUTO_TEST_CASE(constructor_test)
 {
 	// test default constructor
-	BOOST_CHECK_THROW(Object(), type_error);
+	BOOST_CHECK_NO_THROW(Object());
 
 	// test constructor with various types
 	Object obj_int(20513);
-	BOOST_CHECK_EQUAL(obj_int.get<int>(), 20513);
+	BOOST_CHECK_EQUAL(get<int>(obj_int), 20513);
 	Object obj_char('x');
-	BOOST_CHECK_EQUAL(obj_char.get<char>(), 'x');
+	BOOST_CHECK_EQUAL(get<char>(obj_char), 'x');
 	Object obj_str(std::string("Hello world!"));
-	BOOST_CHECK_EQUAL(obj_str.get<std::string>(), std::string("Hello world!"));
+	BOOST_CHECK_EQUAL(get<std::string>(obj_str), "Hello world!");
 
 	// test copy constructor
 	Object obj_int_copy(obj_int);
-	BOOST_CHECK_EQUAL(obj_int.get<int>(), obj_int_copy.get<int>());
+	BOOST_CHECK_EQUAL(get<int>(obj_int), get<int>(obj_int_copy));
 	Object obj_char_copy(obj_char);
-	BOOST_CHECK_EQUAL(obj_char.get<char>(), obj_char_copy.get<char>());
+	BOOST_CHECK_EQUAL(get<char>(obj_char), get<char>(obj_char_copy));
 	Object obj_str_copy(obj_str);
-	BOOST_CHECK_EQUAL(obj_str.get<std::string>(), obj_str_copy.get<std::string>());
+	BOOST_CHECK_EQUAL(get<std::string>(obj_str), get<std::string>(obj_str_copy));
 }
 
 BOOST_AUTO_TEST_CASE(get_test)
 {
 	// check that get returns assigned value
-	Object obj_short(short(5));
-	BOOST_CHECK_EQUAL(obj_short.get<short>(), 5);
+	Object obj(short(5));
+	BOOST_CHECK_EQUAL(get<short>(obj), 5);
 
 	// check bad type casts
-	BOOST_CHECK_THROW(obj_short.get<int>(), type_error);
-	BOOST_CHECK_THROW(obj_short.get<float>(), type_error);
-	BOOST_CHECK_THROW(obj_short.get<char>(), type_error);
-	BOOST_CHECK_THROW(obj_short.get<std::string>(), type_error);
+	BOOST_CHECK_THROW(get<int>(obj), bad_get);
+	BOOST_CHECK_THROW(get<float>(obj), bad_get);
+	BOOST_CHECK_THROW(get<char>(obj), bad_get);
+	BOOST_CHECK_THROW(get<std::string>(obj), bad_get);
 
 	// check assignment via get
-	obj_short.get<short>() = 10;
-	BOOST_CHECK_EQUAL(obj_short.get<short>(), 10);
+	get<short>(obj) = 10;
+	BOOST_CHECK_EQUAL(get<short>(obj), 10);
 }
 
 BOOST_AUTO_TEST_CASE(assign_by_value_test)
@@ -92,46 +93,39 @@ BOOST_AUTO_TEST_CASE(assign_by_value_test)
 
 	// check assigning different value
 	obj = 100;
-	BOOST_CHECK_EQUAL(obj.get<int>(), 100);
+	BOOST_CHECK_EQUAL(get<int>(obj), 100);
 
-	// cannot change type on assignment
-	BOOST_CHECK_THROW(obj = 1.0f, type_error);
-	BOOST_CHECK_THROW(obj = 'x', type_error);
-	BOOST_CHECK_THROW(obj = std::string("Hello world!"), type_error);
+	// change type on assignment, and check new value and type
+	BOOST_CHECK_NO_THROW(obj = 1.0f);
+	BOOST_CHECK_EQUAL(get<float>(obj), 1.0f);
+	BOOST_CHECK_NO_THROW(obj = 'x');
+	BOOST_CHECK_EQUAL(get<char>(obj), 'x');
+	BOOST_CHECK_NO_THROW(obj = "Hello world!");
+	BOOST_CHECK_EQUAL(get<std::string>(obj), "Hello world!");
 }
 
 BOOST_AUTO_TEST_CASE(assign_by_object_test)
 {
-	Object obj(50);
+  Object obj(50);
 
 	// check assigning different value
-	obj = Object(100);
-	BOOST_CHECK_EQUAL(obj.get<int>(), 100);
+  obj = Object(100);
+	BOOST_CHECK_EQUAL(get<int>(obj), 100);
 
-	// cannot change type on assignment
-	BOOST_CHECK_THROW(obj = Object(1.0f), type_error);
-	BOOST_CHECK_THROW(obj = Object('x'), type_error);
-	BOOST_CHECK_THROW(obj = Object(std::string("Hello world!")), type_error);
+	// change type on assignment
+	BOOST_CHECK_NO_THROW(obj = Object(1.0f));
+	BOOST_CHECK_EQUAL(get<float>(obj), 1.0f);
+	BOOST_CHECK_NO_THROW(obj = Object('x'));
+	BOOST_CHECK_EQUAL(get<char>(obj), 'x');
+	BOOST_CHECK_NO_THROW(obj = Object("Hello world!"));
+	BOOST_CHECK_EQUAL(get<std::string>(obj), "Hello world!");
 
 	obj = Object(Object(101));
-	BOOST_CHECK_EQUAL(obj.get<int>(), 101);
+	BOOST_CHECK_EQUAL(get<int>(obj), 101);
 
 	obj = 102;
 	obj = Object(obj);
-	BOOST_CHECK_EQUAL(Object(obj).get<int>(), 102);
-}
-
-BOOST_AUTO_TEST_CASE(shared_object_test)
-{
-	PObject p_obj1(new Object(10));
-	PObject p_obj2(p_obj1);
-
-	// check that the value is the same
-	BOOST_CHECK_EQUAL(p_obj2->get<int>(), 10);
-
-	// check that value is shared
-	*p_obj1 = 20;
-	BOOST_CHECK_EQUAL(p_obj2->get<int>(), 20);
+	BOOST_CHECK_EQUAL(get<int>(obj), 102);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
