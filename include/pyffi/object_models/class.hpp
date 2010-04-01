@@ -83,18 +83,14 @@ public:
 		child->base = base;
 		// copy base class attributes
 		child->attr_set = base->attr_set;
+		// copy value
+		child->value = value;
 		return child;
 	};
 
-	//! Create a nested primitive class with given default value.
-	PClass class_(const std::string & name, Object value) {
-		PClass child = class_(name);
-		child->value = PObject(new Object(value));
-		// copy base class attributes
-		if (PClass b = base.lock()) {
-			child->attr_set = b->attr_set;
-		};
-		return child;
+	//! Declare class as a primitive one, with given default value.
+	void primitive(Object val) {
+		value = val;
 	};
 
 	//! Get a nested class declaration. Returns the created class.
@@ -110,9 +106,8 @@ public:
 		};
 	};
 
-	//! Create an attribute definition. Returns a shared pointer
-	//! to itself, so the defs can be chained.
-	PClass def(const std::string & name, PClass class_) {
+	//! Create an attribute definition.
+	void def(const std::string & name, PClass class_) {
 		// create attribute
 		Attribute attr(name, class_, attr_set.size());
 		// store attribute
@@ -121,7 +116,6 @@ public:
 		if (!result.second) {
 			throw value_error("Attribute \"" + name + "\" already defined.");
 		};
-		return shared_from_this();
 	};
 
 	//! Get the class of an attribute definition.
@@ -147,9 +141,9 @@ public:
 
 	//! Instantiate class.
 	Object instance() const {
-		if (value) {
+		if (attr_set.empty()) {
 			// primitive type: simple instantiation
-			return Object(*value);
+			return Object(value);
 		} else {
 			// composite type: instantiate a vector containing instances
 			// of each attribute class
@@ -200,9 +194,10 @@ private:
 	//! Base class from which the class is derived.
 	boost::weak_ptr<Class> base;
 
-	//! Default value when instantiating the class (for primitive
-	//! types, or to customize instantiation).
-	PObject value;
+	//! Default value when instantiating the class if attr_set is
+	//! empty.
+	Object value;
+
 	//! Attributes (name, class, and index).
 	AttributeSet attr_set;
 

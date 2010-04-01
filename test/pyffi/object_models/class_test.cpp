@@ -42,6 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "pyffi/object_models/class.hpp"
 #include "pyffi/exceptions.hpp"
 
+using namespace boost;
 using namespace pyffi;
 using namespace pyffi::object_models;
 
@@ -65,15 +66,12 @@ BOOST_AUTO_TEST_CASE(create_test)
 	PClass class7;
 
 	BOOST_CHECK_NO_THROW(class0 = Class::class_());
-	// create non-primitive classes
+	// create classes
 	BOOST_CHECK_NO_THROW(class1 = class0->class_("TestClass1"));
 	BOOST_CHECK_NO_THROW(class2 = class0->class_("TestClass2", class1));
 	BOOST_CHECK_NO_THROW(class3 = class2->class_("TestClass3"));
 	BOOST_CHECK_NO_THROW(class4 = class2->class_("TestClass4", class3));
 	BOOST_CHECK_NO_THROW(class5 = class2->class_("TestClass5", class1));
-	// create primitive classes
-	BOOST_CHECK_NO_THROW(class6 = class2->class_("TestClass6", 'x'));
-	BOOST_CHECK_NO_THROW(class7 = class2->class_("TestClass7", 3));
 
 	// check that class cannot be added again
 	BOOST_CHECK_THROW(class0->class_("TestClass1"), value_error);
@@ -81,16 +79,17 @@ BOOST_AUTO_TEST_CASE(create_test)
 	BOOST_CHECK_THROW(class2->class_("TestClass3"), value_error);
 	BOOST_CHECK_THROW(class2->class_("TestClass4"), value_error);
 	BOOST_CHECK_THROW(class2->class_("TestClass5"), value_error);
-	BOOST_CHECK_THROW(class2->class_("TestClass6"), value_error);
-	BOOST_CHECK_THROW(class2->class_("TestClass7"), value_error);
 }
 
 BOOST_AUTO_TEST_CASE(def_test)
 {
 	PClass class0 = Class::class_();
-	PClass Int = class0->class_("Int", 5);
-	PClass Char = class0->class_("Char", 'y');
-	PClass String = class0->class_("String", std::string("Hello world!"));
+	PClass Int = class0->class_("Int");
+	Int->primitive(5);
+	PClass Char = class0->class_("Char");
+	Char->primitive('y');
+	PClass String = class0->class_("String");
+	String->primitive("Hello world!");
 
 	// define attributes of various types
 	BOOST_CHECK_NO_THROW(class0->def("arg1", Int));
@@ -106,13 +105,15 @@ BOOST_AUTO_TEST_CASE(def_test)
 BOOST_AUTO_TEST_CASE(get_def_class_test)
 {
 	PClass class0 = Class::class_();
-	PClass Int = class0->class_("Int", 5);
-	PClass Char = class0->class_("Char", 'y');
-	PClass String = class0->class_("String", std::string("Hello world!"));
-	class0
-	->def("arg1", Int)
-	->def("arg2", Char)
-	->def("arg3", String);
+	PClass Int = class0->class_("Int");
+	Int->primitive(5);
+	PClass Char = class0->class_("Char");
+	Char->primitive('y');
+	PClass String = class0->class_("String");
+	String->primitive("Hello world!");
+	class0->def("arg1", Int);
+	class0->def("arg2", Char);
+	class0->def("arg3", String);
 
 	BOOST_CHECK_EQUAL(class0->get_def_class("arg1"), Int);
 	BOOST_CHECK_EQUAL(class0->get_def_class("arg2"), Char);
@@ -124,8 +125,10 @@ BOOST_AUTO_TEST_CASE(get_def_class_test)
 BOOST_AUTO_TEST_CASE(get_class_test)
 {
 	PClass class0 = Class::class_();
-	PClass Int = class0->class_("Int", 5);
-	PClass Char = class0->class_("Char", 'y');
+	PClass Int = class0->class_("Int");
+	Int->primitive(5);
+	PClass Char = class0->class_("Char");
+	Char->primitive('y');
 	PClass class1 = class0->class_("TestClass1");
 	class1->def("arg1", Int);
 	class1->def("arg2", Int);
@@ -150,8 +153,10 @@ BOOST_AUTO_TEST_CASE(get_class_test)
 BOOST_AUTO_TEST_CASE(get_def_index_test)
 {
 	PClass class0 = Class::class_();
-	PClass Int = class0->class_("Int", 5);
-	PClass Char = class0->class_("Char", 'y');
+	PClass Int = class0->class_("Int");
+	Int->primitive(5);
+	PClass Char = class0->class_("Char");
+	Char->primitive('y');
 	PClass class1 = class0->class_("TestClass1");
 	class1->def("arg1", Int);
 	class1->def("arg2", Int);
@@ -233,8 +238,10 @@ BOOST_AUTO_TEST_CASE(get_class_nested_test)
 BOOST_AUTO_TEST_CASE(instance_test)
 {
 	PClass ns = Class::class_();
-	PClass Int = ns->class_("Int", 5);
-	PClass Char = ns->class_("Char", 'y');
+	PClass Int = ns->class_("Int");
+	Int->primitive(5);
+	PClass Char = ns->class_("Char");
+	Char->primitive('y');
 	PClass Class1 = ns->class_("TestClass1");
 	Class1->def("arg1", Int);
 	Class1->def("arg2", Int);
@@ -255,36 +262,51 @@ BOOST_AUTO_TEST_CASE(instance_test)
 	Object i4(Class2->instance());
 
 	// check values of the instances
-	BOOST_CHECK_EQUAL(i1.get<int>(), 5);
-	BOOST_CHECK_EQUAL(i2.get<char>(), 'y');
-	BOOST_CHECK_EQUAL(i3.size(), 2);
-	BOOST_CHECK_EQUAL(i3.get<int>(0), 5);
-	BOOST_CHECK_EQUAL(i3.get<int>(1), 5);
-	BOOST_CHECK_EQUAL(i4.size(), 4);
-	BOOST_CHECK_EQUAL(i4.get<int>(0), 5);
-	BOOST_CHECK_EQUAL(i4.get<int>(1), 5);
-	BOOST_CHECK_EQUAL(i4.get<char>(2), 'y');
-	BOOST_CHECK_EQUAL(i4.get<int>(3), 5);
+	BOOST_CHECK_EQUAL(get<int>(i1), 5);
+	BOOST_CHECK_EQUAL(get<char>(i2), 'y');
+	std::vector<Object> & i3vec = boost::get<std::vector<Object> >(i3);
+	std::vector<Object> & i4vec = boost::get<std::vector<Object> >(i4);
+
+	BOOST_CHECK_EQUAL(i3vec.size(), 2);
+	BOOST_CHECK_EQUAL(get<int>(i3vec[0]), 5);
+	BOOST_CHECK_EQUAL(get<int>(i3vec[1]), 5);
+	BOOST_CHECK_EQUAL(i4vec.size(), 4);
+	BOOST_CHECK_EQUAL(get<int>(i4vec[0]), 5);
+	BOOST_CHECK_EQUAL(get<int>(i4vec[1]), 5);
+	BOOST_CHECK_EQUAL(get<char>(i4vec[2]), 'y');
+	BOOST_CHECK_EQUAL(get<int>(i4vec[3]), 5);
+
+	// print the instances
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i1), "5");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i2), "y");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i3), "( 5 5 )");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i4), "( 5 5 y 5 )");
 
 	// change some values
-	i1.get<int>() = 6;
-	i2.get<char>() = 'z';
-	i3.get<int>(0) = 7;
-	i3.get<int>(1) = 8;
-	i4.get<int>(0) = 9;
-	i4.get<int>(1) = 12;
-	i4.get<char>(2) = 'c';
-	i4.get<int>(3) = 19;
+	get<int>(i1) = 6;
+	get<char>(i2) = 'z';
+	get<int>(i3vec[0]) = 7;
+	get<int>(i3vec[1]) = 8;
+	get<int>(i4vec[0]) = 9;
+	get<int>(i4vec[1]) = 12;
+	get<char>(i4vec[2]) = 'c';
+	get<int>(i4vec[3]) = 19;
 
 	// check changed values
-	BOOST_CHECK_EQUAL(i1.get<int>(), 6);
-	BOOST_CHECK_EQUAL(i2.get<char>(), 'z');
-	BOOST_CHECK_EQUAL(i3.get<int>(0), 7);
-	BOOST_CHECK_EQUAL(i3.get<int>(1), 8);
-	BOOST_CHECK_EQUAL(i4.get<int>(0), 9);
-	BOOST_CHECK_EQUAL(i4.get<int>(1), 12);
-	BOOST_CHECK_EQUAL(i4.get<char>(2), 'c');
-	BOOST_CHECK_EQUAL(i4.get<int>(3), 19);
+	BOOST_CHECK_EQUAL(get<int>(i1), 6);
+	BOOST_CHECK_EQUAL(get<char>(i2), 'z');
+	BOOST_CHECK_EQUAL(get<int>(i3vec[0]), 7);
+	BOOST_CHECK_EQUAL(get<int>(i3vec[1]), 8);
+	BOOST_CHECK_EQUAL(get<int>(i4vec[0]), 9);
+	BOOST_CHECK_EQUAL(get<int>(i4vec[1]), 12);
+	BOOST_CHECK_EQUAL(get<char>(i4vec[2]), 'c');
+	BOOST_CHECK_EQUAL(get<int>(i4vec[3]), 19);
+
+	// print the instances
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i1), "6");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i2), "z");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i3), "( 7 8 )");
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i4), "( 9 12 c 19 )");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
