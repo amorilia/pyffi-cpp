@@ -93,8 +93,8 @@ public:
 		value = val;
 	};
 
-	//! Get a nested class declaration. Returns the created class.
-	PClass & get_class(const std::string & name) {
+	//! Get a nested class declaration.
+	PClass get_class(const std::string & name) {
 		try {
 			return class_map.get(name);
 		} catch (const key_error &) {
@@ -118,14 +118,14 @@ public:
 		};
 	};
 
-	//! Get the class of an attribute definition.
-	PClass get_def_class(const std::string & name) {
-		return get_def(name)->class_;
-	};
-
-	//! Get the index of an attribute definition.
-	std::size_t get_def_index(const std::string & name) {
-		return get_def(name)->index;
+	//! Get the class and index of an attribute definition.
+	std::pair<PClass, std::size_t> get_def(const std::string & name) {
+		AttributeSetByName & attr_set_by_name = attr_set.get<by_name>();
+		AttributeSetByName::iterator it = attr_set_by_name.find(name);
+		if (it == attr_set_by_name.end()) {
+			throw name_error("Attribute \"" + name + "\" not found.");
+		};
+		return std::make_pair(it->class_, it->index);
 	};
 
 	//! Check subclass relationship.
@@ -203,16 +203,6 @@ private:
 
 	//! Map names to nested classes.
 	Map<PClass> class_map;
-
-	//! A helper function for accessing attribute definitions.
-	AttributeSetByName::iterator get_def(const std::string & name) {
-		AttributeSetByName & attr_set_by_name = attr_set.get<by_name>();
-		AttributeSetByName::iterator it = attr_set_by_name.find(name);
-		if (it == attr_set_by_name.end()) {
-			throw name_error("Attribute \"" + name + "\" not found.");
-		};
-		return it;
-	};
 }; // class Class
 
 //! For convenience.
