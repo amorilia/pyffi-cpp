@@ -55,10 +55,8 @@ namespace pyffi
 namespace object_models
 {
 
-/*!
- * A boost::variant which can contain all of the usual types. All data
- * has this type.
- */
+//! A boost::variant which can contain all of the usual types. All
+//! data has this type.
 typedef boost::make_recursive_variant<boost::int8_t, boost::uint8_t, boost::int16_t, boost::uint16_t, boost::int32_t, boost::uint32_t, boost::int64_t, boost::uint64_t, float, double, char, std::string, std::vector<boost::recursive_variant_> >::type Object;
 
 //! A visitor for getting the type as string.
