@@ -40,7 +40,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/numeric/conversion/cast.hpp> // numeric_cast
 #include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp> // enable_if, disable_if
 #include <boost/variant.hpp>
 #include <iostream>
 #include <sstream>
@@ -131,6 +134,27 @@ public:
 		};
 		result += ")";
 		return result;
+	};
+};
+
+//! A visitor for getting an arithmetic type (integer, float), with
+//! range checking.
+template <typename ValueType>
+class object_numeric_cast
+	: public boost::static_visitor<ValueType>
+{
+public:
+	template <typename T>
+	typename boost::enable_if<boost::is_arithmetic<T>, ValueType>::type
+	operator()(const T & value) const {
+		return boost::numeric_cast<ValueType>(value);
+	};
+	template <typename T>
+	typename boost::disable_if<boost::is_arithmetic<T>, ValueType>::type
+	operator()(const T & value) const {
+		throw type_error(
+		    "cannot numeric_cast " + std::string(typeid(T).name())
+		    + " to " + std::string(typeid(ValueType).name()));
 	};
 };
 

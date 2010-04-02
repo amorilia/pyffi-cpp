@@ -152,4 +152,40 @@ BOOST_AUTO_TEST_CASE(value_string_test)
 	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), vecobj), "( 100 ( x x x ) 1.1 )");
 }
 
+BOOST_AUTO_TEST_CASE(integer_test)
+{
+	// simple integer cast
+	Object obj(100);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<int>(), obj), 100);
+	// simple float cast
+	obj = 2.1;
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<int>(), obj), 2);
+	// cast from non-arithmetic type fails with type error
+	obj = "hello world";
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<int>(), obj), type_error);
+	// check some 8 bit stuff
+	obj = boost::int32_t(0xff);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<boost::uint8_t>(), obj), 0xff);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::int8_t>(), obj), boost::numeric::positive_overflow);
+	obj = boost::int32_t(0x100);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::uint8_t>(), obj), boost::numeric::positive_overflow);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::int8_t>(), obj), boost::numeric::positive_overflow);
+	obj = boost::int32_t(0x7f);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<boost::uint8_t>(), obj), 0x7f);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<boost::int8_t>(), obj), 0x7f);
+	obj = boost::int32_t(-0x80);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::uint8_t>(), obj), boost::numeric::negative_overflow);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<boost::int8_t>(), obj), -0x80);
+	obj = boost::int32_t(-0x81);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::uint8_t>(), obj), boost::numeric::negative_overflow);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::int8_t>(), obj), boost::numeric::negative_overflow);
+	// check some 64 bit stuff
+	obj = boost::uint64_t(0x7fffffffffffffffLL);
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<boost::int64_t>(), obj), 0x7fffffffffffffffLL);
+	obj = boost::uint64_t(0x8000000000000000LL);
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<boost::int64_t>(), obj), boost::numeric::positive_overflow);
+	// note: a double can represent 0x8000000000000000LL exactly
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<double>(), obj), 0x8000000000000000LL);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
