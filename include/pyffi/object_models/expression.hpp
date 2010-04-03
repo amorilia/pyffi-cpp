@@ -110,12 +110,12 @@ boost::recursive_wrapper<binary_operator<op_multiply> >
 
 typedef boost::mpl::vector<
 boost::recursive_wrapper<binary_operator<op_divide> >,
-boost::recursive_wrapper<binary_operator<op_modulo> >,
-boost::recursive_wrapper<binary_operator<op_power> >,
-boost::recursive_wrapper<call_operator>,
-boost::recursive_wrapper<index_operator>,
-boost::recursive_wrapper<member_operator>
->::type _expr_types_2;
+      boost::recursive_wrapper<binary_operator<op_modulo> >,
+      boost::recursive_wrapper<binary_operator<op_power> >,
+      boost::recursive_wrapper<call_operator>,
+      boost::recursive_wrapper<index_operator>,
+      boost::recursive_wrapper<member_operator>
+      >::type _expr_types_2;
 
 typedef boost::mpl::insert_range<
 _expr_types_1,
@@ -125,7 +125,7 @@ _expr_types;
 
 //! A boost::variant which can contain any expression. All
 //! expressions have this type.
-typedef boost::make_variant_over<_expr_types> Expression;
+typedef boost::make_variant_over<_expr_types>::type Expression;
 
 template <typename operator_tag>
 struct binary_operator {
@@ -141,84 +141,90 @@ struct unary_operator {
 };
 
 struct index_operator {
-  std::vector<Expression> indices;
-  index_operator(const std::vector<Expression> & indices) : indices(indices) {};
+	std::vector<Expression> indices;
+	index_operator(const std::vector<Expression> & indices) : indices(indices) {};
 };
 
 struct call_operator {};
 
 struct member_operator {};
 
-//! A visitor for evaluating an expression. The template argument
-//! IntegerType determines which interger type is used for
+//! A visitor for evaluating an expression to an object. The template
+//! argument IntegerType determines which integer type is used for
 //! intermediate calculations.
-
 template <typename IntegerType>
-class expression_object
+class expression_object_visitor
 	: public boost::static_visitor<Object>
 {
 private:
-  template <typename ValueType>
-  ValueType _numeric_cast(const Expression & e) {
-    return boost::apply_visitor(object_numeric_cast<ValueType>(),
-				boost::apply_visitor(expression_object(), e));
-  };
-public:
-	Object operator()(const Object & value) const {
-	  return value;
+	IntegerType numeric_cast(const Expression & value) const {
+		Object obj(boost::apply_visitor(expression_object_visitor<IntegerType>(), value));
+		return boost::apply_visitor(object_numeric_cast<IntegerType>(), obj);
 	};
+public:
+	template <typename T>
+	Object operator()(const T & value) const {
+		throw runtime_error("expression_object not yet implemented for " + std::string(typeid(T).name()) + ".");
+	};
+	Object operator()(const Object & value) const {
+		return value;
+	};
+	/*
 	Object operator()(const binary_operator<op_logical_or> & value) const {
-	  return (_numeric_cast<bool>(value.lhs)
-		  ||
-		  _numeric_cast<bool>(value.rhs));
 	};
 	Object operator()(const binary_operator<op_logical_and> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_logical_not> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_eq> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_neq> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_gt> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_lt> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_gteq> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_lteq> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_bitwise_or> & value) const {
-	  return (_numeric_cast<IntegerType>(value.lhs)
-		  |
-		  _numeric_cast<IntegerType>(value.rhs));
 	};
 	Object operator()(const binary_operator<op_bitwise_and> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_leftshift> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const binary_operator<op_rightshift> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
+	*/
 	Object operator()(const binary_operator<op_plus> & value) const {
-		throw runtime_error("Not yet implemented.");
+		return numeric_cast(value.lhs) + numeric_cast(value.rhs);
 	};
+	/*
 	Object operator()(const binary_operator<op_minus> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
 	Object operator()(const unary_operator<op_negate> & value) const {
-		throw runtime_error("Not yet implemented.");
 	};
+	*/
+};
+
+//! Evaluating an expression to an object. The template argument
+//! IntegerType determines which integer type is used for intermediate
+//! calculations.
+template <typename IntegerType>
+Object expression_object(const Expression & exp)
+{
+	return boost::apply_visitor(expression_object_visitor<IntegerType>(), exp);
+};
+
+//! Evaluate an expression to a numeric value. The template argument
+//! IntegerType determines which integer type is used for intermediate
+//! calculations.
+template <typename IntegerType, typename ValueType>
+ValueType expression_numeric_cast(const Expression & exp)
+{
+	Object obj(expression_object<IntegerType>(exp));
+	return boost::apply_visitor(object_numeric_cast<ValueType>(), obj);
 };
 
 } // object_models
