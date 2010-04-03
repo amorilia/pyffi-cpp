@@ -152,10 +152,24 @@ BOOST_AUTO_TEST_CASE(value_string_test)
 	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), vecobj), "( 100 ( x x x ) 1.1 )");
 }
 
-BOOST_AUTO_TEST_CASE(integer_test)
+BOOST_AUTO_TEST_CASE(numeric_cast)
 {
+	Object obj;
+	// simple bool cast
+	obj = true;
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<bool>(), obj), true);
+	obj = false;
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<bool>(), obj), false);
+	obj = 1;
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<bool>(), obj), true);
+	obj = 0;
+	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<bool>(), obj), false);
+	obj = 2;
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<bool>(), obj), boost::numeric::positive_overflow);
+	obj = -1;
+	BOOST_CHECK_THROW(boost::apply_visitor(object_numeric_cast<bool>(), obj), boost::numeric::negative_overflow);
 	// simple integer cast
-	Object obj(100);
+	obj = 100;
 	BOOST_CHECK_EQUAL(boost::apply_visitor(object_numeric_cast<int>(), obj), 100);
 	// simple float cast
 	obj = 2.1;
