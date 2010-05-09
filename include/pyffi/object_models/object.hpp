@@ -140,7 +140,7 @@ public:
 //! A visitor for getting an arithmetic type (bool, integer, float), with
 //! range checking.
 template <typename ValueType>
-class object_numeric_cast
+class object_numeric_cast_visitor
 	: public boost::static_visitor<ValueType>
 {
 public:
@@ -156,6 +156,14 @@ public:
 		    "cannot numeric_cast " + std::string(typeid(T).name())
 		    + " to " + std::string(typeid(ValueType).name()));
 	};
+};
+
+//! Get an arithmetic type (bool, integer, float), with range
+//! checking.
+template <typename ValueType>
+ValueType object_numeric_cast(const Object & obj)
+{
+	return boost::apply_visitor(object_numeric_cast_visitor<ValueType>(), obj);
 };
 
 }; // namespace object_models

@@ -158,8 +158,7 @@ class expression_object_visitor
 {
 private:
 	IntegerType numeric_cast(const Expression & value) const {
-		Object obj(boost::apply_visitor(expression_object_visitor<IntegerType>(), value));
-		return boost::apply_visitor(object_numeric_cast<IntegerType>(), obj);
+		return object_numeric_cast<IntegerType>(boost::apply_visitor(expression_object_visitor<IntegerType>(), value));
 	};
 public:
 	template <typename T>
@@ -223,8 +222,7 @@ Object expression_object(const Expression & exp)
 template <typename IntegerType, typename ValueType>
 ValueType expression_numeric_cast(const Expression & exp)
 {
-	Object obj(expression_object<IntegerType>(exp));
-	return boost::apply_visitor(object_numeric_cast<ValueType>(), obj);
+	return object_numeric_cast<ValueType>(expression_object<IntegerType>(exp));
 };
 
 } // object_models
