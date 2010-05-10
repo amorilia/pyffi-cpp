@@ -35,15 +35,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include <string>
+#include <boost/spirit/include/phoenix_core.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_fusion.hpp>
+#include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/phoenix_object.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/support_istream_iterator.hpp>
+#include <fstream>
 
 #include "pyffi/object_models/xml/file_format.hpp"
 #include "pyffi/exceptions.hpp"
-
-#include "antlr3.h"
-#include "XMLLexer.h"
-#include "XMLParser.h"
-#include "FFIFileFormat.h"
 
 namespace pyffi
 {
@@ -54,83 +56,68 @@ namespace object_models
 namespace xml
 {
 
+template <typename Iterator>
+struct xml_parser : boost::spirit::qi::grammar<Iterator, void(), boost::spirit::qi::ascii::space_type> {
+    boost::spirit::qi::rule<Iterator, void(), boost::spirit::qi::ascii::space_type> start;
+
+    xml_parser()
+	    : xml_parser::base_type(start) {
+	using boost::phoenix::construct;
+	using boost::phoenix::val;
+	using boost::spirit::qi::char_;
+	using boost::spirit::qi::lexeme;
+	using boost::spirit::qi::lit;
+	using boost::spirit::qi::on_error;
+	using boost::spirit::qi::fail;
+	using boost::spirit::qi::_1;
+	using boost::spirit::qi::_2;
+	using boost::spirit::qi::_3;
+	using boost::spirit::qi::_4;
+
+	start = -(lit("<?xml") >> *(char_ - "?") >> lit("?>")) >> -(lexeme["<!DOCTYPE niftoolsxml>"]) >> (lexeme["<niftoolsxml version=\"0.7.0.0\">"] | lit("<niftoolsxml>"));
+
+	start.name("<niftoolsxml>");
+
+	on_error<fail>(
+	    start,
+	    std::cout
+	    << val("Error! Expecting ")
+	    << _4                               // what failed?
+	    << val(" here: \"")
+	    << construct<std::string>(_3, _2)   // iterators to error-pos, end
+	    << val("\"")
+	    << std::endl
+	);
+};
+};
+
 /*
- * Main entry point for lexing, parsing, and walking.
+ * Main entry point for parsing an xml file.
  */
 
 FileFormat::FileFormat(const std::string & filename)
 {
-	// set up the antlr structures
-	pANTLR3_INPUT_STREAM input = NULL;
-	pXMLLexer lex = NULL;
-	pANTLR3_COMMON_TOKEN_STREAM tokens = NULL;
-	pXMLParser parser = NULL;
-	pANTLR3_BASE_TREE ast = NULL;
-	pANTLR3_COMMON_TREE_NODE_STREAM nodes = NULL;
-	pFFIFileFormat walker = NULL;
+	// open file, disable skipping of whitespace
+	std::ifstream in(filename.c_str());
+	in.unsetf(std::ios::skipws);
 
-	input = antlr3AsciiFileStreamNew((pANTLR3_UINT8)filename.c_str());
-	if (input == NULL) {
-		throw io_error("Could not open '" + filename + "'.");
-	};
-	lex = XMLLexerNew(input);
-	if (lex == NULL) {
-		input->close(input);
-		throw runtime_error("Could not create lexer for '" + filename + "' (insufficient memory?).");
-	};
-	tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
-	if (tokens == NULL) {
-		lex->free(lex);
-		input->close(input);
-		throw runtime_error("Could not create tokens for '" + filename + "' (insufficient memory?).");
-	};
-	parser = XMLParserNew(tokens);
-	if (parser == NULL) {
-		tokens->free(tokens);
-		lex->free(lex);
-		input->close(input);
-		throw runtime_error("Could not create parser for '" + filename + "' (insufficient memory?).");
-	};
-	// parse the file
-	ast = parser->ffi(parser).tree;
-	// check that parsing succeeded
-	if (parser->pParser->rec->state->errorCount > 0) {
-		parser->free(parser);
-		tokens->free(tokens);
-		lex->free(lex);
-		input->close(input);
+	// wrap istream into iterator
+	boost::spirit::istream_iterator first(in);
+	boost::spirit::istream_iterator last;
+
+	// create parser
+	xml_parser<boost::spirit::istream_iterator> parser;
+
+	// use iterator to parse file data
+	bool r = boost::spirit::qi::phrase_parse(
+	             first,
+	             last,
+	             parser,
+	             boost::spirit::qi::ascii::space);
+
+	// fail if we did not get a full match
+	if (!r) // || first != last)
 		throw syntax_error("Syntax error while parsing '" + filename + "'.");
-	};
-
-	// for debugging
-	printf("Abstract syntax tree: \n%s\n\n", ast->toStringTree(ast)->chars);
-
-	nodes = antlr3CommonTreeNodeStreamNewTree(ast, ANTLR3_SIZE_HINT);
-	if (nodes == NULL) {
-		parser->free(parser);
-		tokens->free(tokens);
-		lex->free(lex);
-		input->close(input);
-		throw runtime_error("Could not create nodes for '" + filename + "' (insufficient memory?).");
-	};
-	walker = FFIFileFormatNew(nodes);
-	if (walker == NULL) {
-		nodes->free(nodes);
-		parser->free(parser);
-		tokens->free(tokens);
-		lex->free(lex);
-		input->close(input);
-		throw runtime_error("Could not create walker for '" + filename + "' (insufficient memory?).");
-	};
-	walker->ffi(walker, class_);
-
-	// release memory
-	if (walker) walker->free(walker);
-	if (nodes) nodes->free(nodes);
-	if (parser) parser->free(parser);
-	if (tokens) tokens->free(tokens);
-	if (lex) lex->free(lex);
-	if (input) input->close(input);
 };
 
 }; // namespace xml
