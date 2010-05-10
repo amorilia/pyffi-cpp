@@ -109,6 +109,9 @@ FileFormat::FileFormat(const std::string & filename)
 {
 	// open file, disable skipping of whitespace
 	std::ifstream in(filename.c_str());
+	if (in.fail()) {
+		throw io_error("Could not open '" + filename + "'.");
+	}
 	in.unsetf(std::ios::skipws);
 
 	// wrap istream into iterator
