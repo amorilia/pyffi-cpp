@@ -59,13 +59,15 @@ namespace ffi
 template <typename Iterator>
 struct ffi_parser : boost::spirit::qi::grammar<Iterator, void(), boost::spirit::qi::ascii::space_type> {
     boost::spirit::qi::rule<Iterator, void(), boost::spirit::qi::ascii::space_type> start;
-    boost::spirit::qi::rule<Iterator, void(), boost::spirit::qi::ascii::space_type> doc;
+    boost::spirit::qi::rule<Iterator, void(), boost::spirit::qi::ascii::space_type> comment;
 
     ffi_parser()
 	    : ffi_parser::base_type(start) {
 	using boost::phoenix::construct;
 	using boost::phoenix::val;
+	using boost::spirit::qi::space;
 	using boost::spirit::qi::char_;
+	using boost::spirit::qi::eol;
 	using boost::spirit::qi::lexeme;
 	using boost::spirit::qi::lit;
 	using boost::spirit::qi::on_error;
@@ -75,9 +77,17 @@ struct ffi_parser : boost::spirit::qi::grammar<Iterator, void(), boost::spirit::
 	using boost::spirit::qi::_3;
 	using boost::spirit::qi::_4;
 
-	start = lit("fileformat");
+	start = *comment >> lit("fileformat");
+
+	comment = lexeme[
+	              char_('#')
+	              >> *(space - eol)
+	              >> (*(char_ - space) % (space - eol))
+	              >> eol
+	          ];
 
 	start.name("fileformat");
+	comment.name("#comment");
 
 	on_error<fail>(
 	    start,
