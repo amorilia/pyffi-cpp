@@ -130,7 +130,7 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		    [std::cout << val("NIFTOOLSXML") << std::endl]
 		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
 		    >> lit(">")
-		    >> *(tag_version | tag_basic)
+		    >> *(tag_version | tag_basic | tag_enum)
 		    //>> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
 		    >> lit("</niftoolsxml>")
 		    >> eoi;
@@ -151,6 +151,34 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		    >> char_('>')
 		    >> comment
 		    >> lit("</basic>");
+
+		tag_enum =
+		    lit("<enum")
+		    [std::cout << val("ENUM=")]
+		    >> *(
+		        attr_string(std::string("name"))
+		        [std::cout << _1 << std::endl]
+		        |
+		        attr_string(std::string("storage"))
+		        [std::cout << val("(") << _1 << ")" << std::endl]
+		    )
+		    >> char_('>')
+		    >> comment
+		    >> *tag_option
+		    >> lit("</enum>");
+
+		tag_option =
+		    lit("<option")
+		    [std::cout << val("OPTION=")]
+		    >> *(
+		        attr_string(std::string("name"))
+		        [std::cout << _1 << std::endl]
+		        |
+		        attr_string(std::string("value"))
+		    )
+		    >> char_('>')
+		    >> comment
+		    >> lit("</option>");
 
 		tag_version =
 		    lit("<version")
