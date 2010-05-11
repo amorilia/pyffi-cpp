@@ -64,6 +64,7 @@ class Class : public boost::enable_shared_from_this<Class>
 {
 public:
 	typedef boost::shared_ptr<Class> PClass;
+	typedef boost::shared_ptr<const Class> PConstClass;
 
 	//! Create top level class to contain other declarations.
 	static PClass class_() {
@@ -156,7 +157,8 @@ public:
 		};
 	};
 
-	bool generate(std::ostream & os);
+	//! Generate file format description.
+	bool generate(std::ostream & os) const;
 
 private:
 	//! Private constructor to prevent it from being
@@ -210,6 +212,7 @@ private:
 
 //! For convenience.
 typedef Class::PClass PClass;
+typedef Class::PConstClass PConstClass;
 
 }; // namespace object_models
 

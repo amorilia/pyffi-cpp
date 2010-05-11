@@ -51,8 +51,8 @@ namespace object_models
 namespace karma = boost::spirit::karma;
 
 template <typename OutputIterator>
-struct ffi_parser : karma::grammar<OutputIterator, PClass()> {
-    karma::rule<OutputIterator, PClass()> class_;
+struct ffi_parser : karma::grammar<OutputIterator, PConstClass()> {
+    karma::rule<OutputIterator, PConstClass()> class_;
 
     ffi_parser()
 	    : ffi_parser::base_type(class_) {
@@ -60,7 +60,7 @@ struct ffi_parser : karma::grammar<OutputIterator, PClass()> {
 }
 };
 
-bool Class::generate(std::ostream & os)
+bool Class::generate(std::ostream & os) const
 {
 	// wrap ostream into iterator
 	boost::spirit::ostream_iterator sink(os);
