@@ -38,6 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
+#include <sstream>
 
 #include "pyffi/object_models/class.hpp"
 #include "pyffi/exceptions.hpp"
@@ -300,5 +301,14 @@ BOOST_AUTO_TEST_CASE(instance_test)
 	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i3), "( 7 8 )");
 	BOOST_CHECK_EQUAL(boost::apply_visitor(object_value_string(), i4), "( 9 12 c 19 )");
 }
+
+BOOST_AUTO_TEST_CASE(generate_test)
+{
+	PClass ns = Class::class_();
+	std::ostringstream os;
+	ns->generate(os);
+	BOOST_CHECK_EQUAL(os.str(), "class\n");
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

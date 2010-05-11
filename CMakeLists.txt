@@ -18,6 +18,7 @@ add_subdirectory(src)
 
 # build the actual library
 add_library(pyffi
+    src/pyffi/object_models/class.cpp
     src/pyffi/object_models/ffi/file_format.cpp
     src/pyffi/object_models/xml/file_format.cpp
 )

@@ -45,6 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/weak_ptr.hpp>
+#include <ostream>
 #include <vector>
 
 #include "pyffi/object_models/map.hpp"
@@ -154,6 +155,8 @@ public:
 			return Object(attrs);
 		};
 	};
+
+	bool generate(std::ostream & os);
 
 private:
 	//! Private constructor to prevent it from being
