@@ -84,13 +84,20 @@ struct xml_skipper : qi::grammar<Iterator> {
 
 template <typename Iterator, typename Skipper = qi::grammar<Iterator> >
 struct xml_parser : qi::grammar<Iterator, Skipper> {
-	qi::rule<Iterator, Skipper> start;
+	qi::rule<Iterator, Skipper> tag_fileformat;
 	qi::rule<Iterator, Skipper> comment;
-	qi::rule<Iterator, Skipper> version;
-	qi::rule<Iterator, unsigned(), Skipper> num_attribute;
+	qi::rule<Iterator, Skipper> tag_version;
+	qi::rule<Iterator, Skipper> tag_basic;
+	qi::rule<Iterator, Skipper> tag_enum;
+	qi::rule<Iterator, Skipper> tag_option;
+	qi::rule<Iterator, Skipper> tag_bitflags;
+	qi::rule<Iterator, Skipper> tag_struct;
+	qi::rule<Iterator, Skipper> tag_add;
+	qi::rule<Iterator, std::string(std::string), Skipper> attr_string;
+	qi::rule<Iterator, unsigned(std::string), Skipper> attr_version;
 
 	xml_parser()
-		: xml_parser::base_type(start) {
+		: xml_parser::base_type(tag_fileformat, "fileformatxml") {
 		using phoenix::construct;
 		using phoenix::val;
 		using qi::char_;
@@ -107,43 +114,70 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		using qi::_2;
 		using qi::_3;
 		using qi::_4;
+		using qi::_r1;
 		using qi::_val;
 
-		start =
-		    -(lit("<?xml")[std::cout << val("XML") << std::endl]
+		tag_fileformat =
+		    -(lit("<?xml")
+		      [std::cout << val("XML") << std::endl]
 		      >> *(!lit("?>") >> char_)
 		      >> lit("?>"))
-		    >> -(lit("<!DOCTYPE")[std::cout << val("DOCTYPE") << std::endl]
+		    >> -(lit("<!DOCTYPE")
+		         [std::cout << val("DOCTYPE") << std::endl]
 		         >> lit("niftoolsxml")
 		         >> lit(">"))
-		    >> lit("<niftoolsxml")[std::cout << val("NIFTOOLSXML") << std::endl]
+		    >> lit("<niftoolsxml")
+		    [std::cout << val("NIFTOOLSXML") << std::endl]
 		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
 		    >> lit(">")
-		    >> *version
+		    >> *(tag_version | tag_basic)
 		    //>> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
 		    >> lit("</niftoolsxml>")
 		    >> eoi;
 
 		comment = *lexeme[+(!char_('<') >> graph)];
 
-		version =
-		    lit("<version")[std::cout << val("VERSION=")]
-		    >> num_attribute[std::cout << _1 << std::endl]
+		tag_basic =
+		    lit("<basic")
+		    [std::cout << val("BASIC=")]
+		    >> *(
+		        attr_string(std::string("name"))
+		        [std::cout << _1 << std::endl]
+		        | attr_string(std::string("count"))
+		        | attr_string(std::string("niflibtype"))
+		        | attr_string(std::string("nifskopetype"))
+		        | attr_string(std::string("istemplate"))
+		    )
+		    >> char_('>')
+		    >> comment
+		    >> lit("</basic>");
+
+		tag_version =
+		    lit("<version")
+		    [std::cout << val("VERSION=")]
+		    >> attr_version(std::string("num"))
+		    [std::cout << _1 << std::endl]
 		    >> char_('>')
 		    >> comment
 		    >> lit("</version>");
 
-		num_attribute =
-		    lit("num")[_val = 0] >> '='
+		attr_string %=
+		    lit(_r1) >> '='
+		    >> lexeme['"' >> *(char_ - '"') >> '"'];
+
+		attr_version =
+		    lit(_r1)[_val = 0] >> '='
 		    >> '"' >> (uint_[_val = _val * 256 + _1] % '.') >> '"';
 
-		start.name("<niftoolsxml>...</niftoolsxml>");
+		tag_fileformat.name("<niftoolsxml>...</niftoolsxml>");
 		comment.name("...");
-		version.name("<version>...</version>");
-		num_attribute.name("num=\"...\"");
+		tag_version.name("<version>...</version>");
+		tag_basic.name("<basic>...</basic>");
+		attr_string.name("attribute (string)");
+		attr_version.name("attribute (version)");
 
 		on_error<fail>(
-		    start,
+		    tag_fileformat,
 		    std::cout
 		    << val("Error! Expecting ")
 		    << _4                               // what failed?
