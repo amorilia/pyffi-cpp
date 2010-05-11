@@ -56,39 +56,62 @@ namespace object_models
 namespace xml
 {
 
+namespace ascii = boost::spirit::ascii;
+namespace phoenix = boost::phoenix;
+namespace qi = boost::spirit::qi;
+
 template <typename Iterator>
-struct xml_parser : boost::spirit::qi::grammar<Iterator, void(), boost::spirit::qi::ascii::space_type> {
-    boost::spirit::qi::rule<Iterator, void(), boost::spirit::qi::ascii::space_type> start;
+struct xml_skipper : qi::grammar<Iterator> {
+	qi::rule<Iterator> start;
 
-    xml_parser()
-	    : xml_parser::base_type(start) {
-	using boost::phoenix::construct;
-	using boost::phoenix::val;
-	using boost::spirit::qi::char_;
-	using boost::spirit::qi::lexeme;
-	using boost::spirit::qi::lit;
-	using boost::spirit::qi::on_error;
-	using boost::spirit::qi::fail;
-	using boost::spirit::qi::_1;
-	using boost::spirit::qi::_2;
-	using boost::spirit::qi::_3;
-	using boost::spirit::qi::_4;
-
-	start = -(lit("<?xml") >> *(char_ - "?") >> lit("?>")) >> -(lexeme["<!DOCTYPE niftoolsxml>"]) >> (lexeme["<niftoolsxml version=\"0.7.0.0\">"] | lit("<niftoolsxml>"));
-
-	start.name("<niftoolsxml>");
-
-	on_error<fail>(
-	    start,
-	    std::cout
-	    << val("Error! Expecting ")
-	    << _4                               // what failed?
-	    << val(" here: \"")
-	    << construct<std::string>(_3, _2)   // iterators to error-pos, end
-	    << val("\"")
-	    << std::endl
-	);
+	xml_skipper()
+		: xml_skipper::base_type(start) {
+		start =
+		    qi::space
+		    | "<--"
+		    >> *(!qi::lit("-->") >> qi::char_)
+		    >> qi::lit("-->");
+	};
 };
+
+template <typename Iterator, typename Skipper = qi::grammar<Iterator> >
+struct xml_parser : qi::grammar<Iterator, Skipper> {
+	qi::rule<Iterator, Skipper> start;
+
+	xml_parser()
+		: xml_parser::base_type(start) {
+		using phoenix::construct;
+		using phoenix::val;
+		using qi::char_;
+		using qi::lexeme;
+		using qi::lit;
+		using qi::on_error;
+		using qi::fail;
+		using qi::_1;
+		using qi::_2;
+		using qi::_3;
+		using qi::_4;
+
+		start =
+		    -(lit("<?xml") >> *(char_ - "?") >> lit("?>"))
+		    >> -(lit("<!") >> lit("DOCTYPE") >> lit("niftoolsxml") >> lit(">"))
+		    >> lit("<niftoolsxml")
+		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
+		    >> lit(">");
+
+		start.name("<niftoolsxml>");
+
+		on_error<fail>(
+		    start,
+		    std::cout
+		    << val("Error! Expecting ")
+		    << _4                               // what failed?
+		    << val(" here: \"")
+		    << construct<std::string>(_3, _2)   // iterators to error-pos, end
+		    << val("\"")
+		    << std::endl
+		);
+	};
 };
 
 /*
@@ -108,15 +131,14 @@ FileFormat::FileFormat(const std::string & filename)
 	boost::spirit::istream_iterator first(in);
 	boost::spirit::istream_iterator last;
 
+	// create skip parser
+	xml_skipper<boost::spirit::istream_iterator> skipper;
+
 	// create parser
 	xml_parser<boost::spirit::istream_iterator> parser;
 
 	// use iterator to parse file data
-	bool r = boost::spirit::qi::phrase_parse(
-	             first,
-	             last,
-	             parser,
-	             boost::spirit::qi::ascii::space);
+	bool r = qi::phrase_parse(first, last, parser, skipper);
 
 	// fail if we did not get a full match
 	if (!r) // || first != last)
