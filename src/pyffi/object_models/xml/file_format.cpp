@@ -97,9 +97,12 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		    >> -(lit("<!") >> lit("DOCTYPE") >> lit("niftoolsxml") >> lit(">"))
 		    >> lit("<niftoolsxml")
 		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
-		    >> lit(">");
+		    >> lit(">")
+		    >> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
+		    >> lit("</niftoolsxml>")
+		    >> qi::eoi;
 
-		start.name("<niftoolsxml>");
+		start.name("<niftoolsxml>...</niftoolsxml>");
 
 		on_error<fail>(
 		    start,
@@ -141,7 +144,7 @@ FileFormat::FileFormat(const std::string & filename)
 	bool r = qi::phrase_parse(first, last, parser, skipper);
 
 	// fail if we did not get a full match
-	if (!r) // || first != last)
+	if (!r || first != last)
 		throw syntax_error("Syntax error while parsing '" + filename + "'.");
 };
 
