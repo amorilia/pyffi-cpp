@@ -130,12 +130,32 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		    [std::cout << val("NIFTOOLSXML") << std::endl]
 		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
 		    >> lit(">")
-		    >> *(tag_version | tag_basic | tag_enum)
+		    >> *(tag_version | tag_basic | tag_enum | tag_struct)
 		    //>> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
 		    >> lit("</niftoolsxml>")
 		    >> eoi;
 
 		comment = *lexeme[+(!char_('<') >> graph)];
+
+		tag_add =
+		    lit("<add")
+		    [std::cout << val("ADD=")]
+		    >> *(
+		        attr_string(std::string("name"))
+		        [std::cout << _1 << std::endl]
+		        | attr_string(std::string("type"))
+		        | attr_string(std::string("default"))
+		        | attr_version(std::string("ver1"))
+		        | attr_version(std::string("ver2"))
+		        | attr_string(std::string("cond"))
+		        | attr_string(std::string("arr1"))
+		        | attr_string(std::string("arr2"))
+		        | attr_string(std::string("template"))
+		        | attr_string(std::string("vercond"))
+		    )
+		    >> char_('>')
+		    >> comment
+		    >> lit("</add>");
 
 		tag_basic =
 		    lit("<basic")
@@ -179,6 +199,26 @@ struct xml_parser : qi::grammar<Iterator, Skipper> {
 		    >> char_('>')
 		    >> comment
 		    >> lit("</option>");
+
+		tag_struct =
+		    (lit("<struct") | lit("<compound") | lit("<niobject"))
+		    [std::cout << val("STRUCT=")]
+		    >> *(
+		        attr_string(std::string("name"))
+		        [std::cout << _1 << std::endl]
+		        |
+		        attr_string(std::string("inherit"))
+		        [std::cout << val("(") << _1 << ")" << std::endl]
+		        | attr_string(std::string("niflibtype"))
+		        | attr_string(std::string("nifskopetype"))
+		        | attr_string(std::string("abstract"))
+		        | attr_string(std::string("ver1"))
+		        | attr_string(std::string("ver2"))
+		    )
+		    >> char_('>')
+		    >> comment
+		    >> *tag_add
+		    >> (lit("</struct>") | lit("</compound>") | lit("</niobject>"));
 
 		tag_version =
 		    lit("<version")
