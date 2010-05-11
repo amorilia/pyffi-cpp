@@ -35,6 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/include/io.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_fusion.hpp>
@@ -68,8 +70,14 @@ struct xml_skipper : qi::grammar<Iterator> {
 		: xml_skipper::base_type(start) {
 		start =
 		    qi::space
-		    | "<--"
-		    >> *(!qi::lit("-->") >> qi::char_)
+		    //[std::cout << phoenix::val("SPACE") << std::endl]
+		    |
+		    qi::lit("<!--")
+		    //[std::cout << phoenix::val("XMLCOMMENT=")]
+		    >> *(!qi::lit("-->")
+		         >> qi::char_
+		         //[std::cout << qi::_1]
+		        )
 		    >> qi::lit("-->");
 	};
 };
@@ -77,32 +85,62 @@ struct xml_skipper : qi::grammar<Iterator> {
 template <typename Iterator, typename Skipper = qi::grammar<Iterator> >
 struct xml_parser : qi::grammar<Iterator, Skipper> {
 	qi::rule<Iterator, Skipper> start;
+	qi::rule<Iterator, Skipper> comment;
+	qi::rule<Iterator, Skipper> version;
+	qi::rule<Iterator, unsigned(), Skipper> num_attribute;
 
 	xml_parser()
 		: xml_parser::base_type(start) {
 		using phoenix::construct;
 		using phoenix::val;
 		using qi::char_;
+		using qi::eoi;
+		using qi::eps;
+		using qi::fail;
+		using qi::graph;
 		using qi::lexeme;
 		using qi::lit;
 		using qi::on_error;
-		using qi::fail;
+		using qi::space;
+		using qi::uint_;
 		using qi::_1;
 		using qi::_2;
 		using qi::_3;
 		using qi::_4;
+		using qi::_val;
 
 		start =
-		    -(lit("<?xml") >> *(char_ - "?") >> lit("?>"))
-		    >> -(lit("<!") >> lit("DOCTYPE") >> lit("niftoolsxml") >> lit(">"))
-		    >> lit("<niftoolsxml")
+		    -(lit("<?xml")[std::cout << val("XML") << std::endl]
+		      >> *(!lit("?>") >> char_)
+		      >> lit("?>"))
+		    >> -(lit("<!DOCTYPE")[std::cout << val("DOCTYPE") << std::endl]
+		         >> lit("niftoolsxml")
+		         >> lit(">"))
+		    >> lit("<niftoolsxml")[std::cout << val("NIFTOOLSXML") << std::endl]
 		    >> -(lit("version") >> lit("=") >> lit("\"0.7.0.0\""))
 		    >> lit(">")
-		    >> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
+		    >> *version
+		    //>> *(!lit("</niftoolsxml>") >> char_) // temporary skip rule
 		    >> lit("</niftoolsxml>")
-		    >> qi::eoi;
+		    >> eoi;
+
+		comment = *lexeme[+(!char_('<') >> graph)];
+
+		version =
+		    lit("<version")[std::cout << val("VERSION=")]
+		    >> num_attribute[std::cout << _1 << std::endl]
+		    >> char_('>')
+		    >> comment
+		    >> lit("</version>");
+
+		num_attribute =
+		    lit("num")[_val = 0] >> '='
+		    >> '"' >> (uint_[_val = _val * 256 + _1] % '.') >> '"';
 
 		start.name("<niftoolsxml>...</niftoolsxml>");
+		comment.name("...");
+		version.name("<version>...</version>");
+		num_attribute.name("num=\"...\"");
 
 		on_error<fail>(
 		    start,
@@ -129,6 +167,7 @@ FileFormat::FileFormat(const std::string & filename)
 		throw io_error("Could not open '" + filename + "'.");
 	}
 	in.unsetf(std::ios::skipws);
+	std::cout << "PARSING " << filename << std::endl;
 
 	// wrap istream into iterator
 	boost::spirit::istream_iterator first(in);
