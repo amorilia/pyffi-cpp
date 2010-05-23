@@ -17,7 +17,7 @@ enum KeyType(UInt):
     TBC = 3
 
     # For use only with rotation data. Separate X, Y, and Z keys will be
-    # stored instead of using quaternions.</option>
+    # stored instead of using quaternions.
     XYZ_ROTATION = 4
 
     # Unknown. Step function?
