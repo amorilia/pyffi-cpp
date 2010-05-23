@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2007-2008, Python File Format Interface
+Copyright (c) 2007-2010, Python File Format Interface
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
